@@ -1,0 +1,57 @@
+services:
+  # Qdrant service Vecter database 
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: always
+    container_name: chatbot_prototypeone_qdrant_vectorDB
+    ports:
+      - 6333:6333
+      - 6334:6334
+    expose:
+      - 6333
+      - 6334
+      - 6335
+    # configs:
+    #   - source: qdrant_config
+    #     target: /qdrant/config/production.yaml
+    volumes:
+      - ./qdrant_data:/qdrant/storage
+
+  # Chatbot web UI  service
+  chatbot_front:
+    container_name: chatbot_prototypeone_webui
+    image: chatbot_webui_cs_project:${WEB_GUI}
+    ports:
+      - 8002:80
+    env_file:
+      - ./.env
+
+  # Chatbot API
+  chatbot_api:
+    container_name: chatbot_prototypeone_web_api
+    image: chatbot_api_cs_project:${CHATBOT_API}
+    ports:
+      - 8003:8003
+    env_file:
+      - ./.env
+    volumes:
+      - ${PWD}/log/api:/app/log
+
+  # Chatbot Create Collection
+  create_collection:
+    container_name: chatbot_prototypeone_management_api
+    image: chatbot_pdf_management_api:${PDF_MANAGEMENT_API}
+    ports:
+      - 8004:8004
+    env_file:
+      - ./.env
+
+    volumes:
+      - ${PWD}/log/pdf:/app/log         # loging 
+      - ${PWD}/pdf_Data:/app/pdfs       # pdf 
+
+# qdrant config
+# configs:
+#   qdrant_config:
+#     content: "log_level: INFO"
+
