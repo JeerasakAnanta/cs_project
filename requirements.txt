@@ -1,0 +1,21 @@
+# cahtbot api 
+langchain-community==0.2.16
+langchain-openai==0.1.23
+python-dotenv==1.0.1
+pymupdf==1.24.10
+fastapi==0.114.0
+uvicorn==0.30.6
+langchain-qdrant==0.1.3
+qdrant-client==1.11.2
+
+
+# PDF mamagement  
+langchain-community==0.2.16
+langchain-openai==0.1.23
+python-dotenv==1.0.1
+pymupdf==1.24.10
+langchain-qdrant==0.1.3
+fastapi==0.114.0
+uvicorn==0.30.6
+Jinja2==3.1.4
+python-multipart==0.0.9
