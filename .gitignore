@@ -1,0 +1,45 @@
+.env
+prototype
+.venv
+env
+.env.swp
+__pycache__
+rag_app_full_appclition_with_chatgpt/data
+data
+node_modules
+
+chatbot_create_collection/qdrant_data 
+qdrant_data
+./chatbot_create_collection/pdfs
+
+
+./chatbot_api/env_fastapi
+./chatbot_api/app.log
+chatbot_api/app.log
+docker-compose.yaml
+# chat_pdf_management_api/pdfs/
+
+# logfile 
+./logs/app.log
+
+
+# chatbot api 
+./chatbot_api/app.log
+chatbot_api/env_fastapi/
+
+
+log/
+
+# 
+./chatbot_api/env_fastapi/
+chat_pdf_management_api/
+
+.env.production
+
+
+
+#PDF 
+./chatbot_pdf_management_api/pdfs/
+chatbot_pdf_management_api/pdfs/
+dist
+pdf_Data
