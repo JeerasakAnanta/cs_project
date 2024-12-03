@@ -1,0 +1,14 @@
+# Ignore all files in the .git directory
+.git
+
+# Ignore all files in the node_modules directory
+node_modules
+
+# Ignore all log files
+*.log
+
+# Ignore all files in the dist directory
+dist
+
+# Ignore all files in the build directory
+build
