@@ -2,8 +2,8 @@
 name = "Final Project CS"
 version = "0.1.0"
 description = "Chatbot "
-authors = ["Game CS RMUTL +  SuperAI  <jeerasakananta@gmail.com>"]
-maintainers = ["Game CS RMUTL + SuperAI <jeerasakananta@gmail.com>"]
+authors = ["Jeerasak Ananta <jeerasakananta@gmail.com>"]
+maintainers = ["Jeerasak Ananta <jeerasakananta@gmail.com>"]
 license = "Chatbot LLM (LLM Large language model)  with  RAG (Retrieval-Augmented Generation) "
 readme = "README.md"
 
