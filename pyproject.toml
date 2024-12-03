@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "Final Project Chatbot Computer Science NAN"
+name = "Final Project CS"
 version = "0.1.0"
 description = "Chatbot "
 authors = ["Game CS RMUTL +  SuperAI  <jeerasakananta@gmail.com>"]
