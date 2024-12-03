@@ -1,0 +1,12 @@
+services:
+  vite-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8002:80'
+    restart: always
+
+networks:
+  chatbot_network:
+    driver: bridge
