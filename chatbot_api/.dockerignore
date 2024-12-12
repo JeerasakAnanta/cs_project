@@ -1,0 +1,5 @@
+.env
+Dockerfile
+__pycache__
+run_api.sh
+        
