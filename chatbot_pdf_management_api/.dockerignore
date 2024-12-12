@@ -1,0 +1,4 @@
+qdrant_data
+docker-compose.yml
+Dockerfile
+.env
