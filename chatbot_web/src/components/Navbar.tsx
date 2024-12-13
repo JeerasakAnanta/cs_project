@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
 
   return (
     <nav
-      className={`bg-green-800 p-4 transition-transform duration-300 ${visible ? 'transform translate-y-0' : 'transform -translate-y-full'}`}
+      className={`bg-yellow-900 p-4 transition-transform duration-300 ${visible ? 'transform translate-y-0' : 'transform -translate-y-full'}`}
     >
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
