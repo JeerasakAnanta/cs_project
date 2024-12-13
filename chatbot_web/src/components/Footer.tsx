@@ -6,12 +6,11 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-green-800 text-white p-4 text-center ">
       <QuestionAnswerIcon />
-      Chatbot มาตรการสินเชื่อ Prototype v.({import.meta.env.VITE_WEB_GUI})
+      Chatbot คู่มือปฏิบัติงาน การเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน Prototype v.({import.meta.env.VITE_WEB_GUI})
       <p>
-        &copy; {new Date().getFullYear()} Chatbot LLM BAAC x SuperAI. All Rights
-        Reserved.
+        &copy; {new Date().getFullYear()} Chatbot RMUTL LLM Prototype . All Rights Reserved.
       </p>
-    </footer>
+    </footer> 
   );
 };
 
