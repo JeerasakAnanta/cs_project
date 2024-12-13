@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Admin from './Admin';
-import baacLogo from '../assets/baac.svg'; // Adjust the path based on your structure
+import RMUTLlogo from '../assets/Rmutl.png'; // Adjust the path based on your structure
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="text-xl flex ml-20">
-          <img src={baacLogo} alt="BACC Logo" className="h-11 w-12" />
+          <img src={RMUTLlogo} alt="RMUTL Logo" className="h-11 " />
         </Link>
 
         {/* Hamburger Icon */}
