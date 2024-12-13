@@ -1,21 +1,23 @@
-# Use the official Qdrant image as the base
+# Use the official Python 3.12.3 image as the base image
+FROM python:3.12.3-alpine
 
-FROM python:3.11-slim 
-
-# Set the working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# update pip
-RUN pip install --no-cache-dir --upgrade pip
+# Install Poetry
+RUN pip install poetry==1.8.4
 
-COPY requirements.txt .
+# Copy the chatbot base API  
+COPY ./pdf_management_api.py ./
 
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy pyproject.toml from parent directory
+COPY ./pyproject.toml .
+
+
+# Install requirements with Poetry
+RUN poetry config virtualenvs.create false && poetry install --no-root --without dev  # Disable virtualenv creation
 
 EXPOSE 8004
-
-# COPY create_vecter_db.py .
-COPY . . 
 
 # run the command to start uWSGI
 CMD ["uvicorn", "pdf_management_api:app", "--host", "0.0.0.0", "--port", "8004"]
