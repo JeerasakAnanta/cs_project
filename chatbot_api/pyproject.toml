@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "Final Project CS"
+version = "0.1.0"
+description = "Chatbot "
+authors = ["Jeerasak Ananta <jeerasakananta@gmail.com>"]
+maintainers = ["Jeerasak Ananta <jeerasakananta@gmail.com>"]
+license = "Chatbot LLM (LLM Large language model)  with  RAG (Retrieval-Augmented Generation) "
+readme = "README.md"
+
+#  dependencies
+[tool.poetry.dependencies]
+python = "^3.10"
+langchain-community = "0.2.16"
+langchain-openai = "0.1.23"
+python-dotenv = "1.0.1"
+pymupdf = "1.24.10"
+fastapi = "0.114.0"
+uvicorn = { version = "0.30.6", extras = ["standard"] } 
+qdrant-client = "1.11.2"
+langchain-qdrant = "0.1.3"
+jinja2 = "3.1.4"
+python-multipart = "0.0.12"
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
