@@ -149,8 +149,7 @@ const Chatbot: React.FC = () => {
     <div className="mx-auto chat-container shadow-lg bg-white rounded-lg">
       <div className="flex justify-between mb-2">
         <p className="font-bold">
-          ❗ คำแนะนำ: chatbots ยังตอบอยู่ภายใต้ มาตรการสินเชื่อ และ
-          เอกสารเท่านั้นที่อยู่ใน เมนูเท่านั้น
+          ❗คำแนะนำ : Chatbots ตอบได้เฉพาะ "คู่มือปฏิบัติงาน การเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน" เท่านั้น
         </p>
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white p-1  rounded-md"
