@@ -81,17 +81,10 @@ const Navbar: React.FC = () => {
               to="/pdflist"
               className="block text-white hover:text-gray-400 py-2 px-4"
             >
-              มาตรการสินเชื่อ
+              คู่มือปฏิบัติงาน
             </Link>
           </li>
-          <li>
-            <Link
-              to="/management"
-              className="block text-white hover:text-gray-400 py-2 px-4"
-            >
-              จัดการ pdf
-            </Link>
-          </li>
+
           <li>
             <Link
               to="/about"
