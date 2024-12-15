@@ -149,8 +149,8 @@ const Chatbot: React.FC = () => {
     <div className="mx-auto chat-container shadow-lg bg-white rounded-lg">
       <div className="flex justify-between mb-2">
         <p className="font-bold">
-          ❗ คำแนะนำ: chatbots ยังตอบอยู่ภายใต้ มาตรการสินเชื่อ และ
-          เอกสารเท่านั้นที่อยู่ใน เมนูเท่านั้น
+          ❗คำแนะนำ : Chatbots ตอบได้เฉพาะ "คู่มือปฏิบัติงาน
+          การเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน" เท่านั้น
         </p>
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white p-1  rounded-md"
@@ -171,7 +171,7 @@ const Chatbot: React.FC = () => {
             className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} mb-2`}
           >
             <div
-              className={`chat-message ${msg.sender === 'bot' ? 'bg-green-200' : 'bg-blue-500'} text-${msg.sender === 'bot' ? 'black' : 'white'} rounded-2xl p-2 max-w-3xl`}
+              className={`chat-message ${msg.sender === 'bot' ? 'bg-amber-200' : 'bg-blue-500'} text-${msg.sender === 'bot' ? 'black' : 'white'} rounded-2xl p-2 max-w-3xl`}
               dangerouslySetInnerHTML={{ __html: msg.text }}
             />
           </div>
@@ -200,10 +200,10 @@ const Chatbot: React.FC = () => {
           onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
         />
         <button
-          className="ml-2 bg-green-600 hover:bg-green-800 text-white px-4 py-2 rounded-2xl"
+          className="ml-2 bg-amber-800 hover:bg-amber-600 text-white px-4 py-2 rounded-2xl"
           onClick={handleSendMessage}
         >
-          <SendIcon className="text-white mr-2 hover:text-white  hover:bg-" />
+          <SendIcon className="text-white mr-2 hover:text-white" />
           ส่ง
         </button>
       </div>
@@ -212,16 +212,18 @@ const Chatbot: React.FC = () => {
         <p className="text-gray-600 mb-2">ตัวอย่างคำถาม</p>
         <div className="flex flex-wrap justify-center ">
           {[
-            'มาตรการสินเชื่อ แทนคุณเแทนใจ?',
-            'มาตรการสินเชื่อ แทนคุณเแทนใจ ระยะเวลาโครงการ',
-            'มาตรการสินเชื่อ แทนคุณเแทนใจ ต้องใช้เอกสารอะไรบ้าง?',
-            'มาตรการสินเชื่อ แทนคุณเแทนใจ สรุปให้หน่อย',
-            'มาตรการสินเชื่อ แทนคุณเแทนใจ ใครรับผิดชอบ',
-            'มาตรการสินเชื่อ แทนคุณเแทนใจ ขอเบอร์ติดต่อ',
+            'ค่าใช้จ่ายในการเดินทางไปราชการ',
+            'ค่าใช้จ่ายในการฝึกอบรม จัดงาน',
+            'ค่าใช้จ่ายในการประชุม',
+            'ค่าตอบแทนปฏิบัติงานนอกเวลาราชการ',
+            'ค่าตอบแทนบุคคลหรือคณะกรรมการเกี่ยวกับการจัดซื้อจัดจ้างและบริหารพัสดุ',
+            'ค่าใช้จ่ายในการบริหารงาน' ,
+            'การจัดซื้อจัดจ้างที่มีความจำเป็นเร่งด่วน',
+            'การจัดหาพัสดุที่เกี่ยวกับค่าใช้จ่ายในการบริหารงาน'
           ].map((question, index) => (
             <button
               key={index}
-              className="bg-gray-200 text-gray-700 hover:bg-gray-400 hover:text-gray-50 px-3 py-1 rounded-lg mr-2 mb-2"
+              className="bg-gray-200 text-gray-700 hover:bg-amber-800 hover:text-gray-50 px-3 py-1 rounded-lg mr-2 mb-2"
               onClick={() => setExampleQuestion(question)}
             >
               {question}
