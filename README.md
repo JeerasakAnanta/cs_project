@@ -1,12 +1,9 @@
-# Chatbot Intergration with OpenAI LLM and WebUI
+# Chatbot Document Q&A Intergration OpenAI LLM with techical RAG  
 
 ## Overview 🔎
-This project showcases the development of an AI chatbot assistant Final Project  with computer Science at RMTUL
-using large language models (LLMs) and the <b>LangChain framework</b>. 
-The chatbot integrates the <b> OpenAI API (model gpt-4o-mini)</b> or Local LLM model with (Ollama) eng  Llama  and utilizes the <b>
-RAG (Retrieval Augmented Generation)</b> method to produce concise summaries from the <b>Vector database (Qdrant)</b>. 
-A user-friendly web (WebUI) interface is also included for seamless interaction with the model.
-
+- This project showcases the development of an AI chatbot assistant Final Project  with computer Science at <b> RMTUL </b> using large language models (LLMs) and the <b>LangChain framework</b>. 
+- The chatbot integrates the <b> OpenAI API (model gpt-4o-mini)</b> or Local LLM model with (Ollama) eng  Llama  and utilizes the <b> RAG (Retrieval Augmented Generation)</b> method to produce concise summaries from the <b>Vector database (Qdrant)</b>. 
+- A user-friendly web (WebUI) interface is also included for seamless interaction with the model from  back end FastAPI.
 
 ## 🔑Key Features
 - A user-friendly **Web Interface** for interacting with the chatbot
