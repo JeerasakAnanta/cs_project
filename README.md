@@ -6,10 +6,10 @@
 - A user-friendly web (WebUI) interface is also included for seamless interaction with the model from  back end FastAPI.
 
 ## 🔑Key Features
-- A user-friendly **Web Interface** for interacting with the chatbot
-- A **Backend API** built with FastAPI and Swagger for executing human commands
-- A **Document Management System** for processing and indexing documents
-- A user interface for viewing and managing the **Vector Database** using Qdrant
+- user-friendly **Web Interface** for interacting with the chatbot
+- **Backend API** built with FastAPI and Swagger for executing human commands
+- **Document Management System** for processing and indexing documents
+- user interface for viewing and managing the **Vector Database** using Qdrant
 
 ## 🛒Prerequisites  
 - Python 3 
@@ -39,28 +39,32 @@
     cd  cs_project
   ```
 ## Step 2: 🎈 Create Virtual Environments
-  use  `venv` (2.1) or `poetry` (2.2) 
+   you can create virtual environments  use  `venv` (2.1) or `poetry` (2.2) 
 
   ### 2.1 creat virtual environments 
   - 2.1.1 create with  venv (linux)
-    ```bash 
-    python3 -m venv envchatbot
-    ```
+  ```bash 
+  python3 -m venv envchatbot
+  ```
 
   - 2.1.2 activate environment (linux)
 
-    ```bash
-    source envchatbot/bin/activate  
-    ```
-  2.1.3 create create with  venv (window) 
-    ```
-    python -m venv envchatbot
-    ```
+  ```bash
+  source envchatbot/bin/activate  
+  ```
+   
+  2.1.3 create create with venv (window) 
+  
+  ```bash
+  python -m venv envchatbot
+  ```
+  
  - 2.1.3activate environment (window)
 
-    ```bash
-    .\envchatbot\Scripts\activate.bat
-    ```
+  ```bash
+  .\envchatbot\Scripts\activate.bat
+  ```
+
   ### 2.2 Poetry is a tool for dependency management and packaging
   - 2.2.1 install  Poetry with pip
     ```bash 
@@ -103,8 +107,7 @@
   ```
 - example  environment file `.env`
   ```
-  # .env
-  
+  # .env  
   ```
 ## Step 5 : 🗂 Create vecter DB with qdrant
 
@@ -361,7 +364,7 @@ title :  Image  Project Structure
 
 ## 🔃 Reference
 - [[1] LangChain ](https://www.langchain.com/) 
-- [[2] Azure OpenAI Service ](https://azure.microsoft.com/en-us/products/ai-services/openai-service?msockid=33e8fe8e304e6add0fb4ea7b31346b54)
+- [[2] OpenAI API Service ](https://platform.openai.com/docs/overview)
 - [[3] High-Performance Vector Search at Scale (Qdrant)
  ](https://qdrant.tech/)
 - [[4] RAG (Retrieval-Augmented Generation)](https://aws.amazon.com/what-is/retrieval-augmented-generation/)
