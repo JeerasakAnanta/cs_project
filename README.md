@@ -1,9 +1,9 @@
 # Chatbot Document Q&A Intergration OpenAI LLM with techical RAG  
 
 ## Overview 🔎
-- This project showcases the development of an AI chatbot assistant Final Project  with computer Science at <b> RMTUL </b> using large language models (LLMs) and the <b>LangChain framework</b>. 
-- The chatbot integrates the <b> OpenAI API (model gpt-4o-mini)</b> or Local LLM model with (Ollama) eng  Llama  and utilizes the <b> RAG (Retrieval Augmented Generation)</b> method to produce concise summaries from the <b>Vector database (Qdrant)</b>. 
-- A user-friendly web (WebUI) interface is also included for seamless interaction with the model from  back end FastAPI.
+- This project demonstrates the development of an AI chatbot assistant as part of the Final Project for the Computer Science program at RMTUL. It focuses on a chatbot designed for document question and answer (Q&A) using large language models (LLMs) and the LangChain framework.
+- The chatbot integrates various LLMs, including the OpenAI API (model GPT-4o-mini) and a Local LLM model (Ollama) engaging Llama, and employs the RAG (Retrieval Augmented Generation) method to generate concise summaries from the Vector database (Qdrant).
+- A user-friendly web interface (WebUI) has also been developed to facilitate seamless interaction with the model via the FastAPI backend.
 
 ## 🔑Key Features
 - user-friendly **Web Interface** for interacting with the chatbot
@@ -12,20 +12,20 @@
 - user interface for viewing and managing the **Vector Database** using Qdrant
 
 ## 🛒Prerequisites  
-- Python 3 
-- LLM model
+-  [Python 3.12.3](https://www.python.org/downloads/)
+- [LLM model](https://ollama.com/)
   - OpenAI API
   - Ollama (run LLM on local machine)
-- Langchain
-- FastAPI
-- Node.js
-- Vite
-- React TypeScript
-- Docker Engine
-- Docker Compose
+- [Langchain](https://www.langchain.com/)
+- [FastAPI](https://fastapi.tiangolo.com/) 
+- [Node.js](https://nodejs.org/en)
+- [Vite](https://vitejs.dev/)
+- [React TypeScript](https://react.dev/)
+- [Docker Engine](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
 
 ## Step 1: ⬇ Clone the Repository  
--  source  code  on  [ Github](https://github.com/JeerasakAnanta/cs_project)  you can clone  with `https` or `ssh`
+-  source code on [Github](https://github.com/JeerasakAnanta/cs_project) you can clone  with `https` or `ssh`
   - clone with https
   ```bash 
     git clone https://github.com/JeerasakAnanta/cs_project
@@ -59,7 +59,7 @@
   python -m venv envchatbot
   ```
   
- - 2.1.3activate environment (window)
+ - 2.1.3 activate environment (window)
 
   ```bash
   .\envchatbot\Scripts\activate.bat
