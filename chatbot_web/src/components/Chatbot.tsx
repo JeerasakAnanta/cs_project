@@ -4,16 +4,17 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import { marked } from 'marked';
 
+// import  vite env
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
-
 const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC;
 
+// debug console 
 console.log('Backend API  =', BACKEND_API);
 console.log('Web Static web  =', DOCS_STATIC);
 
 /**
  * Chatbot component
- *
+ *  
  * @returns Chatbot component
  */
 const Chatbot: React.FC = () => {
@@ -178,7 +179,7 @@ const Chatbot: React.FC = () => {
         ))}
         {isTyping && (
           <div className="typing-indicator text-blue-500">
-            กำลังค้นหาคำตอบค่ะ...
+            กำลังค้นหาคำตอบ ในเอกสารคู่มือปฏิบัติงาน ค่ะ...
           </div>
         )}
       </div>

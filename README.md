@@ -1,34 +1,31 @@
-# Chatbot Intergration with OpenAI LLM and WebUI
+# Chatbot Document Q&A Intergration OpenAI LLM with techical RAG  
 
 ## Overview 🔎
-This project showcases the development of an AI chatbot assistant Final Project  with computer Science at RMTUL
-using large language models (LLMs) and the <b>LangChain framework</b>. 
-The chatbot integrates the <b> OpenAI API (model gpt-4o-mini)</b> or Local LLM model with (Ollama) eng  Llama  and utilizes the <b>
-RAG (Retrieval Augmented Generation)</b> method to produce concise summaries from the <b>Vector database (Qdrant)</b>. 
-A user-friendly web (WebUI) interface is also included for seamless interaction with the model.
-
+- This project demonstrates the development of an AI chatbot assistant as part of the Final Project for the Computer Science program at RMTUL. It focuses on a chatbot designed for document question and answer (Q&A) using large language models (LLMs) and the LangChain framework.
+- The chatbot integrates various LLMs, including the OpenAI API (model GPT-4o-mini) and a Local LLM model (Ollama) engaging Llama, and employs the RAG (Retrieval Augmented Generation) method to generate concise summaries from the Vector database (Qdrant).
+- A user-friendly web interface (WebUI) has also been developed to facilitate seamless interaction with the model via the FastAPI backend.
 
 ## 🔑Key Features
-- A user-friendly **Web Interface** for interacting with the chatbot
-- A **Backend API** built with FastAPI and Swagger for executing human commands
-- A **Document Management System** for processing and indexing documents
-- A user interface for viewing and managing the **Vector Database** using Qdrant
+- user-friendly **Web Interface** for interacting with the chatbot
+- **Backend API** built with FastAPI and Swagger for executing human commands
+- **Document Management System** for processing and indexing documents
+- user interface for viewing and managing the **Vector Database** using Qdrant
 
 ## 🛒Prerequisites  
-- Python 3 
-- LLM model
+-  [Python 3.12.3](https://www.python.org/downloads/)
+- [LLM model](https://ollama.com/)
   - OpenAI API
   - Ollama (run LLM on local machine)
-- Langchain
-- FastAPI
-- Node.js
-- Vite
-- React TypeScript
-- Docker Engine
-- Docker Compose
+- [Langchain](https://www.langchain.com/)
+- [FastAPI](https://fastapi.tiangolo.com/) 
+- [Node.js](https://nodejs.org/en)
+- [Vite](https://vitejs.dev/)
+- [React TypeScript](https://react.dev/)
+- [Docker Engine](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
 
 ## Step 1: ⬇ Clone the Repository  
--  source  code  on  [ Github](https://github.com/JeerasakAnanta/cs_project)  you can clone  with `https` or `ssh`
+-  source code on [Github](https://github.com/JeerasakAnanta/cs_project) you can clone  with `https` or `ssh`
   - clone with https
   ```bash 
     git clone https://github.com/JeerasakAnanta/cs_project
@@ -42,28 +39,39 @@ A user-friendly web (WebUI) interface is also included for seamless interaction 
     cd  cs_project
   ```
 ## Step 2: 🎈 Create Virtual Environments
-  use  `venv` (2.1) or `poetry` (2.2) 
-
+   you can create virtual environments  use  `venv` (2.1) or `poetry` (2.2) 
+  - if you note haave  venv on ubuntu  server 
+  ```bash
+  pip install poetry
+  ```
+  - install pip on ubuntu  
+  ```bash
+  sudo apt install python3-pip
+  ```
   ### 2.1 creat virtual environments 
   - 2.1.1 create with  venv (linux)
-    ```bash 
-    python3 -m venv envchatbot
-    ```
+  ```bash 
+  python3 -m venv envchatbot
+  ```
 
   - 2.1.2 activate environment (linux)
 
-    ```bash
-    source envchatbot/bin/activate  
-    ```
-  2.1.3 create create with  venv (window) 
-    ```
-    python -m venv envchatbot
-    ```
- - 2.1.3activate environment (window)
+  ```bash
+  source envchatbot/bin/activate  
+  ```
+   
+  2.1.3 create create with venv (window) 
+  
+  ```bash
+  python -m venv envchatbot
+  ```
+  
+ - 2.1.3 activate environment (window)
 
-    ```bash
-    .\envchatbot\Scripts\activate.bat
-    ```
+  ```bash
+  .\envchatbot\Scripts\activate.bat
+  ```
+
   ### 2.2 Poetry is a tool for dependency management and packaging
   - 2.2.1 install  Poetry with pip
     ```bash 
@@ -106,8 +114,7 @@ A user-friendly web (WebUI) interface is also included for seamless interaction 
   ```
 - example  environment file `.env`
   ```
-  # .env
-  
+  # .env  
   ```
 ## Step 5 : 🗂 Create vecter DB with qdrant
 
@@ -364,7 +371,7 @@ title :  Image  Project Structure
 
 ## 🔃 Reference
 - [[1] LangChain ](https://www.langchain.com/) 
-- [[2] Azure OpenAI Service ](https://azure.microsoft.com/en-us/products/ai-services/openai-service?msockid=33e8fe8e304e6add0fb4ea7b31346b54)
+- [[2] OpenAI API Service ](https://platform.openai.com/docs/overview)
 - [[3] High-Performance Vector Search at Scale (Qdrant)
  ](https://qdrant.tech/)
 - [[4] RAG (Retrieval-Augmented Generation)](https://aws.amazon.com/what-is/retrieval-augmented-generation/)
