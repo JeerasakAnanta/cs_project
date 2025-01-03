@@ -40,7 +40,14 @@
   ```
 ## Step 2: 🎈 Create Virtual Environments
    you can create virtual environments  use  `venv` (2.1) or `poetry` (2.2) 
-
+  - if you note haave  venv on ubuntu  server 
+  ```bash
+  pip install poetry
+  ```
+  - install pip on ubuntu  
+  ```bash
+  sudo apt install python3-pip
+  ```
   ### 2.1 creat virtual environments 
   - 2.1.1 create with  venv (linux)
   ```bash 
