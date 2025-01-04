@@ -1,5 +1,8 @@
+# Ignore .env file
 .env
+# Ignore Dockerfile
 Dockerfile
+# Ignore Python cache files
 __pycache__
+# Ignore API run script
 run_api.sh
-        
