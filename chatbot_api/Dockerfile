@@ -21,4 +21,4 @@ RUN poetry config virtualenvs.create false && poetry install --no-root --no-dev
 EXPOSE 8003
 
 # Command to run the application
-CMD ["uvicorn", "chatbot_api:app", "--host", "127.0.0.1", "--port", "8003"]
+CMD ["uvicorn", "chatbot_api:app", "--host", "0.0.0.0", "--port", "8003"]
