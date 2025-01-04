@@ -4,20 +4,21 @@ FROM python:3.12.3-alpine
 # Set the working directory inside the container
 WORKDIR /app
 
+# Update pip
+RUN pip install --upgrade pip
+
 # Install Poetry
 RUN pip install poetry==1.8.4
 
-# Copy the chatbot base API  
-COPY ./chatbot_api.py ./
+# Copy the application code and dependencies configuration
+COPY chatbot_api.py ./chatbot_api.py
+COPY pyproject.toml ./pyproject.toml
 
-# Copy pyproject.toml from parent directory
-COPY ./pyproject.toml .
+# Install requirements with Poetry and disable virtualenv creation
+RUN poetry config virtualenvs.create false && poetry install --no-root --no-dev
 
-# Install requirements with Poetry
-RUN poetry config virtualenvs.create false && poetry install --no-root --without dev  # Disable virtualenv creation
-
-# Expose the necessary ports
+# Expose the necessary port
 EXPOSE 8003
 
-# For now, only run Uvicorn server
-CMD ["sh", "-c", "uvicorn chatbot_api:app --host 0.0.0.0 --port 8003 --reload"]  
+# Command to run the application
+CMD ["uvicorn", "chatbot_api:app", "--host", "127.0.0.1", "--port", "8003"]

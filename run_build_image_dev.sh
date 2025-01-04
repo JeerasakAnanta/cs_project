@@ -17,7 +17,7 @@ echo "                  ${start_time}                             "
 echo "------------------------------------------------------------"
 
 # down compose and build
-docker compose down
+docker-compose down
 
 # copy  dpendency pypoetry 
 
@@ -40,13 +40,20 @@ echo "------------------------------------------------------------"
 
 
 #Start  compose
-docker compose up -d    
+docker-compose up -d    
 
 echo "------------------------------------------------------------"
 echo "                  docker compose up Done                    " 
 echo "------------------------------------------------------------"
 
+echo "------------------------------------------------------------"
+echo "                 summary container  port                    " 
+echo "------------------------------------------------------------"
+
+echo "------------------------------------------------------------"
+
 end_time=$(date +%H:%M:%S)
+
 
 echo "----------------  End build Image ------------------------"
 echo "                  ${end_time}                             "
