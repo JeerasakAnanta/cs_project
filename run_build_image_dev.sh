@@ -27,7 +27,7 @@ echo "                  Build Docker Image                        "
 echo "------------------------------------------------------------"
 echo "" 
 
-# docker build -t chatbot_webui_cs_project:0.1.0 ./chatbot_web/.
+docker build -t chatbot_webui_cs_project:0.1.0 ./chatbot_web/.
 docker build -t chatbot_api_cs_project:0.1.0 ./chatbot_api/.
 docker build -t chatbot_pdf_management_api:0.1.0 ./chatbot_pdf_management_api/.
 
@@ -38,4 +38,4 @@ end_time=$(date +%H:%M:%S)
 
 echo "----------------  End build Image ------------------------"
 echo "                  ${end_time}                             "
-echo "----------------------------------------------------------"
+echo "----------------------------------------------------------" 
