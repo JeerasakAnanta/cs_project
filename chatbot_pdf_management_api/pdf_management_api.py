@@ -14,7 +14,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from langchain.document_loaders import PyMuPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_openai import AzureOpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from tqdm import tqdm
 
@@ -128,7 +128,7 @@ async def process_pdf(file_path: str):
         raise HTTPException(status_code=500, detail="Missing environment variables for Azure OpenAI.")
 
     # Initialize embeddings
-    embeddings = AzureOpenAIEmbeddings(model="text-embedding-3-large")
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 
     logger.info(f"Processing PDF for embeddings: {file_path}")
 
@@ -254,7 +254,7 @@ async def reembedding() -> JSONResponse:
         return JSONResponse(content={"error": "Missing environment variables for Azure OpenAI."}, status_code=400)
 
     # Initialize embeddings
-    embeddings = AzureOpenAIEmbeddings(model="text-embedding-3-large")
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 
     # Load PDF files
     pdfs = glob.glob(os.path.join(UPLOAD_FOLDER, '*.pdf'))
