@@ -1,7 +1,7 @@
 services:
   # Qdrant service - Vector database
   qdrant:
-    container_name: chatbot_prototypeone_qdrant_vectorDB
+    container_name: chatbot_qdrant_vectorDB
     image: qdrant/qdrant:latest
     restart: always
     ports:
@@ -14,8 +14,9 @@ services:
 
   # Chatbot Web UI service
   chatbot_front:
-    container_name: chatbot_prototypeone_webui
+    container_name: chatbot_webui
     image: chatbot_webui_cs_project:${CHATBOT_WEBUI}
+    restart: always
     ports:
       - "80:80"
     env_file:
@@ -25,8 +26,9 @@ services:
 
   # Chatbot API
   chatbot_api:
-    container_name: chatbot_prototypeone_web_api
+    container_name: chatbot_web_api
     image: chatbot_api_cs_project:${CHATBOT_API}
+    restart: always
     ports:
       - "8003:8003"
     env_file:
@@ -38,8 +40,9 @@ services:
 
   # Chatbot Create Collection
   create_collection:
-    container_name: chatbot_prototypeone_management_api
+    container_name: chatbot_management_api
     image: chatbot_pdf_management_api:${PDF_MANAGEMENT_API}
+    restart: always
     ports:
       - "8004:8004"
     env_file:
