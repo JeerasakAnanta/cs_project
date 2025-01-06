@@ -43,17 +43,19 @@ echo "------------------------------------------------------------"
 docker-compose up -d    
 
 echo "------------------------------------------------------------"
-echo "                  docker compose up Done                    " 
+echo "                 Docker Compose Done                        " 
 echo "------------------------------------------------------------"
 
 echo "------------------------------------------------------------"
-echo "                 summary container  port                    " 
+echo "                 Summary Container Port                     " 
 echo "------------------------------------------------------------"
-
+echo " WebChatbotUI    : http://localhost:80 "
+echo " Chat API        : http://localhost:8003 "
+echo " PDF             : http://localhost:8004 "
+echo " Qdrant VecterDB : http://localhost:6333"                      
 echo "------------------------------------------------------------"
 
 end_time=$(date +%H:%M:%S)
-
 
 echo "----------------  End build Image ------------------------"
 echo "                  ${end_time}                             "
