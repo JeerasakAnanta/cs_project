@@ -32,7 +32,7 @@ os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 QDRANT_VECTERDB_HOST = os.getenv("QDRANT_VECTERDB_HOST")
 
 print("------------------------------------------------------------")
-print(f"QDRANT_VECTERDB_HOST: {os.getenv("QDRANT_VECTERDB_HOST")}")
+print(f"QDRANT_VECTERDB_HOST: {os.getenv('QDRANT_VECTERDB_HOST')}")
 print("------------------------------------------------------------")
 
 # Create log folder if it doesn't exist
@@ -147,11 +147,10 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
         combine_docs_chain_kwargs={"prompt": prompt},
         return_source_documents=False
     )
-       
 
 
 @router.get("/")
-async def root() -> dict[str, str]:
+async def root():
     """
     Root endpoint to welcome users to the chatbot API.
     """
@@ -194,47 +193,8 @@ async def chat(request: QueryModel):
     }
 
 
-# TODO : strimg Data from API
-@router.post("/chat_streaming")
-async def chat(request: QueryModel):
-    """
-    API for chatbot interaction.
-    Receives user query and responds with chatbot-generated answer.
-    """
-    logger.info(f"Received user query: {request.query}")
-
-    chain = create_chatbot_chain()  # Create a chatbot chain instance
-    
-    
-    result = chain.invoke({"question": request.query, "chat_history": chat_history})
-
-    chat_history.append(
-        (request.query, result["answer"])
-    )  # Store the interaction in chat history
-
-    logger.info(f"Response sent to user: {result['answer']}")
-
-    # Source document handling
-    source_document = (
-        result["source_documents"][0].metadata.get("source", None)
-        if "source_documents" in result and len(result["source_documents"]) > 0
-        else None
-    )
-    source_document_page = (
-        result["source_documents"][0].metadata.get("page", None)
-        if source_document
-        else None
-    )
-
-    return {
-        "message": result["answer"],  # Return the chatbot's answer
-        "source": source_document,  # Return the source of the answer if available
-        "page": source_document_page,  # Return the page number if applicable
-    }
-
-
 @router.get("/history")
-async def get_history() -> list[tuple[str, str]]:
+async def get_history():
     """
     API to fetch chat history.
     """
@@ -243,7 +203,7 @@ async def get_history() -> list[tuple[str, str]]:
 
 
 @router.post("/clear-history")
-async def clear_history() -> dict[str, str]:
+async def clear_history():
     """
     API to clear chat history.
     """
