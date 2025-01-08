@@ -50,7 +50,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize FastAPI
-app = FastAPI()
+app = FastAPI(
+    title="RMUTL Chatbot LLM API endpoint",
+    description="API for RMUTL chatbot interaction with LLM ", 
+)
 
 # Add CORS middlewares
 app.add_middleware(
