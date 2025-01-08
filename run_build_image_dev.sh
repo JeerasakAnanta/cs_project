@@ -1,6 +1,8 @@
 #!/bin/bash
-# author: jeersak
+# author: Jeerasak Ananta  
 # date: 27/11/2024
+# version: 0.1.0 
+
 
 start_time=$(date +%H:%M:%S)
 
@@ -20,14 +22,21 @@ echo "------------------------------------------------------------"
 docker-compose down
 
 # copy  dpendency pypoetry 
-
-
+# move pyproject.toml  
 cp -r ./pyproject.toml ./chatbot_api/pyproject.toml
+
 cp -r ./pyproject.toml ./chatbot_pdf_management_api/pyproject.toml
 
+#  file requirements.txt  
+cp -r ./requirements.txt ./chatbot_api/requirements.txt
+cp -r ./requirements.txt ./chatbot_pdf_management_api/requirements.txt
+
+    
 echo "------------------------------------------------------------"
 echo "                  Copy Dpendency Pypoetry Done              " 
 echo "------------------------------------------------------------"
+
+pip freeze > requirements.txt 
 
 # Build image 
 docker build -t chatbot_webui_cs_project:${CHATBOT_WEBUI} ./chatbot_web/.
