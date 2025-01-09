@@ -7,7 +7,7 @@ import autoprefixer from "autoprefixer";
 export default defineConfig({
   server: {
     host: "0.0.0.0", // Listen on all interfaces
-    port: 8002, // Use port 8002
+    port: 8080, // Use port 80
   },
 
   plugins: [react()],
