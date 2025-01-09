@@ -1,6 +1,7 @@
 #!/bin/bash
 # author: jeersak
 # date: 27/11/2024
+# 
 
 start_time=$(date +%H:%M:%S)
 
@@ -19,9 +20,7 @@ echo "------------------------------------------------------------"
 # down compose and build
 docker-compose down
 
-# copy  dpendency pypoetry 
-
-
+# copy  dpendency pypoetry to  project
 cp -r ./pyproject.toml ./chatbot_api/pyproject.toml
 cp -r ./pyproject.toml ./chatbot_pdf_management_api/pyproject.toml
 
@@ -29,7 +28,7 @@ echo "------------------------------------------------------------"
 echo "                  Copy Dpendency Pypoetry Done              " 
 echo "------------------------------------------------------------"
 
-# Build image 
+# Build docker  image 
 docker build -t chatbot_webui_cs_project:${CHATBOT_WEBUI} ./chatbot_web/.
 docker build -t chatbot_api_cs_project:${CHATBOT_API} ./chatbot_api/.
 docker build -t chatbot_pdf_management_api:${PDF_MANAGEMENT_API} ./chatbot_pdf_management_api/.
