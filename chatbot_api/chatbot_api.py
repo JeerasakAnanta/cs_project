@@ -24,16 +24,12 @@ from langchain_qdrant import QdrantVectorStore
 from pydantic import BaseModel
 from qdrant_client import QdrantClient
 
-# Load environment variables from .env file
-load_dotenv("../.env")
 
-# Set environmental variables
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-QDRANT_VECTERDB_HOST = os.getenv("QDRANT_VECTERDB_HOST")
-
-print("------------------------------------------------------------")
-print(f"QDRANT_VECTERDB_HOST: {os.getenv('QDRANT_VECTERDB_HOST')}")
-print("------------------------------------------------------------")
+# Initialize FastAPI
+app = FastAPI(
+    title="RMUTL Chatbot LLM API endpoint",
+    description="API for RMUTL chatbot interaction with LLM ", 
+)
 
 # Create log folder if it doesn't exist
 if not os.path.exists("./log"):
@@ -49,8 +45,19 @@ logging.basicConfig(
 # Create a logger 
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI
-app = FastAPI()
+# Load environment variables from .env file
+load_dotenv("../.env")
+
+# Set environmental variables
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+QDRANT_VECTERDB_HOST = os.getenv("QDRANT_VECTERDB_HOST")
+
+print("------------------------------------------------------------")
+print("Checking environment variable")
+print(f"QDRANT_VECTERDB_HOST: {os.getenv('QDRANT_VECTERDB_HOST')}")
+print("------------------------------------------------------------")
+
+
 
 # Add CORS middlewares
 app.add_middleware(
@@ -193,6 +200,41 @@ async def chat(request: QueryModel):
     }
 
 
+@router.post("/chat_streaming")
+async def chat_streaming(request: QueryModel):
+    """
+    API for chatbot interaction.
+    Receives user query and responds with chatbot-generated answer.
+    """
+    logger.info(f"Received user query: {request.query}")
+
+    chain = create_chatbot_chain()
+    
+    result = chain.invoke({"question": request.query, "chat_history": chat_history})
+
+    chat_history.append((request.query, result["answer"]))
+
+    logger.info(f"Response sent to user: {result['answer']}")
+
+    # Source document handling
+    source_document = (
+        result["source_documents"][0].metadata.get("source", None)
+        if "source_documents" in result and len(result["source_documents"]) > 0
+        else None
+    )
+    source_document_page = (
+        result["source_documents"][0].metadata.get("page", None)
+        if source_document
+        else None
+    )
+
+    return {
+        "message": result["answer"],
+        "source": source_document,
+        "page": source_document_page,
+    }
+
+
 @router.get("/history")
 async def get_history():
     """
@@ -215,3 +257,4 @@ async def clear_history():
 
 # Include the router into the FastAPI app
 app.include_router(router)
+
