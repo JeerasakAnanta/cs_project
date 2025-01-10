@@ -24,16 +24,12 @@ from langchain_qdrant import QdrantVectorStore
 from pydantic import BaseModel
 from qdrant_client import QdrantClient
 
-# Load environment variables from .env file
-load_dotenv("../.env")
 
-# Set environmental variables
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-QDRANT_VECTERDB_HOST = os.getenv("QDRANT_VECTERDB_HOST")
-
-print("------------------------------------------------------------")
-print(f"QDRANT_VECTERDB_HOST: {os.getenv("QDRANT_VECTERDB_HOST")}")
-print("------------------------------------------------------------")
+# Initialize FastAPI
+app = FastAPI(
+    title="RMUTL Chatbot LLM API endpoint",
+    description="API for RMUTL chatbot interaction with LLM ", 
+)
 
 # Create log folder if it doesn't exist
 if not os.path.exists("./log"):
@@ -49,11 +45,20 @@ logging.basicConfig(
 # Create a logger 
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI
-app = FastAPI(
-    title="RMUTL Chatbot LLM API endpoint",
-    description="API for RMUTL chatbot interaction with LLM ", 
-)
+# Load environment variables from .env file
+load_dotenv("../.env")
+
+# Set environmental variables
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+QDRANT_VECTERDB_HOST = os.getenv("QDRANT_VECTERDB_HOST")
+
+print("------------------------------------------------------------")
+print("Checking environment variable")
+print(f"QDRANT_VECTERDB_HOST: {os.getenv('QDRANT_VECTERDB_HOST')}")
+print("------------------------------------------------------------")
+
+
+
 
 # Add CORS middlewares
 app.add_middleware(
@@ -150,11 +155,10 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
         combine_docs_chain_kwargs={"prompt": prompt},
         return_source_documents=False
     )
-       
 
 
 @router.get("/")
-async def root() -> dict[str, str]:
+async def root():
     """
     Root endpoint to welcome users to the chatbot API.
     """
@@ -197,23 +201,19 @@ async def chat(request: QueryModel):
     }
 
 
-# TODO : strimg Data from API
 @router.post("/chat_streaming")
-async def chat(request: QueryModel):
+async def chat_streaming(request: QueryModel):
     """
     API for chatbot interaction.
     Receives user query and responds with chatbot-generated answer.
     """
     logger.info(f"Received user query: {request.query}")
 
-    chain = create_chatbot_chain()  # Create a chatbot chain instance
-    
+    chain = create_chatbot_chain()
     
     result = chain.invoke({"question": request.query, "chat_history": chat_history})
 
-    chat_history.append(
-        (request.query, result["answer"])
-    )  # Store the interaction in chat history
+    chat_history.append((request.query, result["answer"]))
 
     logger.info(f"Response sent to user: {result['answer']}")
 
@@ -230,14 +230,14 @@ async def chat(request: QueryModel):
     )
 
     return {
-        "message": result["answer"],  # Return the chatbot's answer
-        "source": source_document,  # Return the source of the answer if available
-        "page": source_document_page,  # Return the page number if applicable
+        "message": result["answer"],
+        "source": source_document,
+        "page": source_document_page,
     }
 
 
 @router.get("/history")
-async def get_history() -> list[tuple[str, str]]:
+async def get_history():
     """
     API to fetch chat history.
     """
@@ -246,7 +246,7 @@ async def get_history() -> list[tuple[str, str]]:
 
 
 @router.post("/clear-history")
-async def clear_history() -> dict[str, str]:
+async def clear_history():
     """
     API to clear chat history.
     """
@@ -258,3 +258,4 @@ async def clear_history() -> dict[str, str]:
 
 # Include the router into the FastAPI app
 app.include_router(router)
+

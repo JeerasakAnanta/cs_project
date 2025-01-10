@@ -10,7 +10,7 @@ services:
     volumes:
       - ./qdrant_data:/qdrant/storage
     networks:
-      - chatbot_network
+      - chatbot-network
 
   # Chatbot Web UI service
   chatbot_front:
@@ -20,9 +20,12 @@ services:
     ports:
       - "80:80"
     env_file:
-      - ./.env.production
+      - .env.production
     networks:
-      - chatbot_network
+      - chatbot-network
+    depends_on:
+      - qdrant
+      - chatbot_api
 
   # Chatbot API
   chatbot_api:
@@ -32,11 +35,13 @@ services:
     ports:
       - "8003:8003"
     env_file:
-      - ./.env
+      - .env
     volumes:
       - ./log/api:/app/log
     networks:
-      - chatbot_network
+      - chatbot-network
+    depends_on:
+      - qdrant
 
   # Chatbot Create Collection
   create_collection:
@@ -51,8 +56,12 @@ services:
       - ./log/pdf:/app/log
       - ./pdf_Data:/app/pdfs
     networks:
-      - chatbot_network
+      - chatbot-network
+    depends_on:
+      - qdrant
+      - chatbot_api
+
 
 networks:
-  chatbot_network:
+  chatbot-network:
     driver: bridge
