@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Components Cahtbot
+// Components Chatbot
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import About from './components/About';
@@ -12,7 +12,7 @@ import Chatbot from './components/Chatbot';
 import Management from './components/Management';
 import Pdfcrud from './components/Pdfcrud';
 import Uploadpdf from './components/Uploadpdf';
-import Pagenotfuncd from './components/Pagenotfound';
+import Pagenotfound from './components/Pagenotfound';
 
 // Admin
 import Settings from './components/admin/Settings';
@@ -27,7 +27,7 @@ const App: React.FC = () => {
 
       <main className="flex-1 p-4">
         <Routes>
-          {/* Cahtbots  */}
+          {/* Chatbots */}
           <Route path="/" element={<Chatbot />} />
           <Route path="/PdfList" element={<PdfList />} />
           <Route path="/services" element={<Services />} />
@@ -36,14 +36,14 @@ const App: React.FC = () => {
           <Route path="/pdfcrud" element={<Pdfcrud />} />
           <Route path="/uploadpdf" element={<Uploadpdf />} />
 
-          {/* Admin  */}
+          {/* Admin */}
           <Route path="/settings" element={<Settings />} />
           <Route path="/adminPanel" element={<AdminPanel />} />
           <Route path="/archivedchats" element={<ArchivedChats />} />
           <Route path="/playground" element={<Playground />} />
 
           {/* 404 not found */}
-          <Route path="*" element={<Pagenotfuncd />} />
+          <Route path="*" element={<Pagenotfound />} />
         </Routes>
       </main>
 
@@ -53,4 +53,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default App; 
