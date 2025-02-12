@@ -1,10 +1,10 @@
 [tool.poetry]
 name = "Final Project CS"
 version = "0.1.0"
-description = "Chatbot "
+description = "Chatbot LLM (LLM Large language model)  with  RAG (Retrieval-Augmented Generation) for RMUTL NAN"
 authors = ["Jeerasak Ananta <jeerasakananta@gmail.com>"]
 maintainers = ["Jeerasak Ananta <jeerasakananta@gmail.com>"]
-license = "Chatbot LLM (LLM Large language model)  with  RAG (Retrieval-Augmented Generation) "
+license = "MIT"
 readme = "README.md"
 
 #  dependencies
@@ -20,7 +20,6 @@ jinja2 = "3.1.4"
 python-multipart = "0.0.12"
 fastapi = "^0.115.6"
 uvicorn = "^0.34.0"
-
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
