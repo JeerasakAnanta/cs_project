@@ -12,10 +12,10 @@
 - user interface for viewing and managing the **Vector Database** using Qdrant
 
 ## 🛒Prerequisites  
--  [Python 3.12.3](https://www.python.org/downloads/)
-- [LLM model](https://ollama.com/)
-  - OpenAI API
-  - Ollama (run LLM on local machine)
+- [Python 3.12.3](https://www.python.org/downloads)
+- [LLM model](https://ollama.com)
+  - [OpenAI API](https://platform.openai.com)
+  - [Ollama](https://ollama.com/)
 - [Langchain](https://www.langchain.com/)
 - [FastAPI](https://fastapi.tiangolo.com/) 
 - [Node.js](https://nodejs.org/en)
@@ -29,16 +29,14 @@
   - clone with https
   ```bash 
     git clone https://github.com/JeerasakAnanta/cs_project
-
     cd cs_project
   ```
   - clone with ssh
   ```sh
     git clone git@github.com:JeerasakAnanta/cs_project.git
-    
     cd  cs_project
   ```
-## Step 2: 🎈 Create Virtual Environments
+## Step 2:🎈Create Virtual Environments
    you can create virtual environments  use  `venv` (2.1) or `poetry` (2.2) 
   - if you note haave  venv on ubuntu  server 
   ```bash
@@ -66,13 +64,13 @@
   python -m venv envchatbot
   ```
   
- - 2.1.3 activate environment (window)
+- 2.1.3 activate environment (window)
 
   ```bash
   .\envchatbot\Scripts\activate.bat
   ```
 
-  ### 2.2 Poetry is a tool for dependency management and packaging
+### 2.2 Poetry is a tool for dependency management and packaging
   - 2.2.1 install  Poetry with pip
     ```bash 
     pip install poetry
@@ -162,17 +160,17 @@
 ## Step 6: Runing  Development 
 
 - `web Chatbot UI`: /chatbot_web/
-  - ```bash
-    npm run dev 
-    ```
+  ```bash
+  npm run dev 
+  ```
 - `Chatbot API`:
-  - ```bash    
-    uvicorn chatbot_api:app --host 0.0.0.0 --port 8003 --reload
-    ```
+  ```bash    
+  uvicorn chatbot_api:app --host 0.0.0.0 --port 8003 --reload
+  ```
 - `Chatbot PDF management`:
-  - ```bash
-    uvicorn pdf_management_api:app --host 0.0.0.0 --port 8004 --reload
-    ```
+  ```bash
+  uvicorn pdf_management_api:app --host 0.0.0.0 --port 8004 --reload
+  ```
 
 ## Step 6: Runing with docker  &  run docker comopse 
 
@@ -187,7 +185,7 @@
 - Chat API: http://localhost:8003
 - ระบบจัดการ PDF: http://localhost:8004
 - Qdrant VecterDB: http://localhost:6333
-- Statict Web: http://eden205.kube.baac.or.th:8085/
+- Statict Web: http://localhost:8085
  
 ## 🧪 Example Fine-tuning (RAG Chat Bot) 🚀
 ### fine-tuning with System  promte
@@ -209,7 +207,7 @@
   - exapmel with  openai 
   - ```python
      llm=ChatOpenAI(
-            azure_deployment="gpt-4o-mini",
+            _deployment="gpt-4o-mini",
             api_version="2023-06-01-preview",
             temperature=0.2,
             max_tokens=5000,
@@ -224,7 +222,7 @@
   - file `chatbot_api/chatbot_api.py`
   - `search_type` : similarity 
   - `return_sourece_document` :คืนค่าเอกสาร
-  - ```python
+  ```python
     return ConversationalRetrievalChain.from_llm(
         llm=ChatOpenAI(...),
         retriever=qdrant_store.as_retriever(
@@ -233,7 +231,7 @@
         combine_docs_chain_kwargs={"prompt": prompt},
         return_source_documents=True,
     )
-    ```
+  ```
   - API Ref: [ConversationalRetrievalChain](https://python.langchain.com/api_reference/langchain/chains/langchain.chains.conversational_retrieval.base.ConversationalRetrievalChain.html)
 
 ## 🆕 Feature
@@ -249,79 +247,69 @@
 ### 🚧 API Endpoint 
 
 #### 🔗 Chatbot API
-- `/api/` : Root  
-- `/api/chat` : Chatbot 
-- `/api/history` : list of hisotry chatbot   
-- `/api/clear-history` : clear chat hisotry
+- `/api/`: Root  
+- `/api/chat`: Chatbot 
+- `/api/history`: list of hisotry chatbot   
+- `/api/clear-history`: clear chat hisotry
 
 #### 📚 Chatbot PDF management API  
-- `/`  :Root 
+- `/`:Root 
 - `/upload` :  update file  
 - `/delete/{filename}`
 - `/files` : files pdf 
 - `/pdflist` : list of pdf 
 - `/reembedding` : re-embeddings
   
----
 ## 🚩 Sequence diagram 
-
 ```mermaid
 ---
-title : user interaction chatbot 
+title: User Interaction Chatbot
 ---
 sequenceDiagram
-    actor user  
-    participant Website Interface
-    participant backend Service
-    participant LLM Service
-    participant RAG Service
-    participant vecter Database 
-    participant azure open ai
+  actor User  
+  participant Website Interface
+  participant Backend Service
+  participant LLM Service
+  participant RAG Service
+  participant Vector Database 
+  User ->> Website Interface: Ask Chatbot
+  activate Website Interface
 
-    user ->> Website Interface : ask ChatBos
-    activate Website Interface
-    Website Interface ->>  backend Service : Sent req to backend
-    activate  backend Service
+  Website Interface ->> Backend Service: Send request to backend
+  activate Backend Service
 
-    backend Service ->>  LLM Service :  use LLM Service  
-    activate  LLM Service
+  Backend Service ->> LLM Service: Use LLM Service  
+  activate LLM Service
 
-    LLM Service ->> azure open ai : req embdding model  
-    activate azure open ai
-    azure open ai -->>  LLM Service: res  emmding 
-    deactivate azure open ai
+  LLM Service ->> OpenAI: Request embedding model  
+  activate OpenAI
+  OpenAI -->> LLM Service: Return embedding  
+  deactivate OpenAI
 
-    
-    LLM Service ->>  RAG Service : Retrieval
-    activate RAG Service 
-    
+  LLM Service ->> RAG Service: Retrieval
+  activate RAG Service 
 
-    RAG Service ->> vecter Database :  vector search 
-    activate vecter Database
+  RAG Service ->> Vector Database: Vector search 
+  activate Vector Database
 
-    vecter Database -->>  RAG Service :  Retuern  similarity
-    deactivate   vecter Database 
+  Vector Database -->> RAG Service: Return similarity
+  deactivate Vector Database 
 
-    azure open ai ->>   RAG Service  :  LLM  + Promt  
-  
-    RAG Service -->> LLM Service : answer  
-    deactivate RAG Service 
+  RAG Service ->> LLM Service: LLM + Prompt  
+  deactivate RAG Service 
 
+  LLM Service -->> Backend Service: Return LLM response
+  deactivate LLM Service 
 
-    LLM Service -->> backend Service :  reutrn LLM + Promt
-    deactivate LLM Service 
+  Backend Service -->> Website Interface: Response from backend  
+  deactivate Backend Service
+  ```
 
-    backend Service -->> Website Interface  : Res from  backend  
-    deactivate  backend Service
-
-    Website Interface -->>  user : answer from chatbot 
-    deactivate  Website Interface
-``` 
 ## 🏗 Project Structure
 
 ```mermaid
 ---
-title :  Image  Project Structure  
+title :  Docker Image  Project Structure  
 ---   
   graph LR
 
@@ -341,17 +329,17 @@ title :  Image  Project Structure
 
     G([Stati Web])
     
-    OpenAI([Opnai API  Service]) 
+    OpenAI([Opnai API  Service])
 
     A<-->B 
     A<-->C
     A<-->G
-    A<-->azureopnai
-    B<-->azureopnai
-    C<-->azureopnai
+    A<-->opnai
+    B<-->opnai
+    C<-->opnai
+    opnai <-->OpenAI
     C<-->F
-    B<-->F 
-   
+    B<-->F
 ```
 ## ✈ Version 
 
@@ -384,3 +372,4 @@ title :  Image  Project Structure
 
 ## 😊 License
 This project, Prototype One, is licensed under the terms of the MIT license, created for educational purposes at Rajamangala University of Technology Lanna (RMUTL) in the Computer Science program.
+
