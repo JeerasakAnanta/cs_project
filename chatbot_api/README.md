@@ -17,6 +17,27 @@
   - `/api/clear-history`:  clear chat history.
   
 ## Structure project
+### project tree  
+```
+.
+├── Dockerfile
+├── README.md
+├── app
+│   ├── __init__.py
+│   ├── main.py
+│   └── routers
+│       └── __init__.py
+├── build_docker.sh
+├── chatbot_api.py
+├── log
+│   └── app.log
+├── poetry.lock
+├── pyproject.toml
+├── requirements.txt
+├── run_api.sh
+└── tests
+    └── __init__.py
+```
 ### 🚩 Sequence diagram
 
 ```mermaid
