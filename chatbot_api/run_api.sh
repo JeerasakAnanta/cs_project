@@ -1,4 +1,5 @@
 # Start FastAPI server
 echo "--------------- Start ChatBots  API -----------------"
-uvicorn chatbot_api:app --host 0.0.0.0 --port 8003 --reload
+# uvicorn chatbot_api:app --host 0.0.0.0 --port 8003 --reload
+poetry run uvicorn app.main:app --host 0.0.0.0 --port 8082 --reload
 echo "-----------------------------------------------------"
