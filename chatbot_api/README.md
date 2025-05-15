@@ -3,6 +3,8 @@
 ## 🔍Overview  
 - This project focuses on developing a back-end API using Python 3 and Fast API, while integrating Langchain to leverage the RAG (Retrieval-Augmented Generation) model. The RAG model is either hosted on OpenAI or open-sourced LLM, each with LLama3, to create a chatbot API.
 
+## 🏃‍♂️ How to run  
+-  
 ## 🔑Key Features
   - Back End API: Fastapi
   - LangChain: creat app with LLM
@@ -17,6 +19,27 @@
   - `/api/clear-history`:  clear chat history.
   
 ## Structure project
+### project tree  
+```
+.
+├── Dockerfile
+├── README.md
+├── app
+│   ├── __init__.py
+│   ├── main.py
+│   └── routers
+│       └── __init__.py
+├── build_docker.sh
+├── chatbot_api.py
+├── log
+│   └── app.log
+├── poetry.lock
+├── pyproject.toml
+├── requirements.txt
+├── run_api.sh
+└── tests
+    └── __init__.py
+```
 ### 🚩 Sequence diagram
 
 ```mermaid

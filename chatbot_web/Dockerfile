@@ -1,5 +1,5 @@
 # Stage 1: Build the React application
-FROM node:16 AS builder
+FROM node:23-alpine as builder 
 
 # Set the working directory
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY package*.json ./
 RUN npm install
 
 # Copy the rest of the application
-COPY . .
+COPY . . 
 
 # Build the application
 RUN npm run build

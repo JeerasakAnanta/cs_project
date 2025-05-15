@@ -6,3 +6,16 @@ Dockerfile
 __pycache__
 # Ignore API run script
 run_api.sh
+
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.env
+.idea/
+.vscode/
+*__pycache__/
+*.egg-info/
+dist/
+build/

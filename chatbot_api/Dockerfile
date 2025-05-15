@@ -1,27 +1,19 @@
 # Use the official Python image from the Docker Hub
-FROM python:3.12-slim
+FROM python:3.11-slim
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy only the files that are needed to install dependencies
-COPY pyproject.toml ./
+# Copy the rest of the application code
+COPY ./app ./app
 
-# Install Poetry
-RUN pip install poetry
+COPY ./requirements.txt ./requirements.txt 
 
-# Disable virtualenv creation
-RUN poetry config virtualenvs.create false 
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-# Install dependencies
-RUN  poetry install --no-root --without dev  # Disable virtualenv creation
+# Expose the port the app runs on
+EXPOSE 8082
 
-# Copy the entire application code to the working directory
-COPY . .
-
-# Expose the port FastAPI will run on
-EXPOSE 8003
-
-# Command to run the application using uvicorn
-CMD ["poetry", "run", "uvicorn", "chatbot_api:app", "--host", "0.0.0.0", "--port", "8003"]
-
+# Command to run the application
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
