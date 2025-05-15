@@ -75,6 +75,10 @@
     ```bash 
     pip install poetry
     ```
+    - if can't install
+      ```
+      pip install poetry --break-system-packages
+      ```
   - 2.2.2 install  dependency with poetry 
     ```bash
     poetry install 
