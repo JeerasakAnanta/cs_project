@@ -8,13 +8,13 @@ import { marked } from 'marked';
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC;
 
-// debug console 
+// debug console
 console.log('Backend API  =', BACKEND_API);
 console.log('Web Static web  =', DOCS_STATIC);
 
 /**
  * Chatbot component
- *  
+ *
  * @returns Chatbot component
  */
 const Chatbot: React.FC = () => {
@@ -218,9 +218,9 @@ const Chatbot: React.FC = () => {
             'ค่าใช้จ่ายในการประชุม',
             'ค่าตอบแทนปฏิบัติงานนอกเวลาราชการ',
             'ค่าตอบแทนบุคคลหรือคณะกรรมการเกี่ยวกับการจัดซื้อจัดจ้างและบริหารพัสดุ',
-            'ค่าใช้จ่ายในการบริหารงาน' ,
+            'ค่าใช้จ่ายในการบริหารงาน',
             'การจัดซื้อจัดจ้างที่มีความจำเป็นเร่งด่วน',
-            'การจัดหาพัสดุที่เกี่ยวกับค่าใช้จ่ายในการบริหารงาน'
+            'การจัดหาพัสดุที่เกี่ยวกับค่าใช้จ่ายในการบริหารงาน',
           ].map((question, index) => (
             <button
               key={index}
