@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "chatbot_api"
+name = "API Chatbot  Project CS"
 version = "0.2.0"
-description = "Chatbot LLM (LLM Large language model)  with  RAG (Retrieval-Augmented Generation) for RMUTL NAN"
+description = "API Chatbot LLM (LLM Large language model)  with  RAG (Retrieval-Augmented Generation) for RMUTL NAN"
 authors = ["Jeerasak Ananta <jeerasakananta@gmail.com>"]
 maintainers = ["Jeerasak Ananta <jeerasakananta@gmail.com>"]
 license = "MIT"
@@ -23,6 +23,7 @@ uvicorn = "^0.34.0"
 docling = "^2.29.0"
 
 
+#  dev dependencies 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
 

@@ -1,25 +1,25 @@
-#!/usr/bin/env python3 
-# development by Jeerasak Ananta 
+#!/usr/bin/env python3
+# development by Jeerasak Ananta
 # Date 12/12/2024
 
 import os
 import logging
 
-# loding environment variable 
+# loding environment variable
 from dotenv import load_dotenv
 
-# FastAPI 
+# FastAPI
 from fastapi import FastAPI
 from fastapi import APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 
-# langchain 
+# langchain
 from langchain.chains import ConversationalRetrievalChain
 from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_openai import OpenAIEmbeddings
 
-# vecter database  
+# vecter database
 from langchain_qdrant import QdrantVectorStore
 from pydantic import BaseModel
 from qdrant_client import QdrantClient
@@ -28,7 +28,7 @@ from qdrant_client import QdrantClient
 # Initialize FastAPI
 app = FastAPI(
     title="RMUTL Chatbot LLM API endpoint",
-    description="API for RMUTL chatbot interaction with LLM ", 
+    description="API for RMUTL chatbot interaction with LLM ",
 )
 
 # Create log folder if it doesn't exist
@@ -36,13 +36,13 @@ if not os.path.exists("./log"):
     os.makedirs("./log")
 
 # Configure logging
-logging.basicConfig(    
+logging.basicConfig(
     filename="./log/app.log",
     level=logging.INFO,
     format="%(asctime)s - %(levelname)-8s - %(message)s",
 )
 
-# Create a logger 
+# Create a logger
 logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
@@ -56,8 +56,6 @@ print("------------------------------------------------------------")
 print("Checking environment variable")
 print(f"QDRANT_VECTERDB_HOST: {os.getenv('QDRANT_VECTERDB_HOST')}")
 print("------------------------------------------------------------")
-
-
 
 
 # Add CORS middlewares
@@ -123,7 +121,7 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
     )
 
     # Initialize the embeddings
-    embeddings  = OpenAIEmbeddings(
+    embeddings = OpenAIEmbeddings(
         model="text-embedding-3-large",
     )
 
@@ -153,7 +151,7 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
             search_type="similarity", search_kwargs={"k": 10, "score_threshold": 0.5}
         ),
         combine_docs_chain_kwargs={"prompt": prompt},
-        return_source_documents=False
+        return_source_documents=False,
     )
 
 
@@ -175,7 +173,7 @@ async def chat(request: QueryModel):
     logger.info(f"Received user query: {request.query}")
 
     chain = create_chatbot_chain()
-    
+
     result = chain.invoke({"question": request.query, "chat_history": chat_history})
 
     chat_history.append((request.query, result["answer"]))
@@ -210,7 +208,7 @@ async def chat_streaming(request: QueryModel):
     logger.info(f"Received user query: {request.query}")
 
     chain = create_chatbot_chain()
-    
+
     result = chain.invoke({"question": request.query, "chat_history": chat_history})
 
     chat_history.append((request.query, result["answer"]))
@@ -258,4 +256,3 @@ async def clear_history():
 
 # Include the router into the FastAPI app
 app.include_router(router)
-
