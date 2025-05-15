@@ -32,6 +32,6 @@ python3 setup_vecterdb.py
 echo "---------------- Start PDF management API ---------------------"
 
 # start PDF management API server 
-uvicorn app.main:app --host 0.0.0.0 --port 8083
+uvicorn app.main:app --host 0.0.0.0 --port 8004 --reload 
 echo "--------------------------------------------------------------------"
 
