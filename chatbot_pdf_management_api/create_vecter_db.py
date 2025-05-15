@@ -66,4 +66,3 @@ print("==================================================")
 print("Embeddings complete :)")
 print("Your documents have been loaded into Qdrant!")
 print("==================================================")
-

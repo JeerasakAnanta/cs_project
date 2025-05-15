@@ -1,5 +1,7 @@
 #!/bin/bash
-
+# this script is used to start the serve   
+# code by jeerasak ss4
+# @date 
 # Exit immediately if a command exits with a non-zero status
 set -e
 
@@ -10,7 +12,7 @@ usage() {
     echo "  -h, --help      Display this help message"
 }
 
-# Check for help option
+# Check for help options
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -h|--help) usage; exit 0 ;;
@@ -28,6 +30,8 @@ python3 setup_vecterdb.py
 
 # Start PDF management API
 echo "---------------- Start PDF management API ---------------------"
+
 # start PDF management API server 
-uvicorn app.main:app --host 0.0.0.0 --port 8004 
+uvicorn app.main:app --host 0.0.0.0 --port 8083
 echo "--------------------------------------------------------------------"
+
