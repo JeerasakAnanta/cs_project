@@ -79,6 +79,10 @@
       ```
       pip install poetry --break-system-packages
       ```
+    - install  on ubuntu
+      ```
+      sudo apt install python3-poetry
+      ```
   - 2.2.2 install  dependency with poetry 
     ```bash
     poetry install 
