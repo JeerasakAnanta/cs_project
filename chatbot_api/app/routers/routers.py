@@ -56,6 +56,7 @@ print(f"Qdrant URL: {url}")
 print(f"COLLECTION_NAME: {os.getenv("COLLECTION_NAME")}")
 print("------------------------------------------------------------")
 
+
 def create_chatbot_chain() -> ConversationalRetrievalChain:
     """
     Create a ConversationalRetrievalChain with a custom prompt.
@@ -112,14 +113,16 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
     # Create the Qdrant client and vector store
     qdrant_client = QdrantClient(url)
     qdrant_store = QdrantVectorStore(
-        client=qdrant_client, collection_name=os.getenv("COLLECTION_NAME"), embedding=embeddings
+        client=qdrant_client,
+        collection_name=os.getenv("COLLECTION_NAME"),
+        embedding=embeddings,
     )
 
     # Create the ConversationalRetrievalChain
     return ConversationalRetrievalChain.from_llm(
         llm=ChatOpenAI(
             model="gpt-4o-mini",
-            temperature=0.7,
+            temperature=0.5,
             max_tokens=3000,
             timeout=30,
             max_retries=5,
@@ -191,4 +194,19 @@ async def chat(request: QueryModel):
 
 @router.get("/history")
 async def get_history():
-    return "it in hiary"
+    """
+    API to fetch chat history.
+    """
+    logger.info("Chat history requested.")
+    return chat_history
+
+
+@router.post("/clear-history")
+async def clear_history():
+    """
+    API to clear chat history.
+    """
+    global chat_history
+    chat_history.clear()
+    logger.info("Chat history cleared.")
+    return {"message": "Chat history cleared."}
