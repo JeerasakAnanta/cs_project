@@ -43,8 +43,7 @@ chat_pdf_management_api/
 # Distribution files
 dist
 
-
-notebooks
+# Jupyter Notebook  for reference 
 notebook/Build a simple LLM application with chat models and prompt templates.ipynb
 notebook/chatbot.ipynb
 notebook/data_procession.ipynb
@@ -53,3 +52,4 @@ notebook/poetry.lock
 notebook/pyproject.toml
 notebook/rag.ipynb
 notebook/pdf/Operation manual.pdf
+notebook/

@@ -56,6 +56,7 @@ print(f"Qdrant URL: {url}")
 print(f"COLLECTION_NAME: {os.getenv("COLLECTION_NAME")}")
 print("------------------------------------------------------------")
 
+
 def create_chatbot_chain() -> ConversationalRetrievalChain:
     """
     Create a ConversationalRetrievalChain with a custom prompt.
@@ -80,17 +81,21 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
     prompt = PromptTemplate(
         input_variables=["context", "question"],
         template="""
-            คุณคือผู้ช่วยอัจฉริยะชื่อ น้องน้ำหวาน ความเชี่ยวชาญของคุณคือการให้คำปรึกษาด้านคู่มือปฏิบัติงาน
+            คุณคือผู้ช่วยอัจฉริยะ มีความเชี่ยวชาญของคุณคือการให้คำปรึกษาด้านคู่มือปฏิบัติงาน
             การเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน มหาวิทยาลัยเทคโนโลยีราชมงคลล้านนา 
             กรุณาตอบคำถามในรูปแบบ Markdown และ ใช้ภาษาไทยเท่านั้น 
             โปรดให้คำตอบที่ชัดเจนและละเอียด พร้อมอธิบายขั้นตอนอย่างเป็นลำดับ 
             หากข้อมูลไม่เพียงพอที่จะตอบคำถาม โปรดระบุว่า "น้องน้ำหวานไม่สามารถหาคำตอบจากเอกสารได้ค่ะ"
             คุณสามารถใช้คำลงท้าย "ค่ะ" หรือ "ไม่ค่ะ" ในคำตอบเพื่อเพิ่มความรู้สึก 
-            ขอให้คำตอบมีอารมณ์ และ ความเป็นมิตรในทุกคำตอบค่ะ 
-                    
+            ขอให้คำตอบมีอารมณ์ และ ความเป็นมิตรในทุกคำตอบค่ะ  ถ้าสรุปเป็นตารางให้สรุป
+                
         {context}
-
+        
+        
         คำถามต้นฉบับ: {question}
+        
+    
+        
         """,
     )
 
@@ -112,14 +117,16 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
     # Create the Qdrant client and vector store
     qdrant_client = QdrantClient(url)
     qdrant_store = QdrantVectorStore(
-        client=qdrant_client, collection_name=os.getenv("COLLECTION_NAME"), embedding=embeddings
+        client=qdrant_client,
+        collection_name=os.getenv("COLLECTION_NAME"),
+        embedding=embeddings,
     )
 
     # Create the ConversationalRetrievalChain
     return ConversationalRetrievalChain.from_llm(
         llm=ChatOpenAI(
             model="gpt-4o-mini",
-            temperature=0.7,
+            temperature=0.3,
             max_tokens=3000,
             timeout=30,
             max_retries=5,
@@ -191,4 +198,19 @@ async def chat(request: QueryModel):
 
 @router.get("/history")
 async def get_history():
-    return "it in hiary"
+    """
+    API to fetch chat history.
+    """
+    logger.info("Chat history requested.")
+    return chat_history
+
+
+@router.post("/clear-history")
+async def clear_history():
+    """
+    API to clear chat history.
+    """
+    global chat_history
+    chat_history.clear()
+    logger.info("Chat history cleared.")
+    return {"message": "Chat history cleared."}
