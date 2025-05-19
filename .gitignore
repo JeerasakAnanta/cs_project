@@ -25,6 +25,9 @@ node_modules
 chatbot_api/app.log
 docker-compose.yaml
 
+/chatbot_api/tests
+
+
 # Log files
 logs/
 ./logs/app.log
@@ -39,3 +42,14 @@ chat_pdf_management_api/
 
 # Distribution files
 dist
+
+# Jupyter Notebook  for reference 
+notebook/Build a simple LLM application with chat models and prompt templates.ipynb
+notebook/chatbot.ipynb
+notebook/data_procession.ipynb
+notebook/docling.ipynb
+notebook/poetry.lock
+notebook/pyproject.toml
+notebook/rag.ipynb
+notebook/pdf/Operation manual.pdf
+notebook/

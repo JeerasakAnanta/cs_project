@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# development by Jeerasak Ananta
-# Date 12/12/2024
-
 import os
 import logging
 
@@ -24,12 +20,12 @@ from langchain_qdrant import QdrantVectorStore
 from pydantic import BaseModel
 from qdrant_client import QdrantClient
 
+# fastapi
+from fastapi import APIRouter
 
-# Initialize FastAPI
-app = FastAPI(
-    title="RMUTL Chatbot LLM API endpoint",
-    description="API for RMUTL chatbot interaction with LLM ",
-)
+#
+router = APIRouter(prefix="/api")
+
 
 # Create log folder if it doesn't exist
 if not os.path.exists("./log"):
@@ -46,40 +42,19 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
-load_dotenv("../.env")
+env = load_dotenv(".env")
+print(env)
 
-# Set environmental variables
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-QDRANT_VECTERDB_HOST = os.getenv("QDRANT_VECTERDB_HOST")
 
+# Setup Qdrant client and vector store
+url = os.getenv("QDRANT_VECTERDB_HOST")
+COLLECTION = os.getenv("COLLECTION_NAME")
+
+# print  qdrant  url
 print("------------------------------------------------------------")
-print("Checking environment variable")
-print(f"QDRANT_VECTERDB_HOST: {os.getenv('QDRANT_VECTERDB_HOST')}")
+print(f"Qdrant URL: {url}")
+print(f"COLLECTION_NAME: {os.getenv("COLLECTION_NAME")}")
 print("------------------------------------------------------------")
-
-
-# Add CORS middlewares
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Define a router for API endpoints
-router = APIRouter(prefix="/api")
-
-
-# defal of  string
-class QueryModel(BaseModel):
-    """Model for chat query"""
-
-    query: str = "สวัสดี ครับน้องน้ำหวาน"
-
-
-# Store for chat history
-chat_history: list[tuple[str, str]] = []
 
 
 def create_chatbot_chain() -> ConversationalRetrievalChain:
@@ -106,17 +81,21 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
     prompt = PromptTemplate(
         input_variables=["context", "question"],
         template="""
-            คุณคือผู้ช่วยอัจฉริยะชื่อ น้องน้ำหวาน ความเชี่ยวชาญของคุณคือการให้คำปรึกษาด้านคู่มือปฏิบัติงาน
+            คุณคือผู้ช่วยอัจฉริยะ มีความเชี่ยวชาญของคุณคือการให้คำปรึกษาด้านคู่มือปฏิบัติงาน
             การเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน มหาวิทยาลัยเทคโนโลยีราชมงคลล้านนา 
             กรุณาตอบคำถามในรูปแบบ Markdown และ ใช้ภาษาไทยเท่านั้น 
             โปรดให้คำตอบที่ชัดเจนและละเอียด พร้อมอธิบายขั้นตอนอย่างเป็นลำดับ 
             หากข้อมูลไม่เพียงพอที่จะตอบคำถาม โปรดระบุว่า "น้องน้ำหวานไม่สามารถหาคำตอบจากเอกสารได้ค่ะ"
             คุณสามารถใช้คำลงท้าย "ค่ะ" หรือ "ไม่ค่ะ" ในคำตอบเพื่อเพิ่มความรู้สึก 
-            ขอให้คำตอบมีอารมณ์ และ ความเป็นมิตรในทุกคำตอบค่ะ 
-                    
+            ขอให้คำตอบมีอารมณ์ และ ความเป็นมิตรในทุกคำตอบค่ะ  ถ้าสรุปเป็นตารางให้สรุป
+                
         {context}
-
+        
+        
         คำถามต้นฉบับ: {question}
+        
+    
+        
         """,
     )
 
@@ -126,23 +105,28 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
     )
 
     # Setup Qdrant client and vector store
-    url = QDRANT_VECTERDB_HOST
+    url = os.getenv("QDRANT_VECTERDB_HOST")
+    COLLECTION = os.getenv("COLLECTION_NAME")
 
+    # print  qdrant  url
     print("------------------------------------------------------------")
     print(f"Qdrant URL: {url}")
+    print(f"COLLECTION_NAME : {os.getenv("COLLECTION_NAME")}")
     print("------------------------------------------------------------")
 
     # Create the Qdrant client and vector store
     qdrant_client = QdrantClient(url)
     qdrant_store = QdrantVectorStore(
-        client=qdrant_client, collection_name="my_documents", embedding=embeddings
+        client=qdrant_client,
+        collection_name=os.getenv("COLLECTION_NAME"),
+        embedding=embeddings,
     )
 
     # Create the ConversationalRetrievalChain
     return ConversationalRetrievalChain.from_llm(
         llm=ChatOpenAI(
             model="gpt-4o-mini",
-            temperature=0.7,
+            temperature=0.3,
             max_tokens=3000,
             timeout=30,
             max_retries=5,
@@ -155,52 +139,30 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
     )
 
 
+# Store for chat history
+chat_history: list[tuple[str, str]] = []
+
+# ====================================
+#             Router api
+# ====================================
+
+
+# defal of  string
+class QueryModel(BaseModel):
+    """Model for chat query"""
+
+    query: str = "สวัสดีครับ"
+
+
 @router.get("/")
-async def root():
-    """
-    Root endpoint to welcome users to the chatbot API.
-    """
+async def read_root():
+    """Return a simple greeting message."""
     logger.info("Root endpoint was accessed.")
-    return {"message": "Welcome to the RMUTL chatbot API!"}
+    return {"message": "API endpoint for RMUTL chatbot LLM."}
 
 
 @router.post("/chat")
 async def chat(request: QueryModel):
-    """
-    API for chatbot interaction.
-    Receives user query and responds with chatbot-generated answer.
-    """
-    logger.info(f"Received user query: {request.query}")
-
-    chain = create_chatbot_chain()
-
-    result = chain.invoke({"question": request.query, "chat_history": chat_history})
-
-    chat_history.append((request.query, result["answer"]))
-
-    logger.info(f"Response sent to user: {result['answer']}")
-
-    # Source document handling
-    source_document = (
-        result["source_documents"][0].metadata.get("source", None)
-        if "source_documents" in result and len(result["source_documents"]) > 0
-        else None
-    )
-    source_document_page = (
-        result["source_documents"][0].metadata.get("page", None)
-        if source_document
-        else None
-    )
-
-    return {
-        "message": result["answer"],
-        "source": source_document,
-        "page": source_document_page,
-    }
-
-
-@router.post("/chat_streaming")
-async def chat_streaming(request: QueryModel):
     """
     API for chatbot interaction.
     Receives user query and responds with chatbot-generated answer.
@@ -252,7 +214,3 @@ async def clear_history():
     chat_history.clear()
     logger.info("Chat history cleared.")
     return {"message": "Chat history cleared."}
-
-
-# Include the router into the FastAPI app
-app.include_router(router)

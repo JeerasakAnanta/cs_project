@@ -95,6 +95,7 @@ async def upload_page(request: Request):
 
 @app.post("/upload")    
 async def upload_file(file: UploadFile = File(...)):
+
     """
     Handle PDF file upload.
 
