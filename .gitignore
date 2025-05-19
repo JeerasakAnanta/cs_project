@@ -63,3 +63,4 @@ notebook/pyproject.toml
 notebook/rag.ipynb
 notebook/pdf/Operation manual.pdf
 notebook/
+chatbot_pdf_management_api/.python-version
