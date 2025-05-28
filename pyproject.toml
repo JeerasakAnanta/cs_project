@@ -1,0 +1,16 @@
+[project]
+name = "cs-project"
+version = "0.1.0"
+description = "final project for CS RMUTL RAG"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "docling>=2.34.0",
+    "fastapi>=0.115.12",
+    "langchain-community>=0.3.21",
+    "langchain-openai>=0.3.18",
+    "langchain-qdrant>=0.2.0",
+    "python-dotenv>=1.1.0",
+    "qdrant-client>=1.12.1",
+    "uvicorn>=0.34.2",
+]
