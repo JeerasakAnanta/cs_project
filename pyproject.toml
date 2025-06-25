@@ -14,3 +14,8 @@ dependencies = [
     "qdrant-client>=1.12.1",
     "uvicorn>=0.34.2",
 ]
+
+[tool.uv.workspace]
+members = [
+    "notebook",
+]
