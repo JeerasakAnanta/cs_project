@@ -166,6 +166,11 @@
   python3 create_vecter_db.py
   ```
 ## Step 6: Runing  Development 
+- install npm 
+  ```bash
+  # install npm linux
+  sudo apt install npm
+  ```
 
 - `web Chatbot UI`: /chatbot_web/
   ```bash
