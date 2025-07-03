@@ -8,9 +8,11 @@ requires-python = ">=3.13"
 dependencies = [
     "docling>=2.15.1",
     "fastapi>=0.115.12",
+    "langchain>=0.3.25",
     "langchain-community>=0.3.24",
     "langchain-openai>=0.3.17",
     "langchain-qdrant>=0.2.0",
+    "langgraph>=0.5.0",
     "python-dotenv>=1.1.0",
     "qdrant-client>=1.14.2",
     "uvicorn>=0.34.2",
