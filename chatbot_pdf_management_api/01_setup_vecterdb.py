@@ -19,13 +19,13 @@ def create_collection():
     """
     try:
         client.get_collection(collection_name=COLLECTION_NAME)
-        print("Collection already exists")
+        print(f"Collection {COLLECTION_NAME} already exists")
     except:
         client.create_collection(
             collection_name=COLLECTION_NAME,
             vectors_config=VectorParams(size=3072, distance=Distance.COSINE),
         )
-        print("Collection created")
+        print(f"Collection created successfully  {COLLECTION_NAME}")
 
 
 if __name__ == "__main__":
