@@ -53,7 +53,7 @@ async def read_root():
 @router.post("/chat")
 async def chat(request: QueryModel):
     logger.info(f"Received user query: {request.query}")
-    return chatbot(request)
+    return chatbot(request.query)
 
 
 @router.get("/history")
@@ -74,7 +74,6 @@ async def clear_history():
     chat_history.clear()
     logger.info("Chat history cleared.")
     return {"message": "Chat history cleared."}
-
 
 @router.post("/chat_agent_graph")
 async def chat_agent_graph(request: QueryModel):

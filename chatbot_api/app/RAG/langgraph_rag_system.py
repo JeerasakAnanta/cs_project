@@ -36,7 +36,7 @@ llm = init_chat_model("gpt-4o-mini", model_provider="openai")
 @tool(response_format="content_and_artifact")
 def retrieve(query: str):
     """Retrieve information related to a query."""
-    docs = qdrant_store.similarity_search(query, k=5)
+    docs = qdrant_store.similarity_search(query, k=10)
     serialized = "\n\n".join(
         f"Source: {doc.metadata}\nContent: {doc.page_content}" for doc in docs
     )
@@ -73,7 +73,7 @@ def generate(state: MessagesState):
     ]
     prompt = [SystemMessage(system_message_content)] + conversation_messages
     response = llm.invoke(prompt)
-    return {"messages": [response]} 
+    return {"messages": [response]}
 
 
 # Build graph
