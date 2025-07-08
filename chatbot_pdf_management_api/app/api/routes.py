@@ -13,7 +13,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 # Local imports
-from .process_pdf import process_pdf
+from ..docs_process.process_pdf import process_pdf
 
 # Local imports
 import glob
