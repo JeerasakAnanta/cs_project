@@ -2,6 +2,7 @@ import os
 import glob
 import logging as logger
 
+
 # langchain
 from langchain_openai import OpenAIEmbeddings
 from langchain.text_splitter import MarkdownTextSplitter
@@ -37,7 +38,9 @@ embeddings = OpenAIEmbeddings(model=EMBEDDINGS_MODEL)
 
 
 def process_pdf(file_path: str):
-    """Process the uploaded PDF file for embeddings."""
+    """Process PDF file use docling for conver pdf to markdown and
+    use langchain for spliter data and store in vecter db
+    """
 
     logger.info(f"Processing PDF for embeddings: {file_path}")
     try:
@@ -48,7 +51,7 @@ def process_pdf(file_path: str):
         logger.info("convert  txt to  markdown")
 
         # Split the text into chunks
-        text_splitter = MarkdownTextSplitter(chunk_size=1000, chunk_overlap=0)
+        text_splitter = MarkdownTextSplitter(chunk_size=1000, chunk_overlap=200)
 
         logger.info("spliter data susscerfull")
         chunks = text_splitter.create_documents([serup_text])

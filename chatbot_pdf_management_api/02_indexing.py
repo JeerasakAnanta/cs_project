@@ -1,35 +1,25 @@
-# Import necessary libraries
-from langchain_community.embeddings.openai import OpenAIEmbeddings
-import logging
-
-logger = logging.getLogger(__name__)
-
-
-embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
-
+from app.docs_process.process_pdf import process_pdf
 import os
-from dotenv import load_dotenv
+from tqdm import tqdm  # install with: pip install tqdm
 
-load_dotenv()
-QDRANT_VECTERDB_HOST = os.getenv("QDRANT_VECTERDB_HOST", "http://localhost:6333")
-COLLECTION_NAME = os.getenv("COLLECTION_NAME", "rmutl_chatbot")
 
-from langchain_qdrant import QdrantVectorStore
-from qdrant_client import QdrantClient
+def list_pdf_files(directory: str):
+    return [
+        f
+        for f in os.listdir(directory)
+        if f.endswith(".pdf") and os.path.isfile(os.path.join(directory, f))
+    ]
 
-client = QdrantClient(QDRANT_VECTERDB_HOST, port=6333)
 
-vector_store = QdrantVectorStore(
-    client=client,
-    collection_name=COLLECTION_NAME,
-    embedding=embeddings,
-)
+def main():
+    print("Start indexing")
+    pdf_files = list_pdf_files("./pdfs")
+    print(f"Found {len(pdf_files)} PDF(s):")
 
-from docling.document_converter import DocumentConverter
+    for pdf in tqdm(pdf_files, desc="Processing PDFs"):
+        print(f"Processing convert PDF to vecter DB: {pdf}")
+        process_pdf(os.path.join("pdfs", pdf))
 
-source = "https://arxiv.org/pdf/2408.09869"  # document per local path or URL
-converter = DocumentConverter()
-result = converter.convert(source)
-print(
-    result.document.export_to_markdown()
-)  # output: "## Docling Technical Report[...]"
+
+if __name__ == "__main__":
+    main()
