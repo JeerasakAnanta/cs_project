@@ -52,15 +52,8 @@ dist
 
 # ===============================================================
 #              Jupyter Notebook  for reference 
+
 # ===============================================================
 
-notebook/Build a simple LLM application with chat models and prompt templates.ipynb
-notebook/chatbot.ipynb
-notebook/data_procession.ipynb
-notebook/docling.ipynb
-notebook/poetry.lock
-notebook/pyproject.toml
-notebook/rag.ipynb
-notebook/pdf/Operation manual.pdf
-notebook/
-chatbot_pdf_management_api/.python-version
+notebook/*
+*.ipynb
