@@ -6,12 +6,22 @@ import logging
 # pydantic
 from pydantic import BaseModel
 
+
 # fastapi
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 # RAG
-from app.RAG.rag_system import chatbot
-from app.RAG.langgraph_rag_system import graph
+from app.rag_system.rag_system import chatbot
+from app.rag_system.langgraph_rag_system import graph
+
+
+from sqlalchemy.orm import Session
+
+from fastapi.security import OAuth2PasswordRequestForm
+
+from app.login_system import auth
+from app.login_system.login import register, get_db, login, logout, refresh
+from app.login_system.schemas import UserCreate
 
 
 # Create log folder if it doesn't exist
@@ -29,7 +39,8 @@ logging.basicConfig(
 )
 
 # Initialize FastAPI router /api
-router = APIRouter(prefix="/api")
+router = APIRouter(prefix="/api", tags=["Chatbot"])
+
 
 # ====================================
 #             Router api
@@ -43,20 +54,20 @@ class QueryModel(BaseModel):
     query: str = "สวัสดีครับ"
 
 
-@router.get("/")
+@router.get("/chat", tags=["Chatbot"])
 async def read_root():
     """Return a simple greeting message."""
     logger.info("Root endpoint was accessed.")
     return {"message": "API endpoint for RMUTL chatbot LLM is running..."}
 
 
-@router.post("/chat")
+@router.post("/chat/chats")
 async def chat(request: QueryModel):
     logger.info(f"Received user query: {request.query}")
     return chatbot(request.query)
 
 
-@router.get("/history")
+@router.get("/chat/history")
 async def get_history():
     """
     API to fetch chat history.
@@ -65,7 +76,7 @@ async def get_history():
     return {"history": "not implemented yet"}
 
 
-@router.post("/clear-history")
+@router.post("/chat/clear-history")
 async def clear_history():
     """
     API to clear chat history.
@@ -75,7 +86,8 @@ async def clear_history():
     logger.info("Chat history cleared.")
     return {"message": "Chat history cleared."}
 
-@router.post("/chat_agent_graph")
+
+@router.post("/chat/chat_agent_graph")
 async def chat_agent_graph(request: QueryModel):
 
     logger.info(f"Received user query: {request.query}")
