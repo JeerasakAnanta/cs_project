@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # Load environment
-from app.config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME
+from app.utils.config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME
 
 # Database config postgres
 SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"

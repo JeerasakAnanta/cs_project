@@ -11,7 +11,7 @@ from langchain_openai import OpenAIEmbeddings
 
 
 # Load environment
-from app.config import OPENAI_API_KEY, COLLECTION_NAME, QDRANT_URL
+from app.utils.config import OPENAI_API_KEY, COLLECTION_NAME, QDRANT_URL
 
 # Initialize the embeddings
 embeddings = OpenAIEmbeddings(

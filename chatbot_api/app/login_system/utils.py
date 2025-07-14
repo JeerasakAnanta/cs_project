@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 # load environment
-from app.config import ACCESS_SECRET, REFRESH_SECRET, ALGORITHM
+from app.utils.config import ACCESS_SECRET, REFRESH_SECRET, ALGORITHM
 
 # Password hashing context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

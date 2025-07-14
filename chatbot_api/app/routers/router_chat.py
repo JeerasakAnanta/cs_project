@@ -58,7 +58,7 @@ class QueryModel(BaseModel):
 async def read_root():
     """Return a simple greeting message."""
     logger.info("Root endpoint was accessed.")
-    return {"message": "API endpoint for RMUTL chatbot LLM is running..."}
+    return {"response": "API endpoint for RMUTL chatbot LLM is running..."}
 
 
 @router.post("/chat/chats")
@@ -73,7 +73,7 @@ async def get_history():
     API to fetch chat history.
     """
     logger.info("Chat history requested.")
-    return {"history": "not implemented yet"}
+    return {"response": "not implemented yet"}
 
 
 @router.post("/chat/clear-history")
@@ -81,10 +81,8 @@ async def clear_history():
     """
     API to clear chat history.
     """
-    global chat_history
-    chat_history.clear()
-    logger.info("Chat history cleared.")
-    return {"message": "Chat history cleared."}
+
+    return {"response": "Chat history not implemented yet."}
 
 
 @router.post("/chat/chat_agent_graph")
@@ -97,4 +95,4 @@ async def chat_agent_graph(request: QueryModel):
     ):
         step["messages"][-1].pretty_print()  # optional, for logging
         results.append(step["messages"][-1].content)
-    return {"message": results[-1]}  # return final step onlysdf
+    return {"response": results[-1]}  # return final step onlysdf
