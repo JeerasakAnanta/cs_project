@@ -1,15 +1,11 @@
-import jwt
 import os
+import jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
-load_dotenv(".env")
-
-# Constants
-ACCESS_SECRET = os.getenv("ACCESS_SECRET")
-REFRESH_SECRET = os.getenv("REFRESH_SECRET")
-ALGORITHM = os.getenv("ALGORITHM")
+# load environment
+from app.config import ACCESS_SECRET, REFRESH_SECRET, ALGORITHM
 
 # Password hashing context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

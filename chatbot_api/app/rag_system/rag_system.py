@@ -38,12 +38,12 @@ from qdrant_client import QdrantClient
 load_dotenv(".env")
 
 # Setup Qdrant client and vector store
-url = os.getenv("QDRANT_VECTERDB_HOST")
+URL_QDRANT = os.getenv("QDRANT_VECTERDB_HOST")
 COLLECTION = os.getenv("COLLECTION_NAME")
 
 # print  qdrant  url
 print("------------------------------------------------------------")
-print(f"Qdrant URL: {url}")
+print(f"Qdrant URL: {URL_QDRANT}")
 print(f"COLLECTION_NAME: {os.getenv("COLLECTION_NAME")}")
 print("------------------------------------------------------------")
 

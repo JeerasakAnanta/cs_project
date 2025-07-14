@@ -10,8 +10,8 @@ from qdrant_client import QdrantClient
 from langchain_openai import OpenAIEmbeddings
 
 
-# Load environment variables
-load_dotenv()
+# Load environment
+from app.config import OPENAI_API_KEY, COLLECTION_NAME, QDRANT_URL
 
 # Initialize the embeddings
 embeddings = OpenAIEmbeddings(
