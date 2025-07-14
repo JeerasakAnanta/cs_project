@@ -1,7 +1,7 @@
 # models.py
 from sqlalchemy import Column, Integer, String, Text, DateTime, ARRAY
 from datetime import datetime
-from app.login_system.database import Base  # assume you already have this
+from chatbot_api.app.utils.database import Base  # assume you already have this
 
 
 class ChatLog(Base):
