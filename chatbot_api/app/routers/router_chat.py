@@ -12,6 +12,7 @@ from fastapi import APIRouter, Depends
 
 # RAG
 from app.rag_system.rag_system import chatbot
+from app.rag_system.new_rag import generation_answer
 from app.rag_system.langgraph_rag_system import graph
 
 
@@ -96,3 +97,9 @@ async def chat_agent_graph(request: QueryModel):
         step["messages"][-1].pretty_print()  # optional, for logging
         results.append(step["messages"][-1].content)
     return {"response": results[-1]}  # return final step onlysdf
+
+
+@router.post("/chat/new_rag")
+async def new_rags(request: QueryModel):
+    answer = generation_answer(request.query)
+    return {"response": answer}

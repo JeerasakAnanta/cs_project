@@ -92,7 +92,7 @@ const Chatbot: React.FC = () => {
    */
 
   const fetchChatbotResponse = async (input: string): Promise<string> => {
-    const response = await fetch(`${BACKEND_API}/api/chat_agent_graph`, {
+    const response = await fetch(`${BACKEND_API}/api/chat/new_rag`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: input }),
@@ -102,9 +102,9 @@ const Chatbot: React.FC = () => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const data: { message: string; source: string | null } =
+    const data: { response: string; source: string | null } =
       await response.json();
-    const formattedMessage = formatChatbotMessage(data.message);
+    const formattedMessage = formatChatbotMessage(data.response);
     if (data.source) {
       const sourceData = data.source.replace('./pdfs/', '');
       return `${formattedMessage}\n\n เอกสารอ้างอิง : <a href="${DOCS_STATIC}/file/${sourceData}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">${sourceData}</a>`;

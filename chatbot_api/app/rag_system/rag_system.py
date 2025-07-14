@@ -33,19 +33,8 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 
-
-# Load environment variables from .env file
-load_dotenv(".env")
-
-# Setup Qdrant client and vector store
-URL_QDRANT = os.getenv("QDRANT_VECTERDB_HOST")
-COLLECTION = os.getenv("COLLECTION_NAME")
-
-# print  qdrant  url
-print("------------------------------------------------------------")
-print(f"Qdrant URL: {URL_QDRANT}")
-print(f"COLLECTION_NAME: {os.getenv("COLLECTION_NAME")}")
-print("------------------------------------------------------------")
+# loading environment variable
+from app.utils.config import OPENAI_API_KEY, QDRANT_URL
 
 
 def create_chatbot_chain() -> ConversationalRetrievalChain:
@@ -79,14 +68,9 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
             หากข้อมูลไม่เพียงพอที่จะตอบคำถาม โปรดระบุว่า "น้องน้ำหวานไม่สามารถหาคำตอบจากเอกสารได้ค่ะ"
             คุณสามารถใช้คำลงท้าย "ค่ะ" หรือ "ไม่ค่ะ" ในคำตอบเพื่อเพิ่มความรู้สึก 
             ขอให้คำตอบมีอารมณ์ และ ความเป็นมิตรในทุกคำตอบค่ะ  ถ้าสรุปเป็นตารางให้สรุป
-                
+            
         {context}
-        
-        
         คำถามต้นฉบับ: {question}
-        
-    
-        
         """,
     )
 
@@ -98,12 +82,6 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
     # Setup Qdrant client and vector store
     url = os.getenv("QDRANT_VECTERDB_HOST")
     COLLECTION = os.getenv("COLLECTION_NAME")
-
-    # print  qdrant  url
-    print("------------------------------------------------------------")
-    print(f"Qdrant URL: {url}")
-    print(f"COLLECTION_NAME : {os.getenv("COLLECTION_NAME")}")
-    print("------------------------------------------------------------")
 
     # Create the Qdrant client and vector store
     qdrant_client = QdrantClient(url)
