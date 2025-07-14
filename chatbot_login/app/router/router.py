@@ -11,7 +11,6 @@ from app.login_system.schemas import UserCreate
 
 class QueryModel(BaseModel):
     query: str = "สวัสดีครับ"
-
 router = APIRouter(prefix="/api")
 
 
