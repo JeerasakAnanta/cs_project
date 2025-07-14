@@ -92,7 +92,7 @@ const Chatbot: React.FC = () => {
    */
 
   const fetchChatbotResponse = async (input: string): Promise<string> => {
-    const response = await fetch(`${BACKEND_API}/api/chat_agent_graph`, {
+    const response = await fetch(`${BACKEND_API}/api/chat/chat_agent_graph`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: input }),
