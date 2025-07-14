@@ -8,18 +8,6 @@ from app.login_system import auth
 from app.login_system.login import register, get_db, login, logout, refresh
 from app.login_system.schemas import UserCreate
 
-# Create log folder if it doesn't exist
-if not os.path.exists("./log"):
-    os.makedirs("./log")
-
-# Configure logging
-logging.basicConfig(
-    filename="./log/app.log",
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)-8s - %(message)s",
-)
-
-logger = logging.getLogger(__name__)
 
 # Initialize FastAPI router
 router = APIRouter(prefix="/api", tags=["Authentication"])
@@ -33,7 +21,13 @@ class QueryModel(BaseModel):
 @router.get("/login", tags=["Authentication"])
 async def read_root():
     """Root endpoint of the API."""
-    return {"message": "API endpoint for RMUTL chatbot login system is running..."}
+    return {"response": "API endpoint for RMUTL chatbot login system is running..."}
+
+
+@router.post("/register", tags=["Authentication"])
+def register_user(user: UserCreate, db: Session = Depends(get_db)):
+    """Endpoint to register a new user."""
+    return register(user, db)
 
 
 @router.post("/login", tags=["Authentication"])
@@ -55,3 +49,4 @@ def logout_user(token: str = Depends(auth.oauth2_scheme)):
 def refresh_token(refresh_token: str):
     """Endpoint to refresh the access token using a refresh token."""
     return refresh(refresh_token)
+ 
