@@ -35,3 +35,40 @@
     transform: scale(1);
   }
 }
+
+.prose {
+  color: inherit;
+}
+
+.prose strong {
+  color: #a8b3cf; /* A lighter color for emphasis */
+}
+
+.prose em {
+  color: #92a0bf; /* A slightly different color for italics */
+}
+
+.prose table {
+  @apply w-full my-6 border-collapse;
+}
+
+.prose th,
+.prose td {
+  @apply border border-gray-600 px-4 py-2 text-left;
+}
+
+.prose thead {
+  background-color: #4a5568; /* A darker gray for the header */
+}
+
+.prose thead th {
+  @apply font-semibold text-white;
+}
+
+.prose tbody tr:nth-child(odd) {
+  background-color: #2d3748; /* Slightly lighter gray for odd rows */
+}
+
+.prose tbody tr:nth-child(even) {
+  background-color: #384252; /* Even lighter for even rows, creating a zebra stripe effect */
+}
