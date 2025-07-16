@@ -70,7 +70,8 @@ const Chatbot: React.FC = () => {
     try {
       const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${authToken}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
+        body: JSON.stringify({ title: 'New Conversation' }),
       });
       if (response.ok) {
         const newConversation = await response.json();
@@ -265,12 +266,16 @@ const Chatbot: React.FC = () => {
         </div>
         <button
           onClick={handleNewConversation}
-          className="w-full flex items-center justify-center bg-rmutl-gold text-rmutl-brown font-bold py-2 px-4 rounded-lg hover:bg-yellow-400 transition-colors"
+          className="w-full flex items-center justify-center bg-rmutl-gold text-rmutl-brown font-bold py-2 px-4 rounded-lg hover:bg-yellow-400 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
+          disabled={currentConversationId !== null && messages.length === 0}
         >
           <AddCommentIcon className="mr-2" /> New Chat
         </button>
         <nav className="flex-1 overflow-y-auto">
-          {conversations.map((convo) => (
+          {conversations
+            .slice()
+            .reverse()
+            .map((convo) => (
             <div
               key={convo.id}
               className={`flex justify-between items-center p-2 my-1 rounded-md cursor-pointer ${
