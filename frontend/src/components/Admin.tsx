@@ -1,8 +1,18 @@
 import React from 'react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { User, Settings, Code, Shield, LogOut } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Admin: React.FC = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -44,13 +54,13 @@ const Admin: React.FC = () => {
             </a>
           </MenuItem>
           <MenuItem>
-            <a
-              href="/"
+            <button
+              onClick={handleLogout}
               className="group flex items-center w-full px-4 py-2 text-left text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
             >
               <LogOut className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
               Sign out
-            </a>
+            </button>
           </MenuItem>
         </div>
       </MenuItems>
