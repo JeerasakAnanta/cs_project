@@ -3,7 +3,7 @@ from app.database import models
 from . import schemas
 
 def create_conversation(db: Session, user_id: int):
-    db_conversation = models.Conversation(user_id=user_id)
+    db_conversation = models.Conversation(user_id=user_id, title="New Chat")
     db.add(db_conversation)
     db.commit()
     db.refresh(db_conversation)
@@ -14,6 +14,9 @@ def get_conversations_by_user(db: Session, user_id: int):
 
 def get_conversation(db: Session, conversation_id: int):
     return db.query(models.Conversation).filter(models.Conversation.id == conversation_id).first()
+
+def get_messages_by_conversation(db: Session, conversation_id: int):
+    return db.query(models.Message).filter(models.Message.conversation_id == conversation_id).all()
 
 def get_message(db: Session, message_id: int):
     return db.query(models.Message).filter(models.Message.id == message_id).first()

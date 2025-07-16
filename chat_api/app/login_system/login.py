@@ -26,7 +26,7 @@ def register(user: schemas.UserCreate, db: Session):
         raise HTTPException(status_code=400, detail="ชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว")
 
     # Hash the user's password for security
-    hashed_password = auth.get_password_hash(user.password)
+    hashed_password = utils.hash_password(user.password)
 
     # Create a new user instance
     db_user = models.User(
@@ -45,7 +45,7 @@ def register(user: schemas.UserCreate, db: Session):
 
 
 def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.email == form.username).first()
+    user = db.query(models.User).filter(models.User.username == form.username).first()
     if not user or not utils.verify_password(form.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Wrong credentials")
     data = {"sub": user.username, "role": user.role, "email": user.email}
@@ -72,11 +72,3 @@ def refresh(refresh_token: str):
         return {"access_token": new_access_token}
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid refresh token")
-
-
-def admin_only(payload=Depends(auth.require_role("admin"))):
-    return {"message": f"Hello Admin {payload['sub']}"}
-
-
-def user(payload=Depends(auth.get_current_user)):
-    return {"message": f"Hello {payload['sub']} with role {payload['role']}"}

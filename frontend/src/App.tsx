@@ -9,9 +9,11 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Chatbot from './components/Chatbot';
 import Pagenotfound from './components/Pagenotfound';
+import AdminDashboard from './components/AdminDashboard';
 
 // Auth Wrapper
 import PrivateRoute from './components/PrivateRoute';
+import AdminRoute from './components/AdminRoute';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC;
@@ -25,6 +27,7 @@ interface Message {
 const AppContent: React.FC = () => {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login' || location.pathname === '/register';
+  const isAdminPage = location.pathname.startsWith('/admin');
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversations, setConversations] = useState<{ id: number; title: string }[]>([]);
@@ -148,11 +151,14 @@ const AppContent: React.FC = () => {
   };
 
 
-  if (isLoginPage) {
+  if (isLoginPage || isAdminPage) {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route element={<AdminRoute />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+        </Route>
       </Routes>
     );
   }

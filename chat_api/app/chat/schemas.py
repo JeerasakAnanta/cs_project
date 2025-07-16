@@ -12,7 +12,6 @@ class MessageCreate(MessageBase):
 class Message(MessageBase):
     id: int
     conversation_id: int
-    timestamp: datetime
 
     class Config:
         from_attributes = True

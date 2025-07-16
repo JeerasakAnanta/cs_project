@@ -9,6 +9,8 @@ from app.database import models
 from app.chat.router import router as router_chat
 from app.routers.router_login import router as router_login
 from app.chat.feedback_router import router as router_feedback
+from app.routers.router_pdfs import router as router_pdfs
+from app.routers.router_admin import router as router_admin
 
 
 # Create all tables in the database
@@ -31,6 +33,8 @@ app.add_middleware(
 app.include_router(router_login)
 app.include_router(router_chat)
 app.include_router(router_feedback)
+app.include_router(router_pdfs)
+app.include_router(router_admin)
 
 
 

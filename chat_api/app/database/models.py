@@ -46,7 +46,6 @@ class Message(Base):
     conversation_id = Column(Integer, ForeignKey("conversations.id"))
     sender = Column(String)  # "user" or "bot"
     content = Column(String)
-    timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
     conversation = relationship("Conversation", back_populates="messages")
     feedbacks = relationship("Feedback", back_populates="message", cascade="all, delete-orphan")
