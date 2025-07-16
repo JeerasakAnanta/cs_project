@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Props {
   children: React.ReactElement;
@@ -7,11 +8,15 @@ interface Props {
 }
 
 const PrivateRoute: React.FC<Props> = ({ children, role }) => {
-  const token = localStorage.getItem('token');
-  const userRole = localStorage.getItem('role');
+  const { isAuthenticated, isAdmin } = useAuth();
 
-  if (!token) return <Navigate to="/login" />;
-  if (role && userRole !== role) return <Navigate to="/" />;
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" />;
+  }
+
+  if (role === 'admin' && !isAdmin()) {
+    return <Navigate to="/" />;
+  }
 
   return children;
 };

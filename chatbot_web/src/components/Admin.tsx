@@ -1,13 +1,13 @@
 import React from 'react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
-// import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { User, Settings, Code, Shield, LogOut } from 'lucide-react';
 
 const Admin: React.FC = () => {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-          Admin
+        <MenuButton className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+          <User className="h-6 w-6" />
         </MenuButton>
       </div>
 
@@ -19,32 +19,36 @@ const Admin: React.FC = () => {
           <MenuItem>
             <a
               href="/settings"
-              className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
+              className="group flex items-center px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
             >
+              <Settings className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
               Settings
             </a>
           </MenuItem>
           <MenuItem>
             <a
               href="/playground"
-              className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
+              className="group flex items-center px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
             >
+              <Code className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
               Playground
             </a>
           </MenuItem>
           <MenuItem>
             <a
-              href="adminpanel"
-              className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
+              href="/adminpanel"
+              className="group flex items-center px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
             >
+              <Shield className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
               Admin Panel
             </a>
           </MenuItem>
           <MenuItem>
             <a
               href="/"
-              className="block w-full px-4 py-2 text-left text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
+              className="group flex items-center w-full px-4 py-2 text-left text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
             >
+              <LogOut className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
               Sign out
             </a>
           </MenuItem>

@@ -96,7 +96,7 @@ const Chatbot: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-full bg-gray-50">
       {/* Header */}
       <header className="bg-amber-900 text-white py-3 px-6 flex justify-between items-center shadow-md">
         <div className="flex items-center space-x-4">
@@ -107,39 +107,46 @@ const Chatbot: React.FC = () => {
             {isSidebarOpen ? <ChevronLeftIcon /> : <MenuIcon />}
           </button>
         </div>
-        {/* <div className="text-lg font-semibold">ระบบตอบคำถามคู่มือราชการ</div> */}
+        <div className="text-lg font-semibold">ระบบตอบคำถามคู่มือราชการ</div>
         <div className="w-10"></div> {/* Spacer for balance */}
       </header>
 
       {/* Body */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
         {/* Sidebar */}
-        {isSidebarOpen && (
-          <aside className="w-72 bg-gray-100 p-4 border-r overflow-y-auto transition-all duration-300">
+        <aside
+          className={`absolute top-0 left-0 h-full w-72 bg-gray-100 p-4 border-r overflow-y-auto transition-transform duration-300 ease-in-out z-20 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
+        >
+          <button
+            onClick={clearHistory}
+            className="bg-white text-amber-900 px-4 py-1 rounded shadow hover:bg-gray-100 flex items-center"
+          >
+            <DeleteForeverIcon className="inline mr-1" />
+            เริ่มใหม่
+          </button>
+          <h2 className="text-md font-bold mb-4">📌 ตัวอย่างคำถาม</h2>
+          {exampleQuestions.map((q, i) => (
             <button
-              onClick={clearHistory}
-              className="bg-white text-amber-900 px-4 py-1 rounded shadow hover:bg-gray-100 flex items-center"
+              key={i}
+              onClick={() => setExampleQuestion(q)}
+              className="block w-full text-left mb-2 px-3 py-2 bg-white rounded hover:bg-amber-800 hover:text-white transition"
             >
-              <DeleteForeverIcon className="inline mr-1" />
-              เริ่มใหม่
+              {q}
             </button>
-            <h2 className="text-md font-bold mb-4">📌 ตัวอย่างคำถาม</h2>
-            {exampleQuestions.map((q, i) => (
-              <button
-                key={i}
-                onClick={() => setExampleQuestion(q)}
-                className="block w-full text-left mb-2 px-3 py-2 bg-white rounded hover:bg-amber-800 hover:text-white transition"
-              >
-                {q}
-              </button>
-            ))}
-          </aside>
+          ))}
+        </aside>
+
+        {/* Overlay */}
+        {isSidebarOpen && (
+          <div
+            className="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300 z-10"
+            onClick={() => setIsSidebarOpen(false)}
+          ></div>
         )}
 
         {/* Chat Area */}
-        <main
-          className={`flex-1 flex flex-col bg-white transition-all duration-300 ${isSidebarOpen ? '' : 'ml-0'}`}
-        >
+        <main className="w-full flex flex-col bg-white">
           {/* Chat Messages */}
           <div
             ref={chatBoxRef}

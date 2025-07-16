@@ -2,12 +2,14 @@
 import React, { useState } from 'react';
 import axios, { AxiosResponse } from 'axios'; // Import AxiosResponse
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('game');
   const [password, setPassword] = useState('game');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async () => {
     try {
@@ -32,9 +34,8 @@ const Login: React.FC = () => {
       const decodedPayload = JSON.parse(atob(payloadBase64));
       const role = decodedPayload.role;
 
-      // ✅ Save token & role
-      localStorage.setItem('token', access_token);
-      localStorage.setItem('role', role);
+      // ✅ Save token & role using AuthContext
+      login(access_token, role);
 
       // ✅ Redirect based on role
       if (role === 'admin') {

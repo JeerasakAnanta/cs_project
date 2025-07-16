@@ -30,7 +30,7 @@ const App: React.FC = () => {
     <Router>
       <Navbar />
 
-      <main className="flex-1 p-4">
+      <main className="flex-1 p-4 ml-60">
         <Routes>
           {/* ✅ Login page - only public route */}
           <Route path="/login" element={<Login />} />
@@ -132,7 +132,7 @@ const App: React.FC = () => {
         </Routes>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </Router>
   );
 };
