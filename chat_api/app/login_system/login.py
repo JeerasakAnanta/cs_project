@@ -12,9 +12,12 @@ blacklisted_tokens = set()
 
 
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    if db.query(models.User).filter(models.User.email == user.email).first():
+        raise HTTPException(status_code=400, detail="Email already registered")
     if db.query(models.User).filter(models.User.username == user.username).first():
         raise HTTPException(status_code=400, detail="Username taken")
     new_user = models.User(
+        email=user.email,
         username=user.username,
         hashed_password=utils.hash_password(user.password),
         role="user",
@@ -26,10 +29,10 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 
 def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.username == form.username).first()
+    user = db.query(models.User).filter(models.User.email == form.username).first()
     if not user or not utils.verify_password(form.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Wrong credentials")
-    data = {"sub": user.username, "role": user.role}
+    data = {"sub": user.username, "role": user.role, "email": user.email}
     access_token = utils.create_access_token(data)
     refresh_token = utils.create_refresh_token(data)
     return {

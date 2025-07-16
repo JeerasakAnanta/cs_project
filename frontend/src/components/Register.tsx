@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 
 const Register: React.FC = () => {
+  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,7 +25,7 @@ const Register: React.FC = () => {
       const response = await fetch(`${BACKEND_API}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, username, password }),
       });
 
       if (response.ok) {
@@ -42,10 +43,26 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-full">
+    <div className="flex items-center justify-center h-full bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-center text-rmutl-brown">Register</h1>
         <form className="space-y-6" onSubmit={handleRegister}>
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-rmutl-brown"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-3 py-2 mt-1 bg-white text-rmutl-brown border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-rmutl-gold focus:border-rmutl-gold"
+            />
+          </div>
           <div>
             <label
               htmlFor="username"

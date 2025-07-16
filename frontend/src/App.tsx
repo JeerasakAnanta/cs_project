@@ -19,7 +19,7 @@ const AppContent: React.FC = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <Navbar />
-      <main className="flex-1 overflow-y-auto p-4">
+      <main className="flex-1 overflow-y-auto">
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

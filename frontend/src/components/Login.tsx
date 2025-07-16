@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const Login: React.FC = () => {
       const response = await fetch(`${BACKEND_API}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ username, password }),
+        body: new URLSearchParams({ username: email, password }),
       });
 
       if (response.ok) {
@@ -28,7 +28,7 @@ const Login: React.FC = () => {
         login(data.access_token);
         navigate('/');
       } else {
-        setError('Invalid username or password');
+        setError('Invalid email or password');
       }
     } catch (err) {
       setError('An error occurred. Please try again.');
@@ -36,22 +36,22 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-full">
+    <div className="flex items-center justify-center h-full bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-center text-rmutl-brown">Login</h1>
         <form className="space-y-6" onSubmit={handleLogin}>
           <div>
             <label
-              htmlFor="username"
+              htmlFor="email"
               className="block text-sm font-medium text-rmutl-brown"
             >
-              Username
+              Email
             </label>
             <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-3 py-2 mt-1 bg-white text-rmutl-brown border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-rmutl-gold focus:border-rmutl-gold"
             />

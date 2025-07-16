@@ -15,7 +15,7 @@ const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC;
 
 interface Message {
-  id?: number; // Optional because user-created messages won't have an ID initially
+  id?: number;
   text: string;
   sender: 'user' | 'bot';
 }
@@ -38,7 +38,6 @@ const Chatbot: React.FC = () => {
   const [selectedMessageId, setSelectedMessageId] = useState<number | null>(null);
 
   const { currentUser } = useAuth();
-
   const authToken = localStorage.getItem('authToken');
 
   useEffect(() => {
@@ -54,16 +53,16 @@ const Chatbot: React.FC = () => {
   const fetchConversations = async () => {
     try {
       const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
-        headers: { 'Authorization': `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${authToken}` },
       });
       if (response.ok) {
         const data = await response.json();
         setConversations(data);
       } else {
-        console.error("Failed to fetch conversations");
+        console.error('Failed to fetch conversations');
       }
     } catch (error) {
-      console.error("Error fetching conversations:", error);
+      console.error('Error fetching conversations:', error);
     }
   };
 
@@ -71,16 +70,16 @@ const Chatbot: React.FC = () => {
     try {
       const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${authToken}` },
       });
       if (response.ok) {
         const newConversation = await response.json();
-        setConversations(prev => [...prev, newConversation]);
+        setConversations((prev) => [...prev, newConversation]);
         setCurrentConversationId(newConversation.id);
         setMessages([]);
       }
     } catch (error) {
-      console.error("Error creating new conversation:", error);
+      console.error('Error creating new conversation:', error);
     }
   };
 
@@ -88,20 +87,22 @@ const Chatbot: React.FC = () => {
     setCurrentConversationId(id);
     try {
       const response = await fetch(`${BACKEND_API}/chat/conversations/${id}`, {
-        headers: { 'Authorization': `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${authToken}` },
       });
       if (response.ok) {
         const data = await response.json();
-        const formattedMessages = await Promise.all(data.messages.map(async (msg: any) => {
-          if (msg.sender === 'bot') {
-            return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' };
-          }
-          return { id: msg.id, text: msg.content, sender: 'user' };
-        }));
+        const formattedMessages = await Promise.all(
+          data.messages.map(async (msg: any) => {
+            if (msg.sender === 'bot') {
+              return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' };
+            }
+            return { id: msg.id, text: msg.content, sender: 'user' };
+          })
+        );
         setMessages(formattedMessages);
       }
     } catch (error) {
-      console.error("Error fetching conversation details:", error);
+      console.error('Error fetching conversation details:', error);
     }
   };
 
@@ -111,7 +112,7 @@ const Chatbot: React.FC = () => {
     const userMessage: Message = { text: userInput, sender: 'user' };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
-    
+
     const originalUserInput = userInput;
     setUserInput('');
     setIsTyping(true);
@@ -119,52 +120,49 @@ const Chatbot: React.FC = () => {
     let conversationId = currentConversationId;
     let isNewConversation = false;
 
-    // If there is no current conversation, create a new one
     if (!conversationId) {
       isNewConversation = true;
       try {
         const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
           method: 'POST',
-          headers: { 'Authorization': `Bearer ${authToken}` }
+          headers: { Authorization: `Bearer ${authToken}` },
         });
         if (response.ok) {
           const newConversation = await response.json();
-          setConversations(prev => [...prev, newConversation]);
+          setConversations((prev) => [...prev, newConversation]);
           conversationId = newConversation.id;
           setCurrentConversationId(newConversation.id);
         } else {
-          // Handle error in conversation creation
-          console.error("Error creating new conversation");
+          console.error('Error creating new conversation');
           setIsTyping(false);
           return;
         }
       } catch (error) {
-        console.error("Error creating new conversation:", error);
+        console.error('Error creating new conversation:', error);
         setIsTyping(false);
         return;
       }
     }
 
-    // If it's a new conversation, update its title with the first message
     if (isNewConversation && conversationId) {
       try {
         await fetch(`${BACKEND_API}/chat/conversations/${conversationId}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
           body: JSON.stringify({ title: originalUserInput }),
         });
-        // Update conversation title in the local state
-        setConversations(prev => prev.map(c => c.id === conversationId ? { ...c, title: originalUserInput } : c));
+        setConversations((prev) =>
+          prev.map((c) => (c.id === conversationId ? { ...c, title: originalUserInput } : c))
+        );
       } catch (error) {
-        console.error("Error updating conversation title:", error);
+        console.error('Error updating conversation title:', error);
       }
     }
-
 
     try {
       const response = await fetch(`${BACKEND_API}/chat/conversations/${conversationId}/messages/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
         body: JSON.stringify({ sender: 'user', content: originalUserInput }),
       });
       if (response.ok) {
@@ -173,29 +171,33 @@ const Chatbot: React.FC = () => {
         const botMessage: Message = { id: botMessageData.id, text: formattedText, sender: 'bot' };
         setMessages((prev) => [...prev, botMessage]);
       } else {
-        console.error("Failed to send message");
+        console.error('Failed to send message');
       }
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error('Error sending message:', error);
     } finally {
       setIsTyping(false);
     }
   };
 
-  const handleFeedbackSubmit = async (messageId: number, feedbackType: 'like' | 'dislike', comment: string, reason: string) => {
+  const handleFeedbackSubmit = async (
+    messageId: number,
+    feedbackType: 'like' | 'dislike',
+    comment: string,
+    reason: string
+  ) => {
     const finalComment = reason === 'Others' ? `Others: ${comment}` : `${reason}: ${comment}`;
     try {
       await fetch(`${BACKEND_API}/chat/feedback/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
+          Authorization: `Bearer ${authToken}`,
         },
         body: JSON.stringify({ message_id: messageId, feedback_type: feedbackType, comment: finalComment }),
       });
-      // Optionally, show a "Thank you for your feedback" message
     } catch (error) {
-      console.error("Error submitting feedback:", error);
+      console.error('Error submitting feedback:', error);
     }
   };
 
@@ -205,7 +207,6 @@ const Chatbot: React.FC = () => {
   };
 
   const formatBotMessage = async (content: string): Promise<string> => {
-    // This is a simplified parser. A more robust solution might be needed.
     const sourceRegex = /อ้างอิง: <a href="[^"]+"[^>]+>([^<]+)<\/a>/;
     const match = content.match(sourceRegex);
     let text = content;
@@ -219,24 +220,23 @@ const Chatbot: React.FC = () => {
 
     const formattedText = await marked.parse(text);
     return formattedText + sourceLink;
-  }
+  };
 
   const handleDeleteConversation = async (id: number) => {
     try {
       await fetch(`${BACKEND_API}/chat/conversations/${id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${authToken}` },
       });
-      setConversations(prev => prev.filter(c => c.id !== id));
+      setConversations((prev) => prev.filter((c) => c.id !== id));
       if (currentConversationId === id) {
         setCurrentConversationId(null);
         setMessages([]);
       }
     } catch (error) {
-      console.error("Error deleting conversation:", error);
+      console.error('Error deleting conversation:', error);
     }
   };
-
 
   const exampleQuestions = [
     'ตัวอย่างค่าเบี้ยเดินทางในประเทศ',
@@ -250,123 +250,146 @@ const Chatbot: React.FC = () => {
   ];
 
   return (
-    <div className="relative h-full bg-white overflow-hidden flex">
+    <div className="flex h-screen bg-gray-200 font-sans">
       {/* Sidebar */}
-      <aside className={`bg-rmutl-brown text-white p-4 flex flex-col w-80 transition-transform duration-300 ease-in-out z-20 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full absolute md:relative'}`}>
-        <div className="flex justify-between items-center mb-4 ">
-          <h1 className="text-xl font-bold">ประวัติการสนทนา</h1>
-          <button onClick={() => setIsSidebarOpen(false)} className="text-gray-400 hover:text-white md:hidden">
+      <aside
+        className={`bg-rmutl-brown text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } transition-transform duration-300 ease-in-out z-20 flex flex-col`}
+      >
+        <div className="flex justify-between items-center px-4">
+          <h2 className="text-2xl font-semibold text-white">History</h2>
+          <button onClick={() => setIsSidebarOpen(false)}>
             <ChevronLeftIcon />
           </button>
         </div>
         <button
           onClick={handleNewConversation}
-          className="w-full bg-rmutl-gold text-rmutl-brown px-4 py-2 rounded-lg hover:bg-opacity-80 flex items-center justify-center mb-4"
+          className="w-full flex items-center justify-center bg-rmutl-gold text-rmutl-brown font-bold py-2 px-4 rounded-lg hover:bg-yellow-400 transition-colors"
         >
-          <AddCommentIcon className="mr-2" />
-          เริ่มการสนทนาใหม่
+          <AddCommentIcon className="mr-2" /> New Chat
         </button>
-        <div className="flex-grow overflow-y-auto">
-          <div className="flex flex-col space-y-2">
-            {conversations.map(convo => (
-              <div key={convo.id} className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${currentConversationId === convo.id ? 'bg-rmutl-gold text-rmutl-brown' : 'hover:bg-gray-700'}`}>
-                <span onClick={() => handleSelectConversation(convo.id)} className="flex-grow truncate">{convo.title}</span>
-                <button onClick={() => handleDeleteConversation(convo.id)} className="text-gray-400 hover:text-white ml-2 flex-shrink-0">
-                  <DeleteForeverIcon fontSize="small" />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="text-xs text-gray-400 pt-4 border-t border-gray-700">
-          <p>เวอร์ชัน 3.0.0 (DB History,login)</p>
-        </div>
+        <nav className="flex-1 overflow-y-auto">
+          {conversations.map((convo) => (
+            <div
+              key={convo.id}
+              className={`flex justify-between items-center p-2 my-1 rounded-md cursor-pointer ${
+                currentConversationId === convo.id ? 'bg-rmutl-gold text-rmutl-brown' : 'hover:bg-rmutl-light-brown'
+              }`}
+            >
+              <a
+                onClick={() => handleSelectConversation(convo.id)}
+                className="block flex-grow"
+              >
+                {convo.title}
+              </a>
+              <button onClick={() => handleDeleteConversation(convo.id)} className="ml-2 p-1 hover:text-red-500">
+                <DeleteForeverIcon fontSize="small" />
+              </button>
+            </div>
+          ))}
+        </nav>
       </aside>
 
-      {/* Main Chat Area */}
-      <main className="flex-1 flex flex-col bg-gray-100">
-        <div className="flex-1 overflow-y-auto p-6" ref={chatBoxRef}>
-          <div className="max-w-4xl mx-auto">
-            {!isSidebarOpen && (
-              <button
-                onClick={() => setIsSidebarOpen(true)}
-                className="absolute top-4 left-4 z-30 text-white p-2 bg-rmutl-brown rounded-md hover:bg-rmutl-gold hover:text-black md:hidden"
-              >
-                <MenuIcon />
-              </button>
-            )}
-            {messages.length === 0 && !isTyping ? (
-              <div className="text-center text-gray-500">
-                <SmartToyIcon style={{ fontSize: 60 }} className="mx-auto mb-4" />
-                <h2 className="text-2xl font-bold mb-6">
-                  สวัสดีครับ, {currentUser?.username || 'Guest'} ให้ผมช่วยอะไร?
-                </h2>
-                <div className="grid grid-cols-2 gap-4">
-                  {exampleQuestions.map((q, i) => (
-                    <div key={i} onClick={() => setUserInput(q)} className="bg-white p-4 rounded-lg hover:bg-rmutl-gold hover:text-rmutl-brown cursor-pointer shadow-md">
-                      <p className="font-semibold">{q}</p>
-                    </div>
-                  ))}
+      {/* Main Content */}
+      <div className={`flex-1 flex flex-col relative transition-all duration-300 ease-in-out ${isSidebarOpen ? 'md:ml-64' : ''}`}>
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="absolute top-4 left-4 z-10 bg-rmutl-brown text-white p-2 rounded-full"
+        >
+          <MenuIcon />
+        </button>
+        
+        {/* Main Chat Area */}
+        <main className="flex-1 flex flex-col bg-gray-100">
+          <div className="flex-1 overflow-y-auto p-6" ref={chatBoxRef}>
+            <div className="max-w-4xl mx-auto">
+              {messages.length === 0 && !isTyping ? (
+                <div className="text-center text-gray-500">
+                  <SmartToyIcon style={{ fontSize: 60 }} className="mx-auto mb-4 text-rmutl-brown" />
+                  <h2 className="text-2xl font-bold mb-6 text-rmutl-brown">
+                  สวัสดีครับ คุณ {currentUser?.username}, มีอะไรให้ น้องคำเงิน ช่วยไหมครับ
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {exampleQuestions.map((q, i) => (
+                      <div
+                        key={i}
+                        onClick={() => setUserInput(q)}
+                        className="bg-white p-4 rounded-lg hover:bg-rmutl-gold hover:text-rmutl-brown cursor-pointer shadow-md transition-colors"
+                      >
+                        <p className="font-semibold">{q}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ) : (
-              messages.map((msg, index) => (
-                <div key={index} className={`flex items-start gap-4 my-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  {msg.sender === 'bot' && <div className="p-2 bg-gray-300 rounded-full"><SmartToyIcon className="text-rmutl-brown" /></div>}
-                  <div
-                    className={`p-4 rounded-lg max-w-2xl shadow-md ${msg.sender === 'user' ? 'bg-rmutl-brown text-white' : 'bg-white text-gray-800'
-                      }`}
-                  >
-                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: msg.text }} />
-                    {msg.sender === 'bot' && msg.id && (
-                      <FeedbackButtons
-                        messageId={msg.id}
-                        onDislikeClick={() => handleDislikeClick(msg.id!)}
-                        onFeedbackSubmit={(feedbackType, comment, reason) =>
-                          handleFeedbackSubmit(msg.id!, feedbackType, comment || '', reason || '')
-                        }
-                      />
+              ) : (
+                messages.map((msg, index) => (
+                  <div key={index} className={`flex items-start gap-4 my-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    {msg.sender === 'bot' && (
+                      <div className="p-2 bg-gray-300 rounded-full">
+                        <SmartToyIcon className="text-rmutl-brown" />
+                      </div>
+                    )}
+                    <div className={`p-4 rounded-lg max-w-lg shadow-md ${msg.sender === 'user' ? 'bg-rmutl-gold text-rmutl-brown' : 'bg-white'}`}>
+                      <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: msg.text }}></div>
+                      {msg.sender === 'bot' && msg.id && (
+                        <FeedbackButtons
+                          messageId={msg.id}
+                          onDislikeClick={() => {
+                            if (msg.id) {
+                              handleDislikeClick(msg.id);
+                            }
+                          }}
+                          onFeedbackSubmit={(feedbackType, comment, reason) => {
+                            if (msg.id) {
+                              handleFeedbackSubmit(msg.id, feedbackType, comment || '', reason || '');
+                            }
+                          }}
+                        />
+                      )}
+                    </div>
+                    {msg.sender === 'user' && (
+                      <div className="p-2 bg-gray-300 rounded-full">
+                        <AccountCircleIcon className="text-rmutl-brown" />
+                      </div>
                     )}
                   </div>
-                  {msg.sender === 'user' && <div className="p-2 bg-rmutl-gold rounded-full"><AccountCircleIcon className="text-rmutl-brown" /></div>}
-                </div>
-              ))
-            )}
-            {isTyping && (
-              <div className="flex items-center justify-start gap-4 my-4">
-                <div className="p-2 bg-gray-300 rounded-full"><SmartToyIcon className="text-rmutl-brown" /></div>
-                <div className="p-4 rounded-lg max-w-2xl shadow-md bg-white text-gray-800">
-                  <div className="typing-indicator">
-                    <span></span><span></span><span></span>
+                ))
+              )}
+              {isTyping && (
+                <div className="flex items-center gap-4 my-4 justify-start">
+                  <div className="p-2 bg-gray-300 rounded-full">
+                    <SmartToyIcon className="text-rmutl-brown" />
+                  </div>
+                  <div className="p-4 rounded-lg bg-white shadow-md">
+                    <p>น้องคำเงินกำลังพิมพ์...</p>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-        <div className="p-4 bg-white border-t border-gray-200">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center bg-gray-200 rounded-lg p-2">
+          {/* Message Input */}
+          <div className="p-4 bg-white border-t border-gray-200">
+            <div className="flex items-center gap-4 max-w-4xl mx-auto">
               <input
                 type="text"
-                placeholder="พิมพ์ข้อความของคุณ..."
-                className="flex-grow bg-transparent outline-none px-4 text-gray-800"
+                placeholder="พิมพ์ข้อความ..."
+                className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rmutl-gold"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               />
               <button
                 onClick={handleSendMessage}
-                className="p-2 rounded-full text-white bg-rmutl-brown hover:bg-rmutl-gold hover:text-black transition-colors"
+                className="p-3 bg-rmutl-brown text-white rounded-lg hover:bg-rmutl-gold hover:text-rmutl-brown disabled:bg-gray-400"
                 disabled={isTyping}
               >
                 <SendIcon />
               </button>
             </div>
           </div>
-        </div>
-      </main>
-
+        </main>
+      </div>
       <FeedbackModal
         isOpen={isFeedbackModalOpen}
         onClose={() => setIsFeedbackModalOpen(false)}

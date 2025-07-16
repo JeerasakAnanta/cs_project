@@ -35,45 +35,44 @@ const Navbar: React.FC = () => {
       className={`bg-rmutl-brown shadow-md p-3 transition-transform duration-300 sticky top-0 z-50 ${visible ? 'transform translate-y-0' : 'transform -translate-y-full'
         }`}
     >
-      <div className="container mx-auto flex items-center justify-center">
+      <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
-            <Link to="/" className="flex items-center mr-6">
-              <img src={RMUTLlogo} alt="RMUTL Logo" className="h-10" />
-            </Link>
-            {/* Navigation Links centered */}
-            <div className="hidden md:flex">
-              <ul className="flex space-x-2 text-lg">
-                <li>
-                  <Link
-                    to="/"
-                    className="text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-full transition-colors"
-                  >
-                    แชทบอท
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/pdflist"
-                    className="text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-full transition-colors"
-                  >
-                    คู่มือปฏิบัติงาน
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/about"
-                    className="text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-full transition-colors"
-                  >
-                    เกี่ยวกับ
-                  </Link>
-                </li>
-              </ul>
-            </div>
+          <Link to="/" className="flex items-center mr-6">
+            <img src={RMUTLlogo} alt="RMUTL Logo" className="h-10" />
+          </Link>
+          {/* Navigation Links centered */}
+          <div className="hidden md:flex">
+            <ul className="flex space-x-2 text-lg">
+              <li>
+                <Link
+                  to="/"
+                  className="text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-full transition-colors"
+                >
+                  แชทบอท
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/pdflist"
+                  className="text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-full transition-colors"
+                >
+                  คู่มือปฏิบัติงาน
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/about"
+                  className="text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-full transition-colors"
+                >
+                  เกี่ยวกับ
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
-
         {/* Admin section and Hamburger on the right */}
-        <div className="absolute right-4 flex items-center">
+        <div className="flex items-center">
           <div className="hidden md:block">
             <Admin />
           </div>
@@ -119,7 +118,7 @@ const Navbar: React.FC = () => {
               </Link>
             </li>
             <li className="pt-2 border-t border-rmutl-tan">
-              <div className="ml-2">
+              <div className="flex justify-center items-center w-full">
                 <Admin />
               </div>
             </li>
