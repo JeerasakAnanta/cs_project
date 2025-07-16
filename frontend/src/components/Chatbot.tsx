@@ -100,13 +100,20 @@ const Chatbot: React.FC = () => {
   const handleSendMessage = async () => {
     if (!userInput.trim()) return;
 
-    const newMessage: Message = { text: userInput, sender: 'user' };
-    setMessages((prev) => [...prev, newMessage]);
+    const userMessage: Message = { text: userInput, sender: 'user' };
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+    
+    const originalUserInput = userInput;
     setUserInput('');
     setIsTyping(true);
 
     let conversationId = currentConversationId;
+    let isNewConversation = false;
+
+    // If there is no current conversation, create a new one
     if (!conversationId) {
+      isNewConversation = true;
       try {
         const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
           method: 'POST',
@@ -117,6 +124,11 @@ const Chatbot: React.FC = () => {
           setConversations(prev => [...prev, newConversation]);
           conversationId = newConversation.id;
           setCurrentConversationId(newConversation.id);
+        } else {
+          // Handle error in conversation creation
+          console.error("Error creating new conversation");
+          setIsTyping(false);
+          return;
         }
       } catch (error) {
         console.error("Error creating new conversation:", error);
@@ -125,17 +137,35 @@ const Chatbot: React.FC = () => {
       }
     }
 
+    // If it's a new conversation, update its title with the first message
+    if (isNewConversation && conversationId) {
+      try {
+        await fetch(`${BACKEND_API}/chat/conversations/${conversationId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+          body: JSON.stringify({ title: originalUserInput }),
+        });
+        // Update conversation title in the local state
+        setConversations(prev => prev.map(c => c.id === conversationId ? { ...c, title: originalUserInput } : c));
+      } catch (error) {
+        console.error("Error updating conversation title:", error);
+      }
+    }
+
+
     try {
       const response = await fetch(`${BACKEND_API}/chat/conversations/${conversationId}/messages/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ sender: 'user', content: userInput }),
+        body: JSON.stringify({ sender: 'user', content: originalUserInput }),
       });
       if (response.ok) {
         const botMessageData = await response.json();
         const formattedText = await formatBotMessage(botMessageData.content);
         const botMessage: Message = { text: formattedText, sender: 'bot' };
         setMessages((prev) => [...prev, botMessage]);
+      } else {
+        console.error("Failed to send message");
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -179,7 +209,7 @@ const Chatbot: React.FC = () => {
 
 
   const exampleQuestions = [
-    'ค่าเบี้ยเดินทางใน ประเทศ',
+    'ตัวอย่างค่าเบี้ยเดินทางในประเทศ',
     'ค่าใช้จ่ายในการฝึกอบรม จัดงาน',
     'ค่าใช้จ่ายในการประชุม',
     'ค่าตอบแทนปฏิบัติงานนอกเวลาราชการ',
@@ -193,7 +223,7 @@ const Chatbot: React.FC = () => {
     <div className="relative h-full bg-white overflow-hidden flex">
       {/* Sidebar */}
       <aside className={`bg-rmutl-brown text-white p-4 flex flex-col w-80 transition-transform duration-300 ease-in-out z-20 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full absolute md:relative'}`}>
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-4 ">
           <h1 className="text-xl font-bold">ประวัติการสนทนา</h1>
           <button onClick={() => setIsSidebarOpen(false)} className="text-gray-400 hover:text-white md:hidden">
             <ChevronLeftIcon />

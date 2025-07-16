@@ -23,6 +23,9 @@ class ConversationBase(BaseModel):
 class ConversationCreate(ConversationBase):
     pass
 
+class ConversationUpdate(BaseModel):
+    title: str
+
 class Conversation(ConversationBase):
     id: int
     user_id: int

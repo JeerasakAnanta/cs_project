@@ -15,6 +15,14 @@ def get_conversations_by_user(db: Session, user_id: int):
 def get_conversation(db: Session, conversation_id: int):
     return db.query(models.Conversation).filter(models.Conversation.id == conversation_id).first()
 
+def update_conversation_title(db: Session, conversation_id: int, title: str):
+    db_conversation = get_conversation(db, conversation_id)
+    if db_conversation:
+        db_conversation.title = title
+        db.commit()
+        db.refresh(db_conversation)
+    return db_conversation
+
 def create_message(db: Session, message: schemas.MessageCreate, conversation_id: int):
     db_message = models.Message(**message.dict(), conversation_id=conversation_id)
     db.add(db_message)
