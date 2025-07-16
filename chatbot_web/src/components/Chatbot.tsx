@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SendIcon from '@mui/icons-material/Send';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { marked } from 'marked';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC;
@@ -15,7 +14,6 @@ const Chatbot: React.FC = () => {
     Array<{ text: string; sender: 'user' | 'bot' }>
   >(JSON.parse(localStorage.getItem('chatbot-messages') || '[]'));
   const [isTyping, setIsTyping] = useState<boolean>(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const chatBoxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,7 +36,7 @@ const Chatbot: React.FC = () => {
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       const errorMessage = {
-        text: 'เกิดข้อผิดพลาดในการติดต่อกับ chatbot.',
+        text: 'ขออภัย, เกิดข้อผิดพลาดบางอย่างในการสื่อสารกับบอท',
         sender: 'bot' as const,
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -64,7 +62,7 @@ const Chatbot: React.FC = () => {
     const formattedMessage = await marked.parse(data.response);
     if (data.source) {
       const sourceData = data.source.replace('./pdfs/', '');
-      return `${formattedMessage}\n\nเอกสารอ้างอิง: <a href="${DOCS_STATIC}/file/${sourceData}" target="_blank" rel="noopener noreferrer" class="underline text-blue-600">${sourceData}</a>`;
+      return `${formattedMessage}\n\nอ้างอิง: <a href="${DOCS_STATIC}/file/${sourceData}" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline hover:text-blue-300">${sourceData}</a>`;
     } else {
       return formattedMessage;
     }
@@ -80,10 +78,6 @@ const Chatbot: React.FC = () => {
     localStorage.removeItem('chatbot-messages');
   };
 
-  const setExampleQuestion = (question: string) => {
-    setUserInput(question);
-  };
-
   const exampleQuestions = [
     'ค่าใช้จ่ายในการเดินทางไปราชการ',
     'ค่าใช้จ่ายในการฝึกอบรม จัดงาน',
@@ -96,113 +90,97 @@ const Chatbot: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-gray-50">
-      {/* Header */}
-      <header className="bg-amber-900 text-white py-3 px-6 flex justify-between items-center shadow-md">
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-white hover:bg-amber-800 p-1 rounded"
-          >
-            {isSidebarOpen ? <ChevronLeftIcon /> : <MenuIcon />}
-          </button>
-        </div>
-        <div className="text-lg font-semibold">ระบบตอบคำถามคู่มือราชการ</div>
-        <div className="w-10"></div> {/* Spacer for balance */}
-      </header>
-
-      {/* Body */}
-      <div className="flex flex-1 overflow-hidden relative">
-        {/* Sidebar */}
-        <aside
-          className={`absolute top-0 left-0 h-full w-72 bg-gray-100 p-4 border-r overflow-y-auto transition-transform duration-300 ease-in-out z-20 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            }`}
-        >
+    <div className="flex h-screen bg-gray-800 text-white">
+      {/* Sidebar */}
+      <aside className="w-64 bg-gray-900 p-4 flex flex-col">
+        <div className="flex-grow">
+          <h1 className="text-xl font-bold mb-4">ระบบถามตอบ</h1>
           <button
             onClick={clearHistory}
-            className="bg-white text-amber-900 px-4 py-1 rounded shadow hover:bg-gray-100 flex items-center"
+            className="w-full bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center justify-center"
           >
-            <DeleteForeverIcon className="inline mr-1" />
-            เริ่มใหม่
+            <DeleteForeverIcon className="mr-2" />
+            เริ่มการสนทนาใหม่
           </button>
-          <h2 className="text-md font-bold mb-4">📌 ตัวอย่างคำถาม</h2>
-          {exampleQuestions.map((q, i) => (
-            <button
-              key={i}
-              onClick={() => setExampleQuestion(q)}
-              className="block w-full text-left mb-2 px-3 py-2 bg-white rounded hover:bg-amber-800 hover:text-white transition"
-            >
-              {q}
-            </button>
-          ))}
-        </aside>
+        </div>
+        <div className="text-xs text-gray-400">
+          <p>เวอร์ชัน 1.0.0</p>
+        </div>
+      </aside>
 
-        {/* Overlay */}
-        {isSidebarOpen && (
-          <div
-            className="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300 z-10"
-            onClick={() => setIsSidebarOpen(false)}
-          ></div>
-        )}
-
-        {/* Chat Area */}
-        <main className="w-full flex flex-col bg-white">
-          {/* Chat Messages */}
-          <div
-            ref={chatBoxRef}
-            className="flex-1 overflow-y-auto p-8 space-y-4 flex flex-col items-center"
-          >
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`w-full flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`p-3 rounded-3xl shadow max-w-xl whitespace-pre-wrap ${msg.sender === 'user'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-amber-100 text-gray-900'
-                    }`}
-                  dangerouslySetInnerHTML={{ __html: msg.text }}
-                />
+      {/* Main Chat Area */}
+      <main className="flex-1 flex flex-col">
+        <div ref={chatBoxRef} className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-4xl mx-auto">
+            {messages.length === 0 && !isTyping ? (
+              <div className="text-center">
+                <SmartToyIcon style={{ fontSize: 60 }} className="text-gray-400 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold mb-6">สวัสดีครับ, ให้ผมช่วยอะไร?</h2>
+                <div className="grid grid-cols-2 gap-4">
+                  {exampleQuestions.map((q, i) => (
+                    <div key={i} onClick={() => setUserInput(q)} className="bg-gray-700 p-4 rounded-lg hover:bg-gray-600 cursor-pointer">
+                      <p className="font-semibold">{q}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+            ) : (
+              messages.map((msg, index) => (
+                <div key={index} className={`flex items-start gap-4 my-6 ${msg.sender === 'user' ? 'justify-end' : ''}`}>
+                  {msg.sender === 'bot' && <SmartToyIcon className="text-amber-400" style={{ fontSize: 32 }} />}
+                  <div
+                    className={`p-4 rounded-2xl max-w-2xl whitespace-pre-wrap prose prose-invert ${msg.sender === 'user'
+                      ? 'bg-blue-600'
+                      : 'bg-gray-700'
+                      }`}
+                    dangerouslySetInnerHTML={{ __html: msg.text }}
+                  />
+                  {msg.sender === 'user' && <AccountCircleIcon className="text-blue-300" style={{ fontSize: 32 }} />}
+                </div>
+              ))
+            )}
             {isTyping && (
-              <div className="w-full flex justify-center">
-                <p className="text-blue-500 animate-pulse">
-                  กำลังค้นหาคำตอบจากเอกสาร...
-                </p>
+              <div className="flex items-center gap-4 my-6">
+                <SmartToyIcon className="text-amber-400" style={{ fontSize: 32 }} />
+                <div className="bg-gray-700 p-4 rounded-2xl">
+                  <p className="animate-pulse">กำลังพิมพ์...</p>
+                </div>
               </div>
             )}
           </div>
+        </div>
 
-          {/* Input Area */}
-          <div className="border-t p-4 flex items-center bg-white justify-center">
-            <div className="w-full max-w-3xl flex items-center">
-              <KeyboardVoiceIcon className="mr-2 text-gray-500" />
+        {/* Input Area */}
+        <div className="p-6 bg-gray-800">
+          <div className="max-w-3xl mx-auto">
+            <div className="relative flex items-center">
               <input
                 type="text"
-                className="flex-1 border border-gray-300 rounded-full px-4 py-2"
-                placeholder="พิมพ์คำถามที่นี่..."
+                className="w-full bg-gray-700 border-none rounded-lg pl-4 pr-12 py-3 text-white focus:ring-2 focus:ring-amber-500"
+                placeholder="พิมพ์คำถามของคุณที่นี่..."
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
               />
               <button
                 onClick={handleSendMessage}
-                className="ml-2 bg-amber-800 text-white px-4 py-2 rounded-full hover:bg-amber-600"
+                disabled={!userInput.trim()}
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-amber-600 text-white p-2 rounded-md hover:bg-amber-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
               >
-                <SendIcon className="mr-1" />
-                ส่ง
+                <SendIcon />
               </button>
             </div>
+            <p className="text-xs text-center text-gray-400 mt-2">
+              LLMs can make mistakes. Verify important information.
+            </p>
           </div>
-        </main>
-      </div>
-
-      {/* Footer */}
-      <footer className="text-center py-2 text-sm text-gray-500">
-        LLMs can make mistakes. Verify important information.
-      </footer>
+        </div>
+      </main>
     </div>
   );
 };

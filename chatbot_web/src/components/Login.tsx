@@ -1,6 +1,6 @@
 // src/components/Login.tsx
 import React, { useState } from 'react';
-import axios, { AxiosResponse } from 'axios'; // Import AxiosResponse
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -17,7 +17,7 @@ const Login: React.FC = () => {
       formData.append('username', username);
       formData.append('password', password);
 
-      const response: AxiosResponse<{ access_token: string }> = await axios.post( // Specify the type here
+      const response = await axios.post<{ access_token: string }>(
         'http://localhost:8001/api/login',
         formData,
         {

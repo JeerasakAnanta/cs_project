@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 // Components - Public
 import Navbar from './components/Navbar';
@@ -25,12 +25,14 @@ import Playground from './components/admin/Playground';
 // Auth Wrapper
 import PrivateRoute from './components/PrivateRoute';
 
-const App: React.FC = () => {
-  return (
-    <Router>
-      <Navbar />
+const AppContent: React.FC = () => {
+  const location = useLocation();
+  const isChatPage = location.pathname === '/';
 
-      <main className="flex-1 p-4 ml-60">
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {!isChatPage && <Navbar />}
+      <main className={`flex-1 ${!isChatPage ? 'p-4 ml-60' : ''}`}>
         <Routes>
           {/* ✅ Login page - only public route */}
           <Route path="/login" element={<Login />} />
@@ -131,8 +133,15 @@ const App: React.FC = () => {
           <Route path="*" element={<Pagenotfound />} />
         </Routes>
       </main>
+      {/* {!isChatPage && <Footer />} */}
+    </div>
+  );
+}
 
-      {/* <Footer /> */}
+const App: React.FC = () => {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 };
