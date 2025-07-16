@@ -1,278 +1,203 @@
-# Chatbot Document Q&A Intergration OpenAI LLM with techical RAG  
+# LannaFinChat: Intelligent Document-Based Q&A Chatbot using RAG and LLM (ระบบแชตบอตตอบคำถามจากเอกสารด้วยเทคนิค RAG และ LLM – ล้านนาฟินแชต) 
 
-## Overview 🔎
-- This project demonstrates the development of an AI chatbot assistant as part of the Final Project for the Computer Science program at RMTUL. It focuses on a chatbot designed for document question and answer (Q&A) using large language models (LLMs) and the LangChain framework.
-- The chatbot integrates various LLMs, including the OpenAI API (model GPT-4o-mini) and a Local LLM model (Ollama) engaging Llama, and employs the RAG (Retrieval Augmented Generation) method to generate concise summaries from the Vector database (Qdrant).
-- A user-friendly web interface (WebUI) has also been developed to facilitate seamless interaction with the model via the FastAPI backend.
+## ภาพรวม project 🔎
+- การพัฒนาแชตบอต ถามตอบ คู่มือปฏิบัติงานการเบิกจ่ายค่าใช้จ่าย ในการดำเนินงานของ มทร.ล้านนา โดยใช้โมเดล LLM ร่วมกับเทคนิค RAG
+* โครงการนี้เป็นส่วนหนึ่งของโครงงาน ระดับปริญญาตรี สาขาวิทยาการคอมพิวเตอร์ มหาวิทยาลัยเทคโนโลยีราชมงคลล้านนา (RMUTL) ซึ่งมีวัตถุประสงค์เพื่อพัฒนาแชตบอตผู้ช่วยอัจฉริยะ ที่สามารถตอบคำถามจากเอกสารโดยใช้เทคโนโลยีปัญญาประดิษฐ์ LLM (Large Language Models) โดยอาศัยเฟรมเวิร์ก LangChain
+* แชตบอตนี้ผสานการทำงานระหว่างโมเดล LLM ได้แก่ OpenAI (GPT-4o-mini) และโมเดล Local LLM (Ollama - Llama) โดยใช้เทคนิค RAG (Retrieval Augmented Generation) เพื่อสรุปข้อมูลจากฐานข้อมูลเวกเตอร์ (Qdrant)
+* มีการพัฒนาอินเทอร์เฟซสำหรับผู้ใช้ (WebUI) ที่ใช้งานง่ายและเชื่อมต่อกับระบบหลังบ้านผ่าน FastAPI
+* มีระบบ Backend Analysis System
 
-## 🔑Key Features
-- user-friendly **Web Interface** for interacting with the chatbot
-- **Backend API** built with FastAPI and Swagger for executing human commands
-- **Document Management System** for processing and indexing documents
-- user interface for viewing and managing the **Vector Database** using Qdrant
+## 🔑คุณสมบัติหลัก
 
-## 🛒Prerequisites  
-- [Python 3.12.3](https://www.python.org/downloads)
-- [LLM model](https://ollama.com)
-  - [OpenAI API](https://platform.openai.com)
-  - [Ollama](https://ollama.com/)
-- [Langchain](https://www.langchain.com/)
-- [FastAPI](https://fastapi.tiangolo.com/) 
-- [Node.js](https://nodejs.org/en)
-- [Vite](https://vitejs.dev/)
-- [React TypeScript](https://react.dev/)
-- [Docker Engine](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
+* อินเทอร์เฟซผู้ใช้สำหรับโต้ตอบกับแชตบอต
+* ระบบ API หลังบ้านพัฒนาโดยใช้ FastAPI และ Swagger
+* ระบบจัดการเอกสาร เพื่อประมวลผลและจัดทำดัชนีเอกสาร
+* อินเทอร์เฟซสำหรับแสดงและจัดการฐานข้อมูลเวกเตอร์ด้วย Qdrant
 
-## Step 1: ⬇ Clone the Repository  
--  source code on [Github](https://github.com/JeerasakAnanta/cs_project) you can clone  with `https` or `ssh`
-  - clone with https
-  ```bash 
-    git clone https://github.com/JeerasakAnanta/cs_project
-    cd cs_project
-  ```
-  - clone with ssh
-  ```sh
-    git clone git@github.com:JeerasakAnanta/cs_project.git
-    cd  cs_project
-  ```
-## Step 2:🎈Create Virtual Environments
-   you can create virtual environments  use  `venv` (2.1) or `poetry` (2.2) 
-  - if you note haave  venv on ubuntu  server 
-  ```bash
-  pip install poetry
-  ```
-  - install pip on ubuntu  
-  ```bash
-  sudo apt install python3-pip
-  ```
-  ### 2.1 creat virtual environments 
-  - 2.1.1 create with  venv (linux)
-  ```bash 
-  python3 -m venv envchatbot
-  ```
+## 🛒ความต้องการเบื้องต้น
 
-  - 2.1.2 activate environment (linux)
+* [Python 3.12.3](https://www.python.org/downloads)
+* [โมเดล LLM](https://ollama.com)
 
-  ```bash
-  source envchatbot/bin/activate  
-  ```
-   
-  2.1.3 create create with venv (window) 
-  
-  ```bash
-  python -m venv envchatbot
-  ```
-  
-- 2.1.3 activate environment (window)
+  * [OpenAI API](https://platform.openai.com)
+  * [Ollama](https://ollama.com/)
+* [Langchain](https://www.langchain.com/)
+* [FastAPI](https://fastapi.tiangolo.com/)
+* [Node.js](https://nodejs.org/en)
+* [Vite](https://vitejs.dev/)
+* [React TypeScript](https://react.dev/)
+* [Docker Engine](https://www.docker.com/)
+* [Docker Compose](https://docs.docker.com/compose/)
 
-  ```bash
-  .\envchatbot\Scripts\activate.bat
-  ```
+## ขั้นตอนที่ 1: ⬇️ โคลนโครงการ
 
-### 2.2 Poetry is a tool for dependency management and packaging
-  - 2.2.1 install  Poetry with pip
-    ```bash 
-    pip install poetry
-    ```
-    - if can't install
-      ```
-      pip install poetry --break-system-packages
-      ```
-    - install  on ubuntu
-      ```
-      sudo apt install python3-poetry
-      ```
-  - 2.2.2 install  dependency with poetry 
-    ```bash
-    poetry install 
-    ```
-  - 2.2.3 update  dependency  
-    ```bash
-    poetry update
-    ```
-  - 2.2.4 use poetry  shell 
-    ```bash
-    poetry  shell
-    ```
+สามารถโคลนโค้ดจาก [GitHub](https://github.com/JeerasakAnanta/cs_project) ได้ด้วยคำสั่ง:
 
-## Step 3: 🛠 Install  Dependencies with venv
-- 3.1 update  pip   24.0 -> 24.2
+```bash
+git clone https://github.com/JeerasakAnanta/cs_project
+cd cs_project
+```
 
-  ```bash
-  python3 -m pip install --upgrade pip
-  ```
+## ขั้นตอนที่ 2: 📦 สร้าง Virtual Environment ด้วย `uv`
 
-- 3.2 install  requirements
+* ติดตั้ง `uv` จากเอกสาร:
 
-  ```bash
-    pip install  -r requirements.txt
-  ```
+```bash
+https://docs.astral.sh/uv/getting-started/installation/
+```
 
-## Step 4: ⚙ Configurethe `.env`
-- 4.1 copy example `.env.example`  to `.env`  for API 
-  ```bash
-    cp .env.example .env
-  ```
-- 4.2 copy  example `.env.example`  to `chatbot_web/.env` for web site
-  ```bash 
-    cp .env.example chatbot_web/.env
-  ```
-- example  environment file `.env`
-  ```
-  # .env  
-  ```
-## Step 5 : 🗂 Create vecter DB with qdrant
+* สร้างและใช้งาน Virtual Environment:
 
-- 5.1 create vecter DB with qdrant with   `docker-compose.yml`
-  ```yaml
-  services:
-    # Qdrant service
-    qdrant:
-      image: qdrant/qdrant:latest
-      restart: always
-      container_name: qdrant_vectorDB
-      ports:
-        - 6333:6333
-        - 6334:6334
-      expose:
-        - 6333
-        - 6334
-        - 6335
-      configs:
-        - source: qdrant_config
-          target: /qdrant/config/production.yaml
-      volumes:
-        - ./qdrant_data:/qdrant/storage
-  configs:
-    qdrant_config:
-      content: "log_level: INFO"
-  ```
-- 5.2 start qdrant  with compose 
-  ```sh
-  docker compose up -d 
-  ```
-- 5.3 check qdrant 
-  ```sh 
-    docker ps -a 
-  ``` 
-- 5.4 cd `chatbot_pdf_management_api` 
-- 5.5 create folder `pdfs`
-- 5.6 upload file .pdf to `pdfs`  
-- 5.7 create collection qdrant with python use command run scrtip 
-  `/chatbot_pdf_management_api/create_vecter_db.py`
-    
-  ```sh
-  python3 create_vecter_db.py
-  ```
-## Step 6: Runing  Development 
-- install npm 
-  ```bash
-  # install npm linux
-  sudo apt install npm
-  ```
+```bash
+uv venv
+uv activate
+```
 
-- `web Chatbot UI`: /chatbot_web/
-  ```bash
-  npm run dev 
-  ```
-- `Chatbot API`:
-  ```bash    
-  uvicorn chatbot_api:app --host 0.0.0.0 --port 8003 --reload
-  ```
-- `Chatbot PDF management`:
-  ```bash
-  uvicorn pdf_management_api:app --host 0.0.0.0 --port 8004 --reload
-  ```
+## ขั้นตอนที่ 4: ⚙ ตั้งค่าตัวแปรสภาพแวดล้อม `.env`
 
-## Step 6: Runing with docker  &  run docker comopse 
+* คัดลอกไฟล์ตัวอย่าง `.env.example` ไปยัง `.env`:
 
-- สร้าง  docker container  โดยการใช้งาน Script ในการ built 
+```bash
+cp .env.example .env
+cp .env.example chatbot_web/.env
+```
 
-  ```bash
-  chmod +x  run_build_image.sh 
-  ./run_build_image.sh
-  ```
-## web URL access port
-- WebChatbotUI: http://localhost:8002
-- Chat API: http://localhost:8003
-- ระบบจัดการ PDF: http://localhost:8004
-- Qdrant VecterDB: http://localhost:6333
-- Statict Web: http://localhost:8085
- 
-## 🧪 Example Fine-tuning (RAG Chat Bot) 🚀
-### fine-tuning with System  promte
-  - file `chatbot_api/chatbot_api.py`
-  - `{context}` : ข้อความที่ค้น หาได้จาก Vecter DB  
-  - `{question}`: ข้อความที่ ถาม Chatbot 
-  - 
-  - ```python 
-    prompt = PromptTemplate(
-          input_variables=["context", "question"],
-          template="""
-              you are a helpful assistant. please answer the question based on the context below.
-          {context}
-          original: {question}
-          """,
-      )
-    ```
-### fine-tuning  LLM model 
-  - exapmel with  openai 
-  - ```python
-     llm=ChatOpenAI(
-            _deployment="gpt-4o-mini",
-            api_version="2023-06-01-preview",
-            temperature=0.2,
-            max_tokens=5000,
-            timeout=None,
-            max_retries=2,
-        )
-    ```
-  - API Ref : [OpenAI](https://platform.openai.com/docs/api-reference/introduction) 
+## ขั้นตอนที่ 5: 🗂 สร้างฐานข้อมูลเวกเตอร์ด้วย Qdrant
 
-### fune-tuning RAG 
+* แก้ไข `docker-compose.yml` เพื่อตั้งค่าระบบ Qdrant ตามตัวอย่างที่ให้ไว้
+* เริ่มระบบ Qdrant:
 
-  - file `chatbot_api/chatbot_api.py`
-  - `search_type` : similarity 
-  - `return_sourece_document` :คืนค่าเอกสาร
-  ```python
-    return ConversationalRetrievalChain.from_llm(
-        llm=ChatOpenAI(...),
-        retriever=qdrant_store.as_retriever(
-            search_type="similarity", search_kwargs={"k": 6, "score_threshold": 0.4}
-        ),
-        combine_docs_chain_kwargs={"prompt": prompt},
-        return_source_documents=True,
-    )
-  ```
-  - API Ref: [ConversationalRetrievalChain](https://python.langchain.com/api_reference/langchain/chains/langchain.chains.conversational_retrieval.base.ConversationalRetrievalChain.html)
+```bash
+docker compose up -d
+docker ps -a
+```
 
-## 🆕 Feature
+* สร้างโฟลเดอร์ `pdfs` ใน `chatbot_pdf_management_api` และอัปโหลดไฟล์ PDF เข้าไป
+* สร้าง collection ด้วยคำสั่ง:
 
-### 🌐 Web ChatBot 
-  - `/` หน้าหลักในการถามตอบ chatbot   
-  - `/pdflist` เเสดง รายการเอกสารที่ ChatBot สามารถตอบได้ทั้งหมด 
-  - `/management` ระบบการจัดการ เอกสาร PDF
-  - `/upload`  เอกสารเก็บไว้ในเเล้วทำให้ เป็น vecter DB  
-  - `/list` รายการเอกสารที่ chatbot สามารถตอบได้ทั้งหมด 
-  - `/about` เกี่ยวกับสั้นๆ chatbot  
+```bash
+python3 chatbot_pdf_management_api/create_vecter_db.py
+```
 
-### 🚧 API Endpoint 
+## ขั้นตอนที่ 6: เริ่มต้นระบบระหว่างการพัฒนา
+
+* ติดตั้ง npm:
+
+```bash
+sudo apt install npm
+```
+
+* เริ่มระบบ Frontend `/chatbot_web/`:
+
+```bash
+npm run dev
+```
+
+* เริ่ม API สำหรับแชตบอต:
+
+```bash
+uvicorn chatbot_api:app --host 0.0.0.0 --port 8003 --reload
+```
+
+* เริ่ม API สำหรับจัดการ PDF:
+
+```bash
+uvicorn pdf_management_api:app --host 0.0.0.0 --port 8004 --reload
+```
+
+## ขั้นตอนที่ 6 (ทางเลือก): การรันด้วย Docker
+
+* ใช้สคริปต์สร้าง Docker image:
+
+```bash
+chmod +x run_build_image.sh 
+./run_build_image.sh
+```
+
+## พอร์ตสำหรับเข้าถึงระบบ
+
+* Web Chatbot UI: [http://localhost:8002](http://localhost:8002)
+* Chat API: [http://localhost:8003](http://localhost:8003)
+* ระบบจัดการ PDF: [http://localhost:8004](http://localhost:8004)
+* Qdrant Vector DB: [http://localhost:6333](http://localhost:6333)
+* Static Web: [http://localhost:8085](http://localhost:8085)
+
+---
+
+## 🧪 ตัวอย่างการปรับจูน (Fine-Tuning) ระบบ RAG
+
+### การปรับ System Prompt
+
+```python
+prompt = PromptTemplate(
+    input_variables=["context", "question"],
+    template="""
+        you are a helpful assistant. please answer the question based on the context below.
+    {context}
+    original: {question}
+    """,
+)
+```
+
+### การปรับจูนโมเดล LLM
+
+```python
+llm = ChatOpenAI(
+    _deployment="gpt-4o-mini",
+    api_version="2023-06-01-preview",
+    temperature=0.2,
+    max_tokens=5000,
+    timeout=None,
+    max_retries=2,
+)
+```
+
+### การใช้ RAG
+
+```python
+return ConversationalRetrievalChain.from_llm(
+    llm=ChatOpenAI(...),
+    retriever=qdrant_store.as_retriever(
+        search_type="similarity", search_kwargs={"k": 6, "score_threshold": 0.4}
+    ),
+    combine_docs_chain_kwargs={"prompt": prompt},
+    return_source_documents=True,
+)
+```
+
+---
+
+## 🆕 ฟีเจอร์ของระบบ
+
+### 🌐 Web ChatBot
+
+* `/` หน้าแชตหลัก
+* `/pdflist` รายการเอกสารทั้งหมด
+* `/management` จัดการเอกสาร
+* `/upload` อัปโหลด PDF เพื่อแปลงเป็นเวกเตอร์
+* `/list` รายการเอกสาร
+* `/about` ข้อมูลเกี่ยวกับระบบ
+
+### 🚧 API Endpoint
 
 #### 🔗 Chatbot API
-- `/api/`: Root  
-- `/api/chat`: Chatbot 
-- `/api/history`: list of hisotry chatbot   
-- `/api/clear-history`: clear chat hisotry
 
-#### 📚 Chatbot PDF management API  
-- `/`:Root 
-- `/upload` :  update file  
-- `/delete/{filename}`
-- `/files` : files pdf 
-- `/pdflist` : list of pdf 
-- `/reembedding` : re-embeddings
-  
+* `/api/` : หน้าหลัก
+* `/api/chat` : ส่งข้อความถามแชตบอต
+* `/api/history` : ดูประวัติแชต
+* `/api/clear-history` : ล้างประวัติแชต
+
+#### 📚 Chatbot PDF Management API
+
+* `/` : หน้าหลัก
+* `/upload` : อัปโหลดไฟล์
+* `/delete/{filename}` : ลบไฟล์
+* `/files` : รายการไฟล์ PDF
+* `/pdflist` : รายการไฟล์ทั้งหมด
+* `/reembedding` : ทำ embeddings ใหม่
+
+---
+
 ## 🚩 Sequence diagram 
 ```mermaid
 ---
@@ -354,35 +279,42 @@ title :  Docker Image  Project Structure
     C<-->F
     B<-->F
 ```
-## ✈ Version 
 
-### 🕸 WebGUI
-- 0.1.0 initial project web UI
+## ✈ เวอร์ชันของโปรเจกต์
 
-   
-### 🔗 ChatBot_API
-- 0.10 initial project chatbot API
+### 🕸 Web GUI
 
-### 📑 PDF_API
-- 0.1.0 initial project pdf management API 
+* เวอร์ชัน 0.1.0
 
-## 👷‍♂️ Development 
-- Start project on  1 December 2024 to  2025
-- Jeerasak Ananta  (Super AI Engineer Season 4 & SC Student RMUTL) [email](jeerasakananta@gmail.com) 
+### 🔗 ChatBot API
 
-## 🔃 Reference
-- [[1] LangChain ](https://www.langchain.com/) 
-- [[2] OpenAI API Service ](https://platform.openai.com/docs/overview)
-- [[3] High-Performance Vector Search at Scale (Qdrant)
- ](https://qdrant.tech/)
-- [[4] RAG (Retrieval-Augmented Generation)](https://aws.amazon.com/what-is/retrieval-augmented-generation/)
-- [[5] Uvicorn](https://www.starlette.io/uvicorn/)
-- [[6] FastAPI](https://fastapi.tiangolo.com/)
-- [[7] Prompt Engineering Guide
-](https://www.promptingguide.ai/)
+* เวอร์ชัน 0.1.0
 
-- [[8] Docker engine and docker compose](https://www.docker.com/)
+### 📑 PDF Management API
 
-## 😊 License
-This project, Prototype One, is licensed under the terms of the MIT license, created for educational purposes at Rajamangala University of Technology Lanna (RMUTL) in the Computer Science program.
+* เวอร์ชัน 0.1.0
 
+---
+
+## 👷‍♂️ ผู้พัฒนา
+
+* เริ่มพัฒนาโครงการเมื่อ 1 ธันวาคม 2567 ถึง 2568
+* เจียระศักดิ์ อนันตะ (นักศึกษาวิทยาการคอมพิวเตอร์ RMUTL และผู้เข้าร่วมโครงการ Super AI Engineer Season 4)
+* ติดต่ออีเมล: [jeerasakananta@gmail.com](mailto:jeerasakananta@gmail.com)
+
+---
+
+## 🔃 แหล่งอ้างอิง
+
+* LangChain
+* OpenAI API
+* Qdrant
+* Retrieval-Augmented Generation (RAG)
+* Uvicorn
+* FastAPI
+* Prompt Engineering Guide
+* Docker Engine & Compose
+
+---
+## 📝 การอนุญาตให้ใช้งาน (License)
+- โครงการ LannaFinChat: ระบบแชตบอตถาม-ตอบจากเอกสารด้วยเทคนิค RAG และ LLM นี้ อยู่ภายใต้สัญญาอนุญาตแบบ MIT License พัฒนาขึ้นเพื่อวัตถุประสงค์ทางการศึกษา ภายใต้หลักสูตรวิทยาการคอมพิวเตอร์ คณะวิทยาศาสตร์และเทคโนโลยีการเกษตร มหาวิทยาลัยเทคโนโลยีราชมงคลล้านนา (RMUTL)
