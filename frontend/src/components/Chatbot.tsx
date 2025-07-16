@@ -367,7 +367,11 @@ const Chatbot: React.FC = () => {
                     <SmartToyIcon className="text-rmutl-brown" />
                   </div>
                   <div className="p-4 rounded-lg bg-white shadow-md">
-                    <p>น้องคำเงินกำลังพิมพ์...</p>
+                    <div className="typing-indicator">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
                   </div>
                 </div>
               )}
