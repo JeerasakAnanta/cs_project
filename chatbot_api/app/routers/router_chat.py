@@ -24,6 +24,9 @@ from app.login_system import auth
 from app.login_system.login import register, get_db, login, logout, refresh
 from app.login_system.schemas import UserCreate
 
+# logging to db
+from app.logs_system.utils import log_chat_interaction
+from datetime import datetime
 
 # Create log folder if it doesn't exist
 if not os.path.exists("./log"):
@@ -100,6 +103,21 @@ async def chat_agent_graph(request: QueryModel):
 
 
 @router.post("/chat/new_rag")
-async def new_rags(request: QueryModel):
+async def new_rags(request: QueryModel, db: Session = Depends(get_db)):
+
+    logger.info(f"Received user query: {request.query}")
+    start_time = datetime.utcnow()
+
     answer = generation_answer(request.query)
+
+    end_time = datetime.utcnow()
+
+    log_chat_interaction(
+        db=db,
+        user_id="test-user",
+        query=request.query,
+        response=answer,
+        start_timestamp=start_time,
+        end_timestamp=end_time,
+    )
     return {"response": answer}

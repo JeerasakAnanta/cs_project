@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models import ChatLog
+from app.logs_system.chat_log import ChatLog
 from datetime import datetime
 
 
@@ -8,17 +8,19 @@ def log_chat_interaction(
     user_id: str,
     query: str,
     response: str,
-    source_docs: list[str] = [],
-    feedback: int = None,
-    timestamp: datetime = None,
+    start_timestamp: datetime = None,
+    end_timestamp: datetime = None,
 ):
     chat_log = ChatLog(
         user_id=user_id,
         query=query,
         response=response,
-        source_docs=source_docs,
-        feedback=feedback,
-        timestamp=timestamp or datetime.utcnow(),
+        start_timestamp=start_timestamp,
+        end_timestamp=end_timestamp,
     )
-    db.add(chat_log)
-    db.commit()
+    try:
+        db.add(chat_log)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise e
