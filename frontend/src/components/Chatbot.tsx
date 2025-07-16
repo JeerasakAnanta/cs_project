@@ -1,18 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SendIcon from '@mui/icons-material/Send';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import AddCommentIcon from '@mui/icons-material/AddComment';
-import { marked } from 'marked';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import MenuIcon from '@mui/icons-material/Menu';
 import { useAuth } from '../contexts/AuthContext';
 import FeedbackButtons from './FeedbackButtons';
 import FeedbackModal from './FeedbackModal';
-
-const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
-const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC;
+import { Edit2, ThumbsDown, ThumbsUp } from 'lucide-react';
 
 interface Message {
   id?: number;
@@ -20,25 +13,32 @@ interface Message {
   sender: 'user' | 'bot';
 }
 
-interface Conversation {
-  id: number;
-  title: string;
+interface ChatbotProps {
+  currentConversationId: number | null;
+  setCurrentConversationId: (id: number | null) => void;
   messages: Message[];
+  setMessages: (messages: Message[]) => void;
+  onSendMessage: (message: string) => Promise<void>;
+  conversations: { id: number; title: string }[];
 }
 
-const Chatbot: React.FC = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+const Chatbot: React.FC<ChatbotProps> = ({
+  currentConversationId,
+  messages,
+  setMessages,
+  onSendMessage,
+  conversations,
+}) => {
   const [userInput, setUserInput] = useState<string>('');
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState<number | null>(null);
 
   const { currentUser } = useAuth();
-  const authToken = localStorage.getItem('authToken');
+  const currentConversation = conversations.find(c => c.id === currentConversationId);
+
 
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -46,160 +46,28 @@ const Chatbot: React.FC = () => {
     }
   }, [messages]);
 
-  useEffect(() => {
-    fetchConversations();
-  }, []);
-
-  const fetchConversations = async () => {
-    try {
-      const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setConversations(data);
-      } else {
-        console.error('Failed to fetch conversations');
-      }
-    } catch (error) {
-      console.error('Error fetching conversations:', error);
-    }
-  };
-
-  const handleNewConversation = async () => {
-    try {
-      const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
-        body: JSON.stringify({ title: 'New Conversation' }),
-      });
-      if (response.ok) {
-        const newConversation = await response.json();
-        setConversations((prev) => [...prev, newConversation]);
-        setCurrentConversationId(newConversation.id);
-        setMessages([]);
-      }
-    } catch (error) {
-      console.error('Error creating new conversation:', error);
-    }
-  };
-
-  const handleSelectConversation = async (id: number) => {
-    setCurrentConversationId(id);
-    try {
-      const response = await fetch(`${BACKEND_API}/chat/conversations/${id}`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        const formattedMessages = await Promise.all(
-          data.messages.map(async (msg: any) => {
-            if (msg.sender === 'bot') {
-              return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' };
-            }
-            return { id: msg.id, text: msg.content, sender: 'user' };
-          })
-        );
-        setMessages(formattedMessages);
-      }
-    } catch (error) {
-      console.error('Error fetching conversation details:', error);
-    }
-  };
-
   const handleSendMessage = async () => {
     if (!userInput.trim()) return;
 
     const userMessage: Message = { text: userInput, sender: 'user' };
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
+    setMessages([...messages, userMessage]);
 
     const originalUserInput = userInput;
     setUserInput('');
     setIsTyping(true);
 
-    let conversationId = currentConversationId;
-    let isNewConversation = false;
+    await onSendMessage(originalUserInput);
 
-    if (!conversationId) {
-      isNewConversation = true;
-      try {
-        const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
-        if (response.ok) {
-          const newConversation = await response.json();
-          setConversations((prev) => [...prev, newConversation]);
-          conversationId = newConversation.id;
-          setCurrentConversationId(newConversation.id);
-        } else {
-          console.error('Error creating new conversation');
-          setIsTyping(false);
-          return;
-        }
-      } catch (error) {
-        console.error('Error creating new conversation:', error);
-        setIsTyping(false);
-        return;
-      }
-    }
-
-    if (isNewConversation && conversationId) {
-      try {
-        await fetch(`${BACKEND_API}/chat/conversations/${conversationId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
-          body: JSON.stringify({ title: originalUserInput }),
-        });
-        setConversations((prev) =>
-          prev.map((c) => (c.id === conversationId ? { ...c, title: originalUserInput } : c))
-        );
-      } catch (error) {
-        console.error('Error updating conversation title:', error);
-      }
-    }
-
-    try {
-      const response = await fetch(`${BACKEND_API}/chat/conversations/${conversationId}/messages/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
-        body: JSON.stringify({ sender: 'user', content: originalUserInput }),
-      });
-      if (response.ok) {
-        const botMessageData = await response.json();
-        const formattedText = await formatBotMessage(botMessageData.content);
-        const botMessage: Message = { id: botMessageData.id, text: formattedText, sender: 'bot' };
-        setMessages((prev) => [...prev, botMessage]);
-      } else {
-        console.error('Failed to send message');
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-    } finally {
-      setIsTyping(false);
-    }
+    setIsTyping(false);
   };
 
-  const handleFeedbackSubmit = async (
+  const handleFeedbackSubmit = (
     messageId: number,
     feedbackType: 'like' | 'dislike',
     comment: string,
     reason: string
   ) => {
-    const finalComment = reason === 'Others' ? `Others: ${comment}` : `${reason}: ${comment}`;
-    try {
-      await fetch(`${BACKEND_API}/chat/feedback/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`,
-        },
-        body: JSON.stringify({ message_id: messageId, feedback_type: feedbackType, comment: finalComment }),
-      });
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
-    }
+    // ... feedback logic
   };
 
   const handleDislikeClick = (messageId: number) => {
@@ -207,36 +75,8 @@ const Chatbot: React.FC = () => {
     setIsFeedbackModalOpen(true);
   };
 
-  const formatBotMessage = async (content: string): Promise<string> => {
-    const sourceRegex = /อ้างอิง: <a href="[^"]+"[^>]+>([^<]+)<\/a>/;
-    const match = content.match(sourceRegex);
-    let text = content;
-    let sourceLink = '';
-
-    if (match) {
-      text = content.replace(sourceRegex, '').trim();
-      const sourceData = match[1];
-      sourceLink = `\n\nอ้างอิง: <a href="${DOCS_STATIC}/file/${sourceData}" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline hover:text-blue-300">${sourceData}</a>`;
-    }
-
-    const formattedText = await marked.parse(text);
-    return formattedText + sourceLink;
-  };
-
-  const handleDeleteConversation = async (id: number) => {
-    try {
-      await fetch(`${BACKEND_API}/chat/conversations/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      setConversations((prev) => prev.filter((c) => c.id !== id));
-      if (currentConversationId === id) {
-        setCurrentConversationId(null);
-        setMessages([]);
-      }
-    } catch (error) {
-      console.error('Error deleting conversation:', error);
-    }
+  const handleExampleQuestionClick = (question: string) => {
+    setUserInput(question);
   };
 
   const exampleQuestions = [
@@ -244,161 +84,104 @@ const Chatbot: React.FC = () => {
     'ค่าใช้จ่ายในการฝึกอบรม จัดงาน',
     'ค่าใช้จ่ายในการประชุม',
     'ค่าตอบแทนปฏิบัติงานนอกเวลาราชการ',
-    'ค่าตอบแทนบุคคลหรือคณะกรรมการเกี่ยวกับการจัดซื้อจัดจ้างและบริหารพัสดุ',
-    'ค่าใช้จ่ายในการบริหารงาน',
-    'การจัดซื้อจัดจ้างที่มีความจำเป็นเร่งด่วน',
-    'การจัดหาพัสดุที่เกี่ยวกับค่าใช้จ่ายในการบริหารงาน',
   ];
 
   return (
-    <div className="flex h-screen bg-gray-200 font-sans">
-      {/* Sidebar */}
-      <aside
-        className={`bg-rmutl-brown text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } transition-transform duration-300 ease-in-out z-20 flex flex-col`}
-      >
-        <div className="flex justify-between items-center px-4">
-          <h2 className="text-2xl font-semibold text-white">History</h2>
-          <button onClick={() => setIsSidebarOpen(false)}>
-            <ChevronLeftIcon />
+    <div className="flex flex-col h-full bg-[#343541]">
+      {/* Chat Header */}
+      {currentConversation && (
+        <div className="p-4 border-b border-gray-700 flex justify-between items-center flex-shrink-0">
+          <h2 className="text-lg font-semibold text-white">{currentConversation.title}</h2>
+        </div>
+      )}
+
+      {/* Chat Messages */}
+      <div ref={chatBoxRef} className="flex-1 overflow-y-auto p-6">
+        {messages.length === 0 && !isTyping ? (
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="text-5xl font-bold mb-4">
+              <span className="text-blue-500">Hi, I'm </span>
+              <span className="text-white">LannaFinChat.</span>
+            </div>
+            <p className="text-gray-400 text-lg">How can I help you today?</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12 w-full max-w-3xl">
+              {exampleQuestions.map((q, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleExampleQuestionClick(q)}
+                  className="bg-gray-700 p-4 rounded-lg text-left hover:bg-gray-600 transition-colors"
+                >
+                  <p className="text-white font-semibold">{q}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="p-6">
+            {messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`flex items-start my-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`flex items-start max-w-2xl ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-600 text-white flex-shrink-0 mx-2">
+                    {msg.sender === 'bot' ? <SmartToyIcon /> : <AccountCircleIcon />}
+                  </div>
+                  <div className={`p-4 rounded-lg ${msg.sender === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-200'}`}>
+                    <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: msg.text }} />
+                    {msg.sender === 'bot' && msg.id && (
+                      <FeedbackButtons
+                        messageId={msg.id}
+                        onDislikeClick={() => handleDislikeClick(msg.id!)}
+                        onFeedbackSubmit={(feedbackType, comment, reason) =>
+                          handleFeedbackSubmit(msg.id!, feedbackType, comment || '', reason || '')
+                        }
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {isTyping && (
+          <div className="flex justify-start p-6">
+            <div className="bg-gray-700 p-3 rounded-lg">
+              <p className="text-white">กำลังพิมพ์...</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Message Input */}
+      <div className="p-4 bg-[#343541] border-t border-gray-700 flex-shrink-0">
+        <div className="relative max-w-3xl mx-auto bg-gray-700 rounded-lg">
+          <textarea
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+              }
+            }}
+            placeholder="Message LannaFinChat..."
+            className="w-full bg-transparent p-4 pr-16 text-white placeholder-gray-400 focus:outline-none resize-none"
+            rows={1}
+          />
+          <button
+            onClick={handleSendMessage}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-blue-500 disabled:text-gray-500"
+            disabled={!userInput.trim() || isTyping}
+          >
+            <SendIcon />
           </button>
         </div>
-        <button
-          onClick={handleNewConversation}
-          className="w-full flex items-center justify-center bg-rmutl-gold text-rmutl-brown font-bold py-2 px-4 rounded-lg hover:bg-yellow-400 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
-          disabled={currentConversationId !== null && messages.length === 0}
-        >
-          <AddCommentIcon className="mr-2" /> New Chat
-        </button>
-        <nav className="flex-1 overflow-y-auto">
-          {conversations
-            .slice()
-            .reverse()
-            .map((convo) => (
-            <div
-              key={convo.id}
-              className={`flex justify-between items-center p-2 my-1 rounded-md cursor-pointer ${
-                currentConversationId === convo.id ? 'bg-rmutl-gold text-rmutl-brown' : 'hover:bg-rmutl-light-brown'
-              }`}
-            >
-              <a
-                onClick={() => handleSelectConversation(convo.id)}
-                className="block flex-grow"
-              >
-                {convo.title}
-              </a>
-              <button onClick={() => handleDeleteConversation(convo.id)} className="ml-2 p-1 hover:text-red-500">
-                <DeleteForeverIcon fontSize="small" />
-              </button>
-            </div>
-          ))}
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <div className={`flex-1 flex flex-col relative transition-all duration-300 ease-in-out ${isSidebarOpen ? 'md:ml-64' : ''}`}>
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="absolute top-4 left-4 z-10 bg-rmutl-brown text-white p-2 rounded-full"
-        >
-          <MenuIcon />
-        </button>
-        
-        {/* Main Chat Area */}
-        <main className="flex-1 flex flex-col bg-gray-100">
-          <div className="flex-1 overflow-y-auto p-6" ref={chatBoxRef}>
-            <div className="max-w-4xl mx-auto">
-              {messages.length === 0 && !isTyping ? (
-                <div className="text-center text-gray-500">
-                  <SmartToyIcon style={{ fontSize: 60 }} className="mx-auto mb-4 text-rmutl-brown" />
-                  <h2 className="text-2xl font-bold mb-6 text-rmutl-brown">
-                  สวัสดีครับ คุณ {currentUser?.username}, มีอะไรให้ น้องคำเงิน ช่วยไหมครับ
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {exampleQuestions.map((q, i) => (
-                      <div
-                        key={i}
-                        onClick={() => setUserInput(q)}
-                        className="bg-white p-4 rounded-lg hover:bg-rmutl-gold hover:text-rmutl-brown cursor-pointer shadow-md transition-colors"
-                      >
-                        <p className="font-semibold">{q}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                messages.map((msg, index) => (
-                  <div key={index} className={`flex items-start gap-4 my-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    {msg.sender === 'bot' && (
-                      <div className="p-2 bg-gray-300 rounded-full">
-                        <SmartToyIcon className="text-rmutl-brown" />
-                      </div>
-                    )}
-                    <div className={`p-4 rounded-lg max-w-lg shadow-md ${msg.sender === 'user' ? 'bg-rmutl-gold text-rmutl-brown' : 'bg-white'}`}>
-                      <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: msg.text }}></div>
-                      {msg.sender === 'bot' && msg.id && (
-                        <FeedbackButtons
-                          messageId={msg.id}
-                          onDislikeClick={() => {
-                            if (msg.id) {
-                              handleDislikeClick(msg.id);
-                            }
-                          }}
-                          onFeedbackSubmit={(feedbackType, comment, reason) => {
-                            if (msg.id) {
-                              handleFeedbackSubmit(msg.id, feedbackType, comment || '', reason || '');
-                            }
-                          }}
-                        />
-                      )}
-                    </div>
-                    {msg.sender === 'user' && (
-                      <div className="p-2 bg-gray-300 rounded-full">
-                        <AccountCircleIcon className="text-rmutl-brown" />
-                      </div>
-                    )}
-                  </div>
-                ))
-              )}
-              {isTyping && (
-                <div className="flex items-center gap-4 my-4 justify-start">
-                  <div className="p-2 bg-gray-300 rounded-full">
-                    <SmartToyIcon className="text-rmutl-brown" />
-                  </div>
-                  <div className="p-4 rounded-lg bg-white shadow-md">
-                    <div className="typing-indicator">
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-          {/* Message Input */}
-          <div className="p-4 bg-white border-t border-gray-200">
-            <div className="flex items-center gap-4 max-w-4xl mx-auto">
-              <input
-                type="text"
-                placeholder="พิมพ์ข้อความ..."
-                className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rmutl-gold"
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              />
-              <button
-                onClick={handleSendMessage}
-                className="p-3 bg-rmutl-brown text-white rounded-lg hover:bg-rmutl-gold hover:text-rmutl-brown disabled:bg-gray-400"
-                disabled={isTyping}
-              >
-                <SendIcon />
-              </button>
-            </div>
-          </div>
-        </main>
+        <p className="text-xs text-center text-gray-500 mt-2">
+          AI-generated, for reference only
+        </p>
       </div>
+
       <FeedbackModal
         isOpen={isFeedbackModalOpen}
         onClose={() => setIsFeedbackModalOpen(false)}

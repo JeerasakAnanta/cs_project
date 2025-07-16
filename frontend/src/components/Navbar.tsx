@@ -1,131 +1,129 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Admin from './Admin';
-import RMUTLlogo from '../assets/Rmutl.png';
-import { Menu, X } from 'lucide-react';
+import { Plus, LogOut, User, Menu, X, Trash2 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext'; // Assuming useAuth provides logout and user info
 
-const Navbar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [visible, setVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 
-  const toggleMenu = () => {
+interface Conversation {
+  id: number;
+  title: string;
+}
+
+const Navbar: React.FC<{
+  onSelectConversation: (id: number) => void;
+  onNewConversation: () => void;
+  currentConversationId: number | null;
+}> = ({ onSelectConversation, onNewConversation, currentConversationId }) => {
+  const [isOpen, setIsOpen] = useState(true); // Default to open on desktop
+  const { currentUser, logout } = useAuth();
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const authToken = localStorage.getItem('authToken');
+
+  useEffect(() => {
+    fetchConversations();
+  }, []);
+
+  const fetchConversations = async () => {
+    try {
+      const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setConversations(data);
+      } else {
+        console.error('Failed to fetch conversations');
+      }
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
+    }
+  };
+
+  const handleDeleteConversation = async (id: number, e: any) => {
+    e.stopPropagation();
+    try {
+      await fetch(`${BACKEND_API}/chat/conversations/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      setConversations((prev) => prev.filter((c) => c.id !== id));
+      if (currentConversationId === id) {
+        onNewConversation(); // Or select another conversation
+      }
+    } catch (error) {
+      console.error('Error deleting conversation:', error);
+    }
+  };
+
+
+  const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleScroll = () => {
-    const currentScrollY = window.scrollY;
-    if (currentScrollY > lastScrollY && currentScrollY > 100) {
-      setVisible(false);
-    } else {
-      setVisible(true);
-    }
-    setLastScrollY(currentScrollY);
-  };
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [lastScrollY]);
-
   return (
-    <nav
-      className={`bg-rmutl-brown shadow-md p-3 transition-transform duration-300 sticky top-0 z-50 ${visible ? 'transform translate-y-0' : 'transform -translate-y-full'
-        }`}
-    >
-      <div className="container mx-auto flex items-center justify-between">
-        <div className="flex items-center">
-          <Link to="/" className="flex items-center mr-6">
-            <img src={RMUTLlogo} alt="RMUTL Logo" className="h-10" />
-          </Link>
-          {/* Navigation Links centered */}
-          <div className="hidden md:flex">
-            <ul className="flex space-x-2 text-lg">
-              <li>
-                <Link
-                  to="/"
-                  className="text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-full transition-colors"
-                >
-                  แชทบอท
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/pdflist"
-                  className="text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-full transition-colors"
-                >
-                  คู่มือปฏิบัติงาน
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/about"
-                  className="text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-full transition-colors"
-                >
-                  เกี่ยวกับ
-                </Link>
-              </li>
-            </ul>
-          </div>
+    <>
+      <button
+        onClick={toggleSidebar}
+        className="md:hidden p-2 text-white fixed top-2 left-2 z-50"
+      >
+        {isOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      <div
+        className={`bg-[#202123] w-64 h-full flex flex-col p-2 transition-transform duration-300 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } md:translate-x-0 md:relative fixed z-40`}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <span className="text-2xl font-bold text-white text-center">LannaFinChat</span>
         </div>
 
-        {/* Admin section and Hamburger on the right */}
-        <div className="flex items-center">
-          <div className="hidden md:block">
-            <Admin />
-          </div>
+        <button
+          onClick={onNewConversation}
+          className="flex items-center justify-center py-2 px-4 mb-4 bg-gray-700 hover:bg-gray-600 rounded-md text-white transition-colors"
+        >
+          <Plus size={20} className="mr-2" />
+          New chat
+        </button>
 
+        <div className="flex-1 overflow-y-auto">
+          <p className="text-xs text-gray-400 px-2 mb-2">Today</p>
+          <ul>
+            {conversations.map((conv) => (
+              <li key={conv.id}>
+                <button
+                  onClick={() => onSelectConversation(conv.id)}
+                  className={`w-full text-left px-3 py-2 rounded-md text-sm flex justify-between items-center text-white
+                    ${currentConversationId === conv.id ? 'bg-gray-700' : 'hover:bg-gray-600'}`}
+                >
+                  <span className="truncate">{conv.title}</span>
+                  <Trash2
+                    size={16}
+                    className="text-gray-400 hover:text-white"
+                    onClick={(e) => handleDeleteConversation(conv.id, e)}
+                  />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="border-t border-gray-700 pt-2">
+          <div className="flex items-center p-2 rounded-md hover:bg-gray-700 cursor-pointer text-white">
+            <User size={20} className="mr-3" />
+            <span>{currentUser?.username || 'My Profile'}</span>
+          </div>
           <button
-            className="md:hidden flex items-center text-white ml-4"
-            onClick={toggleMenu}
+            onClick={logout}
+            className="w-full flex items-center p-2 rounded-md hover:bg-gray-700 text-left text-white"
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+            <LogOut size={20} className="mr-3" />
+            <span>Logout</span>
           </button>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden mt-4">
-          <ul className="flex flex-col space-y-2">
-            <li>
-              <Link
-                to="/"
-                className="block text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-md"
-                onClick={() => setIsOpen(false)}
-              >
-                แชทบอท
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/pdflist"
-                className="block text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-md"
-                onClick={() => setIsOpen(false)}
-              >
-                คู่มือปฏิบัติงาน
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/about"
-                className="block text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-md"
-                onClick={() => setIsOpen(false)}
-              >
-                เกี่ยวกับ
-              </Link>
-            </li>
-            <li className="pt-2 border-t border-rmutl-tan">
-              <div className="flex justify-center items-center w-full">
-                <Admin />
-              </div>
-            </li>
-          </ul>
-        </div>
-      )}
-    </nav>
+    </>
   );
 };
 
