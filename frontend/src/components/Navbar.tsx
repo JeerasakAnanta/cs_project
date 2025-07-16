@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, LogOut, User, Menu, X, Trash2 } from 'lucide-react';
+import { Plus, LogOut, User, Menu, X, Trash2, Shield } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext'; // Assuming useAuth provides logout and user info
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
@@ -76,7 +76,7 @@ const Navbar: React.FC<{
           <ul>
             {conversations.map((conv) => (
               <li key={conv.id}>
-                <button
+                <div
                   onClick={() => onSelectConversation(conv.id)}
                   className={`w-full text-left px-3 py-2 rounded-md text-sm flex justify-between items-center text-white
                     ${currentConversationId === conv.id ? 'bg-gray-700' : 'hover:bg-gray-600'}`}
@@ -89,7 +89,7 @@ const Navbar: React.FC<{
                   >
                     <Trash2 size={16} />
                   </button>
-                </button>
+                </div>
               </li>
             ))}
           </ul>
@@ -99,6 +99,11 @@ const Navbar: React.FC<{
           <div className="flex items-center p-2 rounded-md hover:bg-gray-700 cursor-pointer text-white">
             <User size={20} className="mr-3" />
             <span>{currentUser?.username || 'โปรไฟล์ของฉัน'}</span>
+            {currentUser?.role === 'admin' && (
+              <Link to="/admin" className="ml-auto">
+                <Shield size={20} className="text-white" />
+              </Link>
+            )}
           </div>
           <button
             onClick={logout}

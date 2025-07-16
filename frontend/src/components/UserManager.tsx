@@ -1,91 +1,81 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
+
+const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 
 interface User {
   id: number;
-  username: string;
   email: string;
+  username: string;
   role: string;
 }
 
-const UserManager: React.FC = () => {
+const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchUsers = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Authentication token not found.');
-        return;
-      }
-      const response = await axios.get('http://localhost:8000/admin/users/', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUsers(response.data);
-    } catch (err) {
-      setError('Failed to fetch users.');
-      console.error(err);
-    }
-  };
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  const handleDeleteUser = async (userId: number) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      try {
-        const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:8000/admin/users/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        // Refresh the user list after deletion
-        fetchUsers();
-      } catch (err) {
-        setError('Failed to delete user.');
-        console.error(err);
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(`${BACKEND_API}/admin/users/`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+      } else {
+        setError('Failed to fetch users');
       }
+    } catch (error) {
+      setError('An error occurred while fetching users');
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
-    <div className="p-6 bg-gray-900 text-white min-h-screen">
-      <h2 className="text-2xl font-bold mb-4">จัดการผู้ใช้งาน</h2>
-      {error && <p className="text-red-500 bg-red-900 border border-red-700 p-2 rounded mb-4">{error}</p>}
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-gray-800 border border-gray-700">
-          <thead>
-            <tr className="bg-gray-700">
-              <th className="py-2 px-4 border-b border-gray-600 text-left">ID</th>
-              <th className="py-2 px-4 border-b border-gray-600 text-left">Username</th>
-              <th className="py-2 px-4 border-b border-gray-600 text-left">Email</th>
-              <th className="py-2 px-4 border-b border-gray-600 text-left">Role</th>
-              <th className="py-2 px-4 border-b border-gray-600 text-left">Actions</th>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">User Management</h1>
+      <table className="min-w-full bg-white">
+        <thead>
+          <tr>
+            <th className="py-2">ID</th>
+            <th className="py-2">Email</th>
+            <th className="py-2">Username</th>
+            <th className="py-2">Role</th>
+            <th className="py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td className="border px-4 py-2">{user.id}</td>
+              <td className="border px-4 py-2">{user.email}</td>
+              <td className="border px-4 py-2">{user.username}</td>
+              <td className="border px-4 py-2">{user.role}</td>
+              <td className="border px-4 py-2">
+                <button className="bg-blue-500 text-white px-2 py-1 rounded">Edit</button>
+                <button className="bg-red-500 text-white px-2 py-1 rounded ml-2">Delete</button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-700">
-                <td className="py-2 px-4 border-b border-gray-600">{user.id}</td>
-                <td className="py-2 px-4 border-b border-gray-600">{user.username}</td>
-                <td className="py-2 px-4 border-b border-gray-600">{user.email}</td>
-                <td className="py-2 px-4 border-b border-gray-600">{user.role}</td>
-                <td className="py-2 px-4 border-b border-gray-600">
-                  <button
-                    onClick={() => handleDeleteUser(user.id)}
-                    className="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded"
-                  >
-                    ลบ
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
 
-export default UserManager; 
+export default UserManagement; 
