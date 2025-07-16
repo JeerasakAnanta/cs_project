@@ -47,4 +47,17 @@ class Message(Base):
     content = Column(String)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
-    conversation = relationship("Conversation", back_populates="messages") 
+    conversation = relationship("Conversation", back_populates="messages")
+    feedbacks = relationship("Feedback", back_populates="message", cascade="all, delete-orphan")
+
+
+class Feedback(Base):
+    __tablename__ = "feedbacks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    message_id = Column(Integer, ForeignKey("messages.id"))
+    feedback_type = Column(String)  # 'like' or 'dislike'
+    comment = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    message = relationship("Message", back_populates="feedbacks") 

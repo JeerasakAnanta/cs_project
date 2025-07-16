@@ -8,6 +8,7 @@ from app.database import models
 # Import routers
 from app.chat.router import router as router_chat
 from app.routers.router_login import router as router_login
+from app.chat.feedback_router import router as router_feedback
 
 
 # Create all tables in the database
@@ -29,6 +30,7 @@ app.add_middleware(
 # Include the router in the main FastAPI app
 app.include_router(router_login)
 app.include_router(router_chat)
+app.include_router(router_feedback)
 
 
 

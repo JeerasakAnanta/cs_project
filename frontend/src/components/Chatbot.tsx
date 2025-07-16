@@ -8,11 +8,14 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useAuth } from '../contexts/AuthContext';
+import FeedbackButtons from './FeedbackButtons';
+import FeedbackModal from './FeedbackModal';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC;
 
 interface Message {
+  id?: number; // Optional because user-created messages won't have an ID initially
   text: string;
   sender: 'user' | 'bot';
 }
@@ -31,6 +34,9 @@ const Chatbot: React.FC = () => {
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const chatBoxRef = useRef<HTMLDivElement>(null);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<number | null>(null);
+
   const { currentUser } = useAuth();
 
   const authToken = localStorage.getItem('authToken');
@@ -88,9 +94,9 @@ const Chatbot: React.FC = () => {
         const data = await response.json();
         const formattedMessages = await Promise.all(data.messages.map(async (msg: any) => {
           if (msg.sender === 'bot') {
-            return { text: await formatBotMessage(msg.content), sender: 'bot' };
+            return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' };
           }
-          return { text: msg.content, sender: 'user' };
+          return { id: msg.id, text: msg.content, sender: 'user' };
         }));
         setMessages(formattedMessages);
       }
@@ -164,7 +170,7 @@ const Chatbot: React.FC = () => {
       if (response.ok) {
         const botMessageData = await response.json();
         const formattedText = await formatBotMessage(botMessageData.content);
-        const botMessage: Message = { text: formattedText, sender: 'bot' };
+        const botMessage: Message = { id: botMessageData.id, text: formattedText, sender: 'bot' };
         setMessages((prev) => [...prev, botMessage]);
       } else {
         console.error("Failed to send message");
@@ -174,6 +180,28 @@ const Chatbot: React.FC = () => {
     } finally {
       setIsTyping(false);
     }
+  };
+
+  const handleFeedbackSubmit = async (messageId: number, feedbackType: 'like' | 'dislike', comment: string, reason: string) => {
+    const finalComment = reason === 'Others' ? `Others: ${comment}` : `${reason}: ${comment}`;
+    try {
+      await fetch(`${BACKEND_API}/chat/feedback/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ message_id: messageId, feedback_type: feedbackType, comment: finalComment }),
+      });
+      // Optionally, show a "Thank you for your feedback" message
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+    }
+  };
+
+  const handleDislikeClick = (messageId: number) => {
+    setSelectedMessageId(messageId);
+    setIsFeedbackModalOpen(true);
   };
 
   const formatBotMessage = async (content: string): Promise<string> => {
@@ -290,6 +318,15 @@ const Chatbot: React.FC = () => {
                       }`}
                   >
                     <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: msg.text }} />
+                    {msg.sender === 'bot' && msg.id && (
+                      <FeedbackButtons
+                        messageId={msg.id}
+                        onDislikeClick={() => handleDislikeClick(msg.id!)}
+                        onFeedbackSubmit={(feedbackType, comment, reason) =>
+                          handleFeedbackSubmit(msg.id!, feedbackType, comment || '', reason || '')
+                        }
+                      />
+                    )}
                   </div>
                   {msg.sender === 'user' && <div className="p-2 bg-rmutl-gold rounded-full"><AccountCircleIcon className="text-rmutl-brown" /></div>}
                 </div>
@@ -329,6 +366,16 @@ const Chatbot: React.FC = () => {
           </div>
         </div>
       </main>
+
+      <FeedbackModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        onSubmit={(comment, reason) => {
+          if (selectedMessageId) {
+            handleFeedbackSubmit(selectedMessageId, 'dislike', comment, reason);
+          }
+        }}
+      />
     </div>
   );
 };

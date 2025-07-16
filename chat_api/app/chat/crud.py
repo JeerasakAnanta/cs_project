@@ -15,6 +15,9 @@ def get_conversations_by_user(db: Session, user_id: int):
 def get_conversation(db: Session, conversation_id: int):
     return db.query(models.Conversation).filter(models.Conversation.id == conversation_id).first()
 
+def get_message(db: Session, message_id: int):
+    return db.query(models.Message).filter(models.Message.id == message_id).first()
+
 def update_conversation_title(db: Session, conversation_id: int, title: str):
     db_conversation = get_conversation(db, conversation_id)
     if db_conversation:
