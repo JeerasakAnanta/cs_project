@@ -11,21 +11,37 @@ from app.utils.database import engine
 blacklisted_tokens = set()
 
 
-def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    if db.query(models.User).filter(models.User.email == user.email).first():
-        raise HTTPException(status_code=400, detail="Email already registered")
-    if db.query(models.User).filter(models.User.username == user.username).first():
-        raise HTTPException(status_code=400, detail="Username taken")
-    new_user = models.User(
+def register(user: schemas.UserCreate, db: Session):
+    """
+    Register a new user in the database.
+    """
+    # Check if a user with the given email already exists
+    db_user_by_email = db.query(models.User).filter(models.User.email == user.email).first()
+    if db_user_by_email:
+        raise HTTPException(status_code=400, detail="อีเมลนี้มีผู้ใช้งานแล้ว")
+
+    # Check if a user with the given username already exists
+    db_user_by_username = db.query(models.User).filter(models.User.username == user.username).first()
+    if db_user_by_username:
+        raise HTTPException(status_code=400, detail="ชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว")
+
+    # Hash the user's password for security
+    hashed_password = auth.get_password_hash(user.password)
+
+    # Create a new user instance
+    db_user = models.User(
         email=user.email,
         username=user.username,
-        hashed_password=utils.hash_password(user.password),
-        role="user",
+        hashed_password=hashed_password
     )
-    db.add(new_user)
+
+    # Add the new user to the session and commit to the database
+    db.add(db_user)
     db.commit()
-    db.refresh(new_user)
-    return {"message": "User created"}
+    db.refresh(db_user)
+
+    # Return the newly created user
+    return db_user
 
 
 def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):

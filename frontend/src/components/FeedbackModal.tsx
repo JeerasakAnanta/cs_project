@@ -22,15 +22,15 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose, onSubmit
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
+      <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md shadow-xl text-white">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">ให้คะแนนคำตอบ</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-800">
+          <h2 className="text-xl font-bold">ให้คะแนนคำตอบ</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-white">
             <X size={24} />
           </button>
         </div>
         <div className="mb-4">
-          <p className="text-gray-600 mb-2">กรุณาเลือกเหตุผลที่ท่านให้คะแนน:</p>
+          <p className="text-gray-300 mb-2">กรุณาเลือกเหตุผลที่ท่านให้คะแนน:</p>
           <div className="flex flex-wrap gap-2">
             {feedbackOptions.map((option) => (
               <button
@@ -38,8 +38,8 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose, onSubmit
                 onClick={() => setSelectedOption(option)}
                 className={`px-3 py-1 text-sm rounded-full border ${
                   selectedOption === option
-                    ? 'bg-rmutl-brown text-white border-rmutl-brown'
-                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                    ? 'bg-blue-600 text-white border-blue-500'
+                    : 'bg-gray-700 text-gray-300 border-gray-600 hover:bg-gray-600'
                 }`}
               >
                 {option}
@@ -52,16 +52,16 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose, onSubmit
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="เราขอขอบคุณสำหรับความคิดเห็นของท่าน โปรดแสดงความคิดเห็นหรือข้อเสนอแนะเพื่อช่วยเราปรับปรุง"
-            className="w-full p-2 border border-gray-300 rounded-md h-24 resize-none focus:outline-none focus:ring-2 focus:ring-rmutl-gold"
+            className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="flex justify-end space-x-4">
-          <button onClick={onClose} className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
+          <button onClick={onClose} className="px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-md">
             ยกเลิก
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-rmutl-brown text-white rounded-md hover:bg-opacity-80"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-500"
             disabled={!selectedOption}
           >
             ส่ง

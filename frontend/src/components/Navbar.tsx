@@ -84,11 +84,11 @@ const Navbar: React.FC<{
           className="flex items-center justify-center py-2 px-4 mb-4 bg-gray-700 hover:bg-gray-600 rounded-md text-white transition-colors"
         >
           <Plus size={20} className="mr-2" />
-          New chat
+          แชทใหม่
         </button>
 
         <div className="flex-1 overflow-y-auto">
-          <p className="text-xs text-gray-400 px-2 mb-2">Today</p>
+          <p className="text-xs text-gray-400 px-2 mb-2">วันนี้</p>
           <ul>
             {conversations.map((conv) => (
               <li key={conv.id}>
@@ -112,14 +112,14 @@ const Navbar: React.FC<{
         <div className="border-t border-gray-700 pt-2">
           <div className="flex items-center p-2 rounded-md hover:bg-gray-700 cursor-pointer text-white">
             <User size={20} className="mr-3" />
-            <span>{currentUser?.username || 'My Profile'}</span>
+            <span>{currentUser?.username || 'โปรไฟล์ของฉัน'}</span>
           </div>
           <button
             onClick={logout}
             className="w-full flex items-center p-2 rounded-md hover:bg-gray-700 text-left text-white"
           >
             <LogOut size={20} className="mr-3" />
-            <span>Logout</span>
+            <span>ออกจากระบบ</span>
           </button>
         </div>
       </div>

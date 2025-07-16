@@ -100,10 +100,10 @@ const Chatbot: React.FC<ChatbotProps> = ({
         {messages.length === 0 && !isTyping ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="text-5xl font-bold mb-4">
-              <span className="text-blue-500">Hi, I'm </span>
-              <span className="text-white">LannaFinChat.</span>
+              <span className="text-blue-500">สวัสดี, ฉันคือ </span>
+              <span className="text-white">LannaFinChat</span>
             </div>
-            <p className="text-gray-400 text-lg">How can I help you today?</p>
+            <p className="text-gray-400 text-lg">มีอะไรให้ช่วยไหม?</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12 w-full max-w-3xl">
               {exampleQuestions.map((q, i) => (
                 <button
@@ -165,7 +165,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
                 handleSendMessage();
               }
             }}
-            placeholder="Message LannaFinChat..."
+            placeholder="ส่งข้อความถึง LannaFinChat..."
             className="w-full bg-transparent p-4 pr-16 text-white placeholder-gray-400 focus:outline-none resize-none"
             rows={1}
           />
@@ -178,7 +178,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
           </button>
         </div>
         <p className="text-xs text-center text-gray-500 mt-2">
-          AI-generated, for reference only
+          สร้างโดย AI เพื่อใช้ในการอ้างอิงเท่านั้น
         </p>
       </div>
 

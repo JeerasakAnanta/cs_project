@@ -1,115 +1,99 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 
 const Register: React.FC = () => {
-  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    if (password.length < 4) {
-      setError('Password must be at least 4 characters long.');
-      return;
-    }
+    setError(null);
+    setSuccess(null);
 
     try {
       const response = await fetch(`${BACKEND_API}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, username, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
-      if (response.ok) {
-        setSuccess('Registration successful! Redirecting to login...');
+      if (response.status === 201) {
+        setSuccess('สมัครสมาชิกสำเร็จ! กำลังนำคุณไปยังหน้าเข้าสู่ระบบ...');
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       } else {
-        const data = await response.json();
-        setError(data.detail || 'Registration failed');
+        const errorData = await response.json();
+        setError(errorData.detail || 'เกิดข้อผิดพลาดในการสมัครสมาชิก');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-full bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center text-rmutl-brown">Register</h1>
-        <form className="space-y-6" onSubmit={handleRegister}>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-rmutl-brown"
-            >
-              Email
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+      <div className="max-w-md w-full bg-gray-800 rounded-lg shadow-lg p-8">
+        <h2 className="text-3xl font-bold text-center mb-6">สมัครสมาชิก</h2>
+        {error && <p className="bg-red-500 text-white p-3 rounded mb-4">{error}</p>}
+        {success && <p className="bg-green-500 text-white p-3 rounded mb-4">{success}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-medium" htmlFor="username">
+              ชื่อผู้ใช้
             </label>
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-3 py-2 mt-1 bg-white text-rmutl-brown border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-rmutl-gold focus:border-rmutl-gold"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-rmutl-brown"
-            >
-              Username
-            </label>
-            <input
-              id="username"
               type="text"
+              id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              className="w-full p-3 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-              className="w-full px-3 py-2 mt-1 bg-white text-rmutl-brown border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-rmutl-gold focus:border-rmutl-gold"
             />
           </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-rmutl-brown"
-            >
-              Password
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-medium" htmlFor="email">
+              อีเมล
             </label>
             <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-3 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-              className="w-full px-3 py-2 mt-1 bg-white text-rmutl-brown border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-rmutl-gold focus:border-rmutl-gold"
             />
           </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          {success && <p className="text-sm text-green-600">{success}</p>}
-          <div>
-            <button
-              type="submit"
-              className="w-full px-4 py-2 font-medium text-white bg-rmutl-brown rounded-md hover:bg-rmutl-gold hover:text-rmutl-brown focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rmutl-gold"
-            >
-              Register
-            </button>
+          <div className="mb-6">
+            <label className="block mb-2 text-sm font-medium" htmlFor="password">
+              รหัสผ่าน
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-3 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
           </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300"
+          >
+            สมัครสมาชิก
+          </button>
         </form>
-        <p className="text-sm text-center text-rmutl-brown">
-          Already have an account?{' '}
-          <Link to="/login" className="font-medium text-rmutl-brown hover:text-rmutl-gold">
-            Login
+        <p className="text-center mt-6">
+          มีบัญชีอยู่แล้ว?{' '}
+          <Link to="/login" className="text-blue-400 hover:underline">
+            เข้าสู่ระบบที่นี่
           </Link>
         </p>
       </div>
