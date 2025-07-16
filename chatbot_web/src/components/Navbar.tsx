@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Admin from './Admin';
-import RMUTLlogo from '../assets/Rmutl.png'; // Adjust the path based on your structure
+import RMUTLlogo from '../assets/Rmutl.png';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,20 +14,16 @@ const Navbar: React.FC = () => {
 
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
-
-    // Show or hide the navbar based on scroll direction
     if (currentScrollY > lastScrollY) {
-      setVisible(false); // Scrolling down
+      setVisible(false);
     } else {
-      setVisible(true); // Scrolling up
+      setVisible(true);
     }
-
     setLastScrollY(currentScrollY);
   };
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -35,17 +31,52 @@ const Navbar: React.FC = () => {
 
   return (
     <nav
-      className={`bg-yellow-900 p-4 transition-transform duration-300 ${visible ? 'transform translate-y-0' : 'transform -translate-y-full'}`}
+      className={`bg-yellow-900 p-1 transition-transform duration-300 ${visible ? 'transform translate-y-0' : 'transform -translate-y-full'}`}
     >
-      <div className="container mx-auto flex justify-between items-center">
-        {/* Logo */}
-        <Link to="/" className="text-xl flex ml-20">
-          <img src={RMUTLlogo} alt="RMUTL Logo" className="h-11 " />
+      <div className="container mx-auto flex items-center">
+        {/* Logo on the left */}
+        <Link to="/" className="flex items-center">
+          <img src={RMUTLlogo} alt="RMUTL Logo" className="h-6 mr-4" />
         </Link>
 
-        {/* Hamburger Icon */}
+        {/* Navigation Links aligned left */}
+        <div className="flex-grow">
+          <ul className={`flex space-x-4 text-lg ${isOpen ? 'block' : 'hidden'} md:flex`}>
+            <li>
+              <Link
+                to="/"
+                className="text-white hover:text-gray-400 py-2 px-4"
+              >
+                แชทบอท
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/pdflist"
+                className="text-white hover:text-gray-400 py-2 px-4"
+              >
+                คู่มือปฏิบัติงาน
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/about"
+                className="text-white hover:text-gray-400 py-2 px-4"
+              >
+                เกี่ยวกับแชทบอท
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Admin section on the right */}
+        <div className="ml-auto">
+          <Admin />
+        </div>
+
+        {/* Hamburger Icon for mobile */}
         <button
-          className="md:hidden flex items-center text-white"
+          className="md:hidden flex items-center text-white ml-4"
           onClick={toggleMenu}
         >
           <svg
@@ -63,39 +94,6 @@ const Navbar: React.FC = () => {
             />
           </svg>
         </button>
-
-        {/* Navigation Links */}
-        <ul
-          className={`md:flex md:space-x-4 text-lg ${isOpen ? 'block' : 'hidden'} w-full md:w-auto`}
-        >
-          <li>
-            <Link
-              to="/"
-              className="block text-white hover:text-gray-400 py-2 px-4"
-            >
-              แชทบอท
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/pdflist"
-              className="block text-white hover:text-gray-400 py-2 px-4"
-            >
-              คู่มือปฏิบัติงาน
-            </Link>
-          </li>
-
-          <li>
-            <Link
-              to="/about"
-              className="block text-white hover:text-gray-400 py-2 px-4"
-            >
-              เกี่ยวกับแชทบอท
-            </Link>
-          </li>
-        </ul>
-
-        <Admin />
       </div>
     </nav>
   );
