@@ -9,38 +9,27 @@ services:
       - "6334:6334"
     volumes:
       - ./qdrant_data:/qdrant/storage
-  
-  # Chatbot Web UI service
-  chatbot_front:
-    container_name: chatbot_webui
-    image: chatbot_webui_cs_project:${CHATBOT_WEBUI}
-    restart: always
-    ports:
-      - "80:80"
-    env_file:
-      - .env.production
 
-  # Chatbot API
-  chatbot_api:
-    container_name: chatbot_web_api
-    image: chatbot_api_cs_project:${CHATBOT_API}
+  postgres:
+    container_name: postgres_container
+    image: postgres:latest
     restart: always
-    ports:
-      - "8003:8003"
-    env_file:
-      - .env
-    volumes:
-      - ./log/api:/app/log
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
 
-  # Chatbot Create Collection
-  create_collection:
-    container_name: chatbot_management_api
-    image: chatbot_pdf_management_api:${PDF_MANAGEMENT_API}
-    restart: always
     ports:
-      - "8004:8004"
-    env_file:
-      - ./.env
+      - "5432:5432"
     volumes:
-      - ./log/pdf:/app/log
-      - ./pdf_Data:/app/pdfs
+      - ./postgresql_data:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4:latest
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "8085:80"
