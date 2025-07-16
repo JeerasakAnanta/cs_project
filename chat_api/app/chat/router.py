@@ -18,10 +18,11 @@ router = APIRouter(
 
 @router.post("/conversations/", response_model=schemas.Conversation)
 def create_conversation_for_user(
+    conversation: schemas.ConversationCreate,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
-    return crud.create_conversation(db=db, user_id=current_user.id)
+    return crud.create_conversation(db=db, user_id=current_user.id, title=conversation.title)
 
 @router.get("/conversations/", response_model=List[schemas.Conversation])
 def read_conversations_for_user(

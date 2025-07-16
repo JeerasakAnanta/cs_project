@@ -2,8 +2,8 @@ from sqlalchemy.orm import Session
 from app.database import models
 from . import schemas
 
-def create_conversation(db: Session, user_id: int):
-    db_conversation = models.Conversation(user_id=user_id, title="New Chat")
+def create_conversation(db: Session, user_id: int, title: str):
+    db_conversation = models.Conversation(user_id=user_id, title=title)
     db.add(db_conversation)
     db.commit()
     db.refresh(db_conversation)

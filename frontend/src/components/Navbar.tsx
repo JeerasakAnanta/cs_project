@@ -13,41 +13,25 @@ interface Conversation {
 const Navbar: React.FC<{
   onSelectConversation: (id: number) => void;
   onNewConversation: () => void;
+  onConversationDeleted: (id: number) => void;
   currentConversationId: number | null;
-}> = ({ onSelectConversation, onNewConversation, currentConversationId }) => {
+  conversations: { id: number; title: string }[];
+}> = ({ onSelectConversation, onNewConversation, onConversationDeleted, currentConversationId, conversations }) => {
   const [isOpen, setIsOpen] = useState(true); // Default to open on desktop
   const { currentUser, logout } = useAuth();
-  const [conversations, setConversations] = useState<Conversation[]>([]);
   const authToken = localStorage.getItem('authToken');
 
-  useEffect(() => {
-    fetchConversations();
-  }, []);
-
-  const fetchConversations = async () => {
-    try {
-      const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setConversations(data);
-      } else {
-        console.error('Failed to fetch conversations');
-      }
-    } catch (error) {
-      console.error('Error fetching conversations:', error);
-    }
-  };
-
-  const handleDeleteConversation = async (id: number, e: any) => {
+  const handleDeleteConversation: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.stopPropagation();
+    const id = parseInt(e.currentTarget.dataset.id || '');
+    if (isNaN(id)) return;
+
     try {
       await fetch(`${BACKEND_API}/chat/conversations/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      setConversations((prev) => prev.filter((c) => c.id !== id));
+      onConversationDeleted(id);
       if (currentConversationId === id) {
         onNewConversation(); // Or select another conversation
       }
@@ -98,11 +82,13 @@ const Navbar: React.FC<{
                     ${currentConversationId === conv.id ? 'bg-gray-700' : 'hover:bg-gray-600'}`}
                 >
                   <span className="truncate">{conv.title}</span>
-                  <Trash2
-                    size={16}
+                  <button
+                    data-id={conv.id}
+                    onClick={handleDeleteConversation}
                     className="text-gray-400 hover:text-white"
-                    onClick={(e) => handleDeleteConversation(conv.id, e)}
-                  />
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </button>
               </li>
             ))}

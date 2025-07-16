@@ -33,6 +33,10 @@ const AppContent: React.FC = () => {
   const [conversations, setConversations] = useState<{ id: number; title: string }[]>([]);
   const authToken = localStorage.getItem('authToken');
 
+  const handleConversationDeleted = (id: number) => {
+    setConversations((prev) => prev.filter((c) => c.id !== id));
+  };
+
   // Fetch conversations logic needs to be added or updated in App.tsx
   // This is a placeholder to show where it should be.
   useEffect(() => {
@@ -115,7 +119,7 @@ const AppContent: React.FC = () => {
           const newConversation = await response.json();
           conversationId = newConversation.id;
           setCurrentConversationId(newConversation.id);
-          // Optionally, refresh conversation list in Navbar, though it's not implemented here
+          setConversations((prev) => [newConversation, ...prev]);
         } else {
           throw new Error('Failed to create new conversation');
         }
@@ -168,7 +172,9 @@ const AppContent: React.FC = () => {
       <Navbar
         onNewConversation={handleNewConversation}
         onSelectConversation={handleSelectConversation}
+        onConversationDeleted={handleConversationDeleted}
         currentConversationId={currentConversationId}
+        conversations={conversations}
       />
       <main className="flex-1 flex flex-col overflow-auto">
         <Routes>
