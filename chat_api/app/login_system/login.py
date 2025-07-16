@@ -2,19 +2,13 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 
-from . import models, schemas, database, utils, auth
+from app.database import models
+from app.login_system import schemas, utils, auth
+from app.login_system.database import get_db
+from app.utils.database import engine  
 
-models.Base.metadata.create_all(bind=database.engine)
 
 blacklisted_tokens = set()
-
-
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):

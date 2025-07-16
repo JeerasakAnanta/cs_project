@@ -3,39 +3,69 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from . import crud, schemas
+from app.database import models
 from app.utils.database import get_db
-from app.login_system.auth import get_current_user, require_role
-from app.login_system import models as user_models
+from app.login_system.auth import get_current_user
+from app.rag_system.new_rag import generation_answer
 
 router = APIRouter(
     prefix="/chat",
     tags=["chat"],
 )
 
-@router.post("/history/", response_model=schemas.ChatHistory)
-def create_chat_history_for_user(
-    chat: schemas.ChatHistoryCreate, 
-    db: Session = Depends(get_db), 
-    current_user: user_models.User = Depends(get_current_user)
+@router.post("/conversations/", response_model=schemas.Conversation)
+def create_conversation_for_user(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
 ):
-    return crud.create_chat_history(db=db, chat=chat, user_id=current_user.id)
+    return crud.create_conversation(db=db, user_id=current_user.id)
 
-@router.get("/history/", response_model=List[schemas.ChatHistory])
-def read_user_chat_history(
-    skip: int = 0, 
-    limit: int = 100, 
-    db: Session = Depends(get_db), 
-    current_user: user_models.User = Depends(get_current_user)
+@router.get("/conversations/", response_model=List[schemas.Conversation])
+def read_conversations_for_user(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
 ):
-    history = crud.get_chat_history_by_user(db, user_id=current_user.id, skip=skip, limit=limit)
-    return history
+    return crud.get_conversations_by_user(db=db, user_id=current_user.id)
 
-@router.get("/history/all", response_model=List[schemas.ChatHistory])
-def read_all_chat_history(
-    skip: int = 0, 
-    limit: int = 100, 
-    db: Session = Depends(get_db), 
-    current_user: user_models.User = Depends(require_role("admin"))
+@router.get("/conversations/{conversation_id}", response_model=schemas.Conversation)
+def read_conversation(
+    conversation_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
 ):
-    history = crud.get_all_chat_history(db, skip=skip, limit=limit)
-    return history 
+    db_conversation = crud.get_conversation(db=db, conversation_id=conversation_id)
+    if db_conversation is None or db_conversation.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    return db_conversation
+
+@router.post("/conversations/{conversation_id}/messages/", response_model=schemas.Message)
+def create_message_for_conversation(
+    conversation_id: int,
+    message: schemas.MessageCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    db_conversation = crud.get_conversation(db=db, conversation_id=conversation_id)
+    if db_conversation is None or db_conversation.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    
+    # Create user message
+    crud.create_message(db=db, message=message, conversation_id=conversation_id)
+
+    # Generate bot response
+    bot_response_content = generation_answer(message.content)
+    bot_message = schemas.MessageCreate(sender="bot", content=bot_response_content)
+    
+    return crud.create_message(db=db, message=bot_message, conversation_id=conversation_id)
+
+
+@router.delete("/conversations/{conversation_id}", response_model=schemas.Conversation)
+def delete_conversation(
+    conversation_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    db_conversation = crud.get_conversation(db=db, conversation_id=conversation_id)
+    if db_conversation is None or db_conversation.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    return crud.delete_conversation(db=db, conversation_id=conversation_id) 

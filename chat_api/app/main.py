@@ -1,8 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers.router_chat import router as router_chat
+# Import database utils and models
+from app.utils.database import engine, Base
+from app.database import models
+
+# Import routers
+from app.chat.router import router as router_chat
 from app.routers.router_login import router as router_login
+
+
+# Create all tables in the database
+models.Base.metadata.create_all(bind=engine)
 
 # Initialize FastAPI
 app = FastAPI()

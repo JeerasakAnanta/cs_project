@@ -1,18 +1,30 @@
 from sqlalchemy.orm import Session
-from . import models, schemas
+from app.database import models
+from . import schemas
 
-
-def create_chat_history(db: Session, chat: schemas.ChatHistoryCreate, user_id: int):
-    db_chat = models.ChatHistory(**chat.dict(), user_id=user_id)
-    db.add(db_chat)
+def create_conversation(db: Session, user_id: int):
+    db_conversation = models.Conversation(user_id=user_id)
+    db.add(db_conversation)
     db.commit()
-    db.refresh(db_chat)
-    return db_chat
+    db.refresh(db_conversation)
+    return db_conversation
 
+def get_conversations_by_user(db: Session, user_id: int):
+    return db.query(models.Conversation).filter(models.Conversation.user_id == user_id).all()
 
-def get_chat_history_by_user(db: Session, user_id: int, skip: int = 0, limit: int = 100):
-    return db.query(models.ChatHistory).filter(models.ChatHistory.user_id == user_id).offset(skip).limit(limit).all()
+def get_conversation(db: Session, conversation_id: int):
+    return db.query(models.Conversation).filter(models.Conversation.id == conversation_id).first()
 
+def create_message(db: Session, message: schemas.MessageCreate, conversation_id: int):
+    db_message = models.Message(**message.dict(), conversation_id=conversation_id)
+    db.add(db_message)
+    db.commit()
+    db.refresh(db_message)
+    return db_message
 
-def get_all_chat_history(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.ChatHistory).offset(skip).limit(limit).all() 
+def delete_conversation(db: Session, conversation_id: int):
+    db_conversation = get_conversation(db, conversation_id)
+    if db_conversation:
+        db.delete(db_conversation)
+        db.commit()
+    return db_conversation 

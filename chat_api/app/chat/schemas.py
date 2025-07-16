@@ -1,20 +1,33 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import List, Optional
 
+class MessageBase(BaseModel):
+    sender: str
+    content: str
 
-class ChatHistoryBase(BaseModel):
-    question: str
-    answer: str
-
-
-class ChatHistoryCreate(ChatHistoryBase):
+class MessageCreate(MessageBase):
     pass
 
-
-class ChatHistory(ChatHistoryBase):
+class Message(MessageBase):
     id: int
-    user_id: int
+    conversation_id: int
     timestamp: datetime
 
     class Config:
-        orm_mode = True 
+        from_attributes = True
+
+class ConversationBase(BaseModel):
+    title: Optional[str] = "New Conversation"
+
+class ConversationCreate(ConversationBase):
+    pass
+
+class Conversation(ConversationBase):
+    id: int
+    user_id: int
+    created_at: datetime
+    messages: List[Message] = []
+
+    class Config:
+        from_attributes = True 
