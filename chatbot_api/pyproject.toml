@@ -1,7 +1,7 @@
 [project]
 name = "chatbot-api"
 version = "0.2.0"
-description = "API Chatbot LLM (LLM Large language model)  with  RAG (Retrieval-Augmented Generation) for RMUTL NAN"
+description = "API Chatbot  for RMUTL NAN"
 license = "MIT"
 readme = "README.md"
 requires-python = ">=3.13"

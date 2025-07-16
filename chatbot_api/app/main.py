@@ -7,8 +7,17 @@ from app.routers import router_login
 
 # ระบบตรวจสอบก่อนรัน
 from app.utils.startup_check import run_all_checks
+
 #
 run_all_checks()
+
+
+# logging
+from app.logs_system.chat_log import ChatLog  # หรือจากตำแหน่งโมเดลของคุณ
+from app.utils.database import engine
+
+ChatLog.metadata.create_all(bind=engine)
+
 
 # Initialize FastAPI
 app = FastAPI(
