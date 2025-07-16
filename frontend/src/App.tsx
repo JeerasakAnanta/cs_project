@@ -1,43 +1,28 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 
-// Components - Public
+// Components
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';
 import Login from './components/Login';
-import Pagenotfound from './components/Pagenotfound';
-
-// Components - Protected (ทุกหน้า)
-import About from './components/About';
-import PdfList from './components/PdfList';
-import Services from './components/Services';
+import Register from './components/Register';
 import Chatbot from './components/Chatbot';
-import Management from './components/Management';
-import Pdfcrud from './components/Pdfcrud';
-import Uploadpdf from './components/Uploadpdf';
-
-// Admin
-import Settings from './components/admin/Settings';
-import AdminPanel from './components/admin/AdminPanel';
-import ArchivedChats from './components/admin/ArchivedChats';
-import Playground from './components/admin/Playground';
+import Pagenotfound from './components/Pagenotfound';
 
 // Auth Wrapper
 import PrivateRoute from './components/PrivateRoute';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const isChatPage = location.pathname === '/';
+  const isLoginPage = location.pathname === '/login' || location.pathname === '/register';
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {!isChatPage && <Navbar />}
-      <main className={`flex-1 ${!isChatPage ? 'p-4 ml-60' : ''}`}>
+    <div className="flex flex-col h-screen bg-gray-100">
+      <Navbar />
+      <main className="flex-1 overflow-y-auto p-4">
         <Routes>
-          {/* ✅ Login page - only public route */}
           <Route path="/login" element={<Login />} />
-
-          {/* ✅ Protected routes - ต้อง login ก่อน */}
+          <Route path="/register" element={<Register />} />
           <Route
             path="/"
             element={
@@ -46,94 +31,9 @@ const AppContent: React.FC = () => {
               </PrivateRoute>
             }
           />
-          <Route
-            path="/pdfList"
-            element={
-              <PrivateRoute>
-                <PdfList />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/services"
-            element={
-              <PrivateRoute>
-                <Services />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/about"
-            element={
-              <PrivateRoute>
-                <About />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/management"
-            element={
-              <PrivateRoute>
-                <Management />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/pdfcrud"
-            element={
-              <PrivateRoute>
-                <Pdfcrud />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/uploadpdf"
-            element={
-              <PrivateRoute>
-                <Uploadpdf />
-              </PrivateRoute>
-            }
-          />
-
-          {/* 🔐 Admin only */}
-          <Route
-            path="/settings"
-            element={
-              <PrivateRoute role="admin">
-                <Settings />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/adminPanel"
-            element={
-              <PrivateRoute role="admin">
-                <AdminPanel />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/archivedchats"
-            element={
-              <PrivateRoute role="admin">
-                <ArchivedChats />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/playground"
-            element={
-              <PrivateRoute role="admin">
-                <Playground />
-              </PrivateRoute>
-            }
-          />
-
-          {/* 404 */}
           <Route path="*" element={<Pagenotfound />} />
         </Routes>
       </main>
-      {/* {!isChatPage && <Footer />} */}
     </div>
   );
 }
@@ -141,7 +41,9 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <Router>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </Router>
   );
 };

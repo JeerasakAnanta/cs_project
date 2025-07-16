@@ -1,44 +1,44 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthContextType {
-  token: string | null;
-  role: string | null;
-  login: (token: string, role: string) => void;
-  logout: () => void;
   isAuthenticated: () => boolean;
   isAdmin: () => boolean;
+  login: (token: string) => void;
+  logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [role, setRole] = useState<string | null>(localStorage.getItem('role'));
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [token, setToken] = useState<string | null>(localStorage.getItem('authToken'));
 
-  const login = (newToken: string, newRole: string) => {
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('role', newRole);
+  const login = (newToken: string) => {
+    localStorage.setItem('authToken', newToken);
     setToken(newToken);
-    setRole(newRole);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
+    localStorage.removeItem('authToken');
     setToken(null);
-    setRole(null);
   };
 
   const isAuthenticated = () => {
-    return token !== null;
+    return !!token;
   };
 
   const isAdmin = () => {
-    return role === 'admin';
+    if (!token) return false;
+    try {
+      const decoded: { role?: string } = jwtDecode(token);
+      return decoded.role === 'admin';
+    } catch (error) {
+      return false;
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ token, role, login, logout, isAuthenticated, isAdmin }}>
+    <AuthContext.Provider value={{ isAuthenticated, isAdmin, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
