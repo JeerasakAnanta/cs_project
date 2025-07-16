@@ -32,54 +32,54 @@ const Navbar: React.FC = () => {
 
   return (
     <nav
-      className={`bg-white shadow-md p-1 transition-transform duration-300 sticky top-0 z-50 ${visible ? 'transform translate-y-0' : 'transform -translate-y-full'
+      className={`bg-rmutl-brown shadow-md p-3 transition-transform duration-300 sticky top-0 z-50 ${visible ? 'transform translate-y-0' : 'transform -translate-y-full'
         }`}
     >
-      <div className="container mx-auto flex items-center justify-between">
-        {/* Logo on the left */}
-        <Link to="/" className="flex items-center">
-          <img src={RMUTLlogo} alt="RMUTL Logo" className="h-8 mr-4" />
-
-        </Link>
-
-        {/* Navigation Links centered */}
-        <div className="hidden md:flex flex-grow justify-center">
-          <ul className="flex space-x-2 text-lg">
-            <li>
-              <Link
-                to="/"
-                className="text-gray-700 hover:bg-amber-100 hover:text-amber-800 py-2 px-4 rounded-full transition-colors"
-              >
-                แชทบอท
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/pdflist"
-                className="text-gray-700 hover:bg-amber-100 hover:text-amber-800 py-2 px-4 rounded-full transition-colors"
-              >
-                คู่มือปฏิบัติงาน
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/about"
-                className="text-gray-700 hover:bg-amber-100 hover:text-amber-800 py-2 px-4 rounded-full transition-colors"
-              >
-                เกี่ยวกับ
-              </Link>
-            </li>
-          </ul>
+      <div className="container mx-auto flex items-center justify-center">
+        <div className="flex items-center">
+            <Link to="/" className="flex items-center mr-6">
+              <img src={RMUTLlogo} alt="RMUTL Logo" className="h-10" />
+            </Link>
+            {/* Navigation Links centered */}
+            <div className="hidden md:flex">
+              <ul className="flex space-x-2 text-lg">
+                <li>
+                  <Link
+                    to="/"
+                    className="text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-full transition-colors"
+                  >
+                    แชทบอท
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/pdflist"
+                    className="text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-full transition-colors"
+                  >
+                    คู่มือปฏิบัติงาน
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/about"
+                    className="text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-full transition-colors"
+                  >
+                    เกี่ยวกับ
+                  </Link>
+                </li>
+              </ul>
+            </div>
         </div>
 
+
         {/* Admin section and Hamburger on the right */}
-        <div className="flex items-center">
+        <div className="absolute right-4 flex items-center">
           <div className="hidden md:block">
             <Admin />
           </div>
 
           <button
-            className="md:hidden flex items-center text-gray-800 ml-4"
+            className="md:hidden flex items-center text-white ml-4"
             onClick={toggleMenu}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -94,7 +94,7 @@ const Navbar: React.FC = () => {
             <li>
               <Link
                 to="/"
-                className="block text-gray-700 hover:bg-amber-100 hover:text-amber-800 py-2 px-4 rounded-md"
+                className="block text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-md"
                 onClick={() => setIsOpen(false)}
               >
                 แชทบอท
@@ -103,7 +103,7 @@ const Navbar: React.FC = () => {
             <li>
               <Link
                 to="/pdflist"
-                className="block text-gray-700 hover:bg-amber-100 hover:text-amber-800 py-2 px-4 rounded-md"
+                className="block text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-md"
                 onClick={() => setIsOpen(false)}
               >
                 คู่มือปฏิบัติงาน
@@ -112,13 +112,13 @@ const Navbar: React.FC = () => {
             <li>
               <Link
                 to="/about"
-                className="block text-gray-700 hover:bg-amber-100 hover:text-amber-800 py-2 px-4 rounded-md"
+                className="block text-white hover:bg-rmutl-gold hover:text-rmutl-brown py-2 px-4 rounded-md"
                 onClick={() => setIsOpen(false)}
               >
                 เกี่ยวกับ
               </Link>
             </li>
-            <li className="pt-2 border-t border-gray-200">
+            <li className="pt-2 border-t border-rmutl-tan">
               <div className="ml-2">
                 <Admin />
               </div>

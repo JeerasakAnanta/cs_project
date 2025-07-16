@@ -190,58 +190,58 @@ const Chatbot: React.FC = () => {
   ];
 
   return (
-    <div className="relative h-full bg-gray-800 text-white overflow-hidden">
-      {!isSidebarOpen && (
-        <button
-          onClick={() => setIsSidebarOpen(true)}
-          className="absolute top-4 left-4 z-30 text-white p-2 bg-gray-700 rounded-md hover:bg-gray-600"
-        >
-          <MenuIcon />
-        </button>
-      )}
+    <div className="relative h-full bg-white overflow-hidden flex">
       {/* Sidebar */}
-      <aside className={`absolute top-0 left-0 h-full bg-gray-900 p-4 flex flex-col w-80 transition-transform duration-300 ease-in-out z-20 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex-grow">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-xl font-bold">ประวัติการสนทนา</h1>
-            <button onClick={() => setIsSidebarOpen(false)} className="text-gray-400 hover:text-white">
-              <ChevronLeftIcon />
-            </button>
-          </div>
-          <button
-            onClick={handleNewConversation}
-            className="w-full bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center justify-center mb-4"
-          >
-            <AddCommentIcon className="mr-2" />
-            เริ่มการสนทนาใหม่
+      <aside className={`bg-rmutl-brown text-white p-4 flex flex-col w-80 transition-transform duration-300 ease-in-out z-20 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full absolute md:relative'}`}>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-xl font-bold">ประวัติการสนทนา</h1>
+          <button onClick={() => setIsSidebarOpen(false)} className="text-gray-400 hover:text-white md:hidden">
+            <ChevronLeftIcon />
           </button>
+        </div>
+        <button
+          onClick={handleNewConversation}
+          className="w-full bg-rmutl-gold text-rmutl-brown px-4 py-2 rounded-lg hover:bg-opacity-80 flex items-center justify-center mb-4"
+        >
+          <AddCommentIcon className="mr-2" />
+          เริ่มการสนทนาใหม่
+        </button>
+        <div className="flex-grow overflow-y-auto">
           <div className="flex flex-col space-y-2">
             {conversations.map(convo => (
-              <div key={convo.id} className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${currentConversationId === convo.id ? 'bg-gray-700' : 'hover:bg-gray-800'}`}>
-                <span onClick={() => handleSelectConversation(convo.id)} className="flex-grow">{convo.title}</span>
-                <button onClick={() => handleDeleteConversation(convo.id)} className="text-gray-400 hover:text-white">
+              <div key={convo.id} className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${currentConversationId === convo.id ? 'bg-rmutl-gold text-rmutl-brown' : 'hover:bg-gray-700'}`}>
+                <span onClick={() => handleSelectConversation(convo.id)} className="flex-grow truncate">{convo.title}</span>
+                <button onClick={() => handleDeleteConversation(convo.id)} className="text-gray-400 hover:text-white ml-2 flex-shrink-0">
                   <DeleteForeverIcon fontSize="small" />
                 </button>
               </div>
             ))}
           </div>
         </div>
-        <div className="text-xs text-gray-400">
+        <div className="text-xs text-gray-400 pt-4 border-t border-gray-700">
           <p>เวอร์ชัน 3.0.0 (DB History,login)</p>
         </div>
       </aside>
 
       {/* Main Chat Area */}
-      <main className={`h-full flex flex-col transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-80' : 'ml-0'}`}>
-        <div ref={chatBoxRef} className="flex-1 overflow-y-auto p-6">
+      <main className="flex-1 flex flex-col bg-gray-100">
+        <div className="flex-1 overflow-y-auto p-6" ref={chatBoxRef}>
           <div className="max-w-4xl mx-auto">
+            {!isSidebarOpen && (
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="absolute top-4 left-4 z-30 text-white p-2 bg-rmutl-brown rounded-md hover:bg-rmutl-gold hover:text-black md:hidden"
+              >
+                <MenuIcon />
+              </button>
+            )}
             {messages.length === 0 && !isTyping ? (
-              <div className="text-center">
-                <SmartToyIcon style={{ fontSize: 60 }} className="text-gray-400 mx-auto mb-4" />
+              <div className="text-center text-gray-500">
+                <SmartToyIcon style={{ fontSize: 60 }} className="mx-auto mb-4" />
                 <h2 className="text-2xl font-bold mb-6">สวัสดีครับ, ให้ผมช่วยอะไร?</h2>
                 <div className="grid grid-cols-2 gap-4">
                   {exampleQuestions.map((q, i) => (
-                    <div key={i} onClick={() => setUserInput(q)} className="bg-gray-700 p-4 rounded-lg hover:bg-gray-600 cursor-pointer">
+                    <div key={i} onClick={() => setUserInput(q)} className="bg-white p-4 rounded-lg hover:bg-rmutl-gold hover:text-rmutl-brown cursor-pointer shadow-md">
                       <p className="font-semibold">{q}</p>
                     </div>
                   ))}
@@ -249,58 +249,49 @@ const Chatbot: React.FC = () => {
               </div>
             ) : (
               messages.map((msg, index) => (
-                <div key={index} className={`flex items-start gap-4 my-6 ${msg.sender === 'user' ? 'justify-end' : ''}`}>
-                  {msg.sender === 'bot' && <SmartToyIcon className="text-amber-400" style={{ fontSize: 32 }} />}
+                <div key={index} className={`flex items-start gap-4 my-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  {msg.sender === 'bot' && <div className="p-2 bg-gray-300 rounded-full"><SmartToyIcon className="text-rmutl-brown" /></div>}
                   <div
-                    className={`p-4 rounded-2xl max-w-2xl whitespace-pre-wrap prose prose-invert ${msg.sender === 'user'
-                      ? 'bg-blue-600'
-                      : 'bg-gray-700'
+                    className={`p-4 rounded-lg max-w-2xl shadow-md ${msg.sender === 'user' ? 'bg-rmutl-brown text-white' : 'bg-white text-gray-800'
                       }`}
-                    dangerouslySetInnerHTML={{ __html: msg.text }}
-                  />
-                  {msg.sender === 'user' && <AccountCircleIcon className="text-blue-300" style={{ fontSize: 32 }} />}
+                  >
+                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: msg.text }} />
+                  </div>
+                  {msg.sender === 'user' && <div className="p-2 bg-rmutl-gold rounded-full"><AccountCircleIcon className="text-rmutl-brown" /></div>}
                 </div>
               ))
             )}
             {isTyping && (
-              <div className="flex items-center gap-4 my-6">
-                <SmartToyIcon className="text-amber-400" style={{ fontSize: 32 }} />
-                <div className="bg-gray-700 p-4 rounded-2xl">
-                  <p className="animate-pulse">กำลังพิมพ์...</p>
+              <div className="flex items-center justify-start gap-4 my-4">
+                <div className="p-2 bg-gray-300 rounded-full"><SmartToyIcon className="text-rmutl-brown" /></div>
+                <div className="p-4 rounded-lg max-w-2xl shadow-md bg-white text-gray-800">
+                  <div className="typing-indicator">
+                    <span></span><span></span><span></span>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </div>
-
-        {/* Input Area */}
-        <div className="p-6 bg-gray-800">
-          <div className="max-w-3xl mx-auto">
-            <div className="relative flex items-center">
+        <div className="p-4 bg-white border-t border-gray-200">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center bg-gray-200 rounded-lg p-2">
               <input
                 type="text"
-                className="w-full bg-gray-700 border-none rounded-lg pl-4 pr-12 py-3 text-white focus:ring-2 focus:ring-amber-500"
-                placeholder="พิมพ์คำถามของคุณที่นี่..."
+                placeholder="พิมพ์ข้อความของคุณ..."
+                className="flex-grow bg-transparent outline-none px-4 text-gray-800"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }
-                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
               />
               <button
                 onClick={handleSendMessage}
-                disabled={!userInput.trim()}
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-amber-600 text-white p-2 rounded-md hover:bg-amber-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                className="p-2 rounded-full text-white bg-rmutl-brown hover:bg-rmutl-gold hover:text-black transition-colors"
+                disabled={isTyping}
               >
                 <SendIcon />
               </button>
             </div>
-            <p className="text-xs text-center text-gray-400 mt-2">
-              LLMs can make mistakes. Verify important information.
-            </p>
           </div>
         </div>
       </main>
