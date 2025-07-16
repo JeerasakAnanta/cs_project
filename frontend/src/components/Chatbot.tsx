@@ -7,6 +7,7 @@ import SmartToyIcon from '@mui/icons-material/SmartToy';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useAuth } from '../contexts/AuthContext';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC;
@@ -30,6 +31,7 @@ const Chatbot: React.FC = () => {
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const chatBoxRef = useRef<HTMLDivElement>(null);
+  const { currentUser } = useAuth();
 
   const authToken = localStorage.getItem('authToken');
 
@@ -268,7 +270,9 @@ const Chatbot: React.FC = () => {
             {messages.length === 0 && !isTyping ? (
               <div className="text-center text-gray-500">
                 <SmartToyIcon style={{ fontSize: 60 }} className="mx-auto mb-4" />
-                <h2 className="text-2xl font-bold mb-6">สวัสดีครับ, ให้ผมช่วยอะไร?</h2>
+                <h2 className="text-2xl font-bold mb-6">
+                  สวัสดีครับ, {currentUser?.username || 'Guest'} ให้ผมช่วยอะไร?
+                </h2>
                 <div className="grid grid-cols-2 gap-4">
                   {exampleQuestions.map((q, i) => (
                     <div key={i} onClick={() => setUserInput(q)} className="bg-white p-4 rounded-lg hover:bg-rmutl-gold hover:text-rmutl-brown cursor-pointer shadow-md">
