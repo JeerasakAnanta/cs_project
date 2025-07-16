@@ -5,6 +5,8 @@ import AddCommentIcon from '@mui/icons-material/AddComment';
 import { marked } from 'marked';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC;
@@ -21,6 +23,7 @@ interface Conversation {
 }
 
 const Chatbot: React.FC = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [userInput, setUserInput] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -187,11 +190,24 @@ const Chatbot: React.FC = () => {
   ];
 
   return (
-    <div className="flex h-full bg-gray-800 text-white">
+    <div className="relative h-full bg-gray-800 text-white overflow-hidden">
+      {!isSidebarOpen && (
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="absolute top-4 left-4 z-30 text-white p-2 bg-gray-700 rounded-md hover:bg-gray-600"
+        >
+          <MenuIcon />
+        </button>
+      )}
       {/* Sidebar */}
-      <aside className="w-80 bg-gray-900 p-4 flex flex-col">
+      <aside className={`absolute top-0 left-0 h-full bg-gray-900 p-4 flex flex-col w-80 transition-transform duration-300 ease-in-out z-20 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex-grow">
-          <h1 className="text-xl font-bold mb-4">ประวัติการสนทนา</h1>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-xl font-bold">ประวัติการสนทนา</h1>
+            <button onClick={() => setIsSidebarOpen(false)} className="text-gray-400 hover:text-white">
+              <ChevronLeftIcon />
+            </button>
+          </div>
           <button
             onClick={handleNewConversation}
             className="w-full bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center justify-center mb-4"
@@ -216,7 +232,7 @@ const Chatbot: React.FC = () => {
       </aside>
 
       {/* Main Chat Area */}
-      <main className="flex-1 flex flex-col">
+      <main className={`h-full flex flex-col transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-80' : 'ml-0'}`}>
         <div ref={chatBoxRef} className="flex-1 overflow-y-auto p-6">
           <div className="max-w-4xl mx-auto">
             {messages.length === 0 && !isTyping ? (
