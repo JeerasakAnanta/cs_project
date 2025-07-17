@@ -62,13 +62,48 @@ const Chatbot: React.FC<ChatbotProps> = ({
     setIsTyping(false);
   };
 
-  const handleFeedbackSubmit = (
+  const handleFeedbackSubmit = async (
     messageId: number,
     feedbackType: 'like' | 'dislike',
     comment: string,
     reason: string
   ) => {
-    // ... feedback logic
+    const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
+    const authToken = localStorage.getItem('authToken');
+
+    if (!authToken) {
+      console.error('Authentication token not found.');
+      // Optionally handle this case, e.g., by redirecting to login
+      return;
+    }
+    
+    const feedbackData = {
+      message_id: messageId,
+      feedback_type: feedbackType,
+      comment: reason ? `${reason}: ${comment}` : comment,
+    };
+
+    try {
+      const response = await fetch(`${BACKEND_API}/chat/feedback/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify(feedbackData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Optionally, you can handle the successful feedback submission here
+      // For example, show a success message to the user
+      console.log('Feedback submitted successfully');
+    } catch (error) {
+      console.error('Failed to submit feedback:', error);
+      // Optionally, show an error message to the user
+    }
   };
 
   const handleDislikeClick = (messageId: number) => {
