@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import FeedbackButtons from './FeedbackButtons';
 import FeedbackModal from './FeedbackModal';
 import { Edit2, ThumbsDown, ThumbsUp } from 'lucide-react';
+import './TypingIndicator.css';
 
 interface Message {
   id?: number;
@@ -100,10 +101,10 @@ const Chatbot: React.FC<ChatbotProps> = ({
         {messages.length === 0 && !isTyping ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="text-5xl font-bold mb-4">
-              <span className="text-blue-500">สวัสดี, ฉันคือ </span>
+              <span className="text-blue-500">สวัสดี👋 ผมคือ </span>
               <span className="text-white">LannaFinChat</span>
             </div>
-            <p className="text-gray-400 text-lg">มีอะไรให้ช่วยไหม?</p>
+            <p className="text-gray-400 text-lg">มีคำถามอะไรให้ช่วยตอบหรือไม่</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12 w-full max-w-3xl">
               {exampleQuestions.map((q, i) => (
                 <button
@@ -145,9 +146,18 @@ const Chatbot: React.FC<ChatbotProps> = ({
           </div>
         )}
         {isTyping && (
-          <div className="flex justify-start p-6">
-            <div className="bg-gray-700 p-3 rounded-lg">
-              <p className="text-white">กำลังพิมพ์...</p>
+          <div className="flex justify-start my-4">
+            <div className="flex items-start max-w-2xl">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-600 text-white flex-shrink-0 mx-2">
+                <SmartToyIcon />
+              </div>
+              <div className="bg-gray-700 p-4 rounded-lg flex items-center">
+                <div className="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
             </div>
           </div>
         )}
