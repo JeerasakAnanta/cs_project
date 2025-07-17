@@ -4,9 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 import os
 
-from app.utils.database import get_db
-from app.utils.database import SessionLocal
-
+from app.utils.database import get_db, SessionLocal
 # Load environment variables from .env file
 load_dotenv()
 

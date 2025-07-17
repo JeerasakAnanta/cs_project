@@ -30,10 +30,17 @@ app.add_middleware(
 
 
 # Include the router in the main FastAPI app
+# Authentication routers    
 app.include_router(router_login)
+
+# Chat routers
 app.include_router(router_chat)
 app.include_router(router_feedback)
+
+# PDF routers
 app.include_router(router_pdfs)
+
+# Admin routers
 app.include_router(router_admin)
 
 
