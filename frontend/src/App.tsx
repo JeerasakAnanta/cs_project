@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { marked } from 'marked';
 
 // Components
@@ -26,6 +26,7 @@ interface Message {
 
 const AppContent: React.FC = () => {
   const location = useLocation();
+  const { currentUser } = useAuth();
   const isLoginPage = location.pathname === '/login' || location.pathname === '/register';
   const isAdminPage = location.pathname.startsWith('/admin');
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
@@ -41,6 +42,9 @@ const AppContent: React.FC = () => {
   // This is a placeholder to show where it should be.
   useEffect(() => {
     const fetchConversations = async () => {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) return;
+
       try {
         const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -53,10 +57,10 @@ const AppContent: React.FC = () => {
         console.error('Error fetching conversations:', error);
       }
     };
-    if (authToken) {
+    if (currentUser) {
       fetchConversations();
     }
-  }, [authToken]);
+  }, [currentUser]);
 
 
   const handleNewConversation = () => {
@@ -82,6 +86,8 @@ const AppContent: React.FC = () => {
 
   const handleSelectConversation = async (id: number) => {
     setCurrentConversationId(id);
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) return;
     try {
       const response = await fetch(`${BACKEND_API}/chat/conversations/${id}`, {
         headers: { Authorization: `Bearer ${authToken}` },
@@ -106,6 +112,8 @@ const AppContent: React.FC = () => {
 
   const handleSendMessage = async (messageContent: string) => {
     let conversationId = currentConversationId;
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) return;
     
     // Create a new conversation if one doesn't exist
     if (!conversationId) {
