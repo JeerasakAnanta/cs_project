@@ -28,6 +28,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Root endpoint
+app.get("/")(lambda: {"message": "LannaFinChat API is running..."})
 
 # Include the router in the main FastAPI app
 # Authentication routers    
