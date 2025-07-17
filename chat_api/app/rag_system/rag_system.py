@@ -34,40 +34,38 @@ from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 
 # loading environment variable
-from app.utils.config import OPENAI_API_KEY, QDRANT_URL
+from app.utils.config import OPENAI_API_KEY, QDRANT_URL, COLLECTION_NAME 
 
 
 def create_chatbot_chain() -> ConversationalRetrievalChain:
     """
     Create a ConversationalRetrievalChain with a custom prompt.
-
-    The ConversationalRetrievalChain is a langchain component that enables the
-    chatbot to generate responses based on a given context and question. The
-    chain is comprised of a retriever, a combiner, and an LLM. The retriever
-    fetches relevant documents from a vector store, the combiner combines the
-    retrieved documents with the input context and question, and the LLM
-    generates a response based on the combined input.
-
-    The prompt template is used to define the format of the input to the
-    combiner. The template includes variables for the context and question,
-    which are populated by the input to the endpoint.
-
-    The Qdrant vector store is used to store the documents that the chatbot
-    uses to generate responses. The Qdrant client is configured with the URL
-    of the Qdrant server, which is set as an environment variable.
     """
 
     # Define the prompt template
     prompt = PromptTemplate(
         input_variables=["context", "question"],
         template="""
-            คุณคือผู้ช่วยอัจฉริยะ มีความเชี่ยวชาญของคุณคือการให้คำปรึกษาด้านคู่มือปฏิบัติงาน
-            การเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน มหาวิทยาลัยเทคโนโลยีราชมงคลล้านนา 
-            กรุณาตอบคำถามในรูปแบบ Markdown และ ใช้ภาษาไทยเท่านั้น 
-            โปรดให้คำตอบที่ชัดเจนและละเอียด พร้อมอธิบายขั้นตอนอย่างเป็นลำดับ 
-            หากข้อมูลไม่เพียงพอที่จะตอบคำถาม โปรดระบุว่า "น้องน้ำหวานไม่สามารถหาคำตอบจากเอกสารได้ค่ะ"
-            คุณสามารถใช้คำลงท้าย "ค่ะ" หรือ "ไม่ค่ะ" ในคำตอบเพื่อเพิ่มความรู้สึก 
-            ขอให้คำตอบมีอารมณ์ และ ความเป็นมิตรในทุกคำตอบค่ะ  ถ้าสรุปเป็นตารางให้สรุป
+            คุณคือ LannaFinChat ผู้ช่วยอัจฉริยะของมหาวิทยาลัยเทคโนโลยีราชมงคลล้านนา  
+            ความเชี่ยวชาญของคุณคือ **การให้คำปรึกษาเกี่ยวกับ "คู่มือปฏิบัติงานด้านการเงินและการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน"**  
+            โดยครอบคลุมหัวข้อต่าง ๆ เช่น:  
+            - การเบิกค่าใช้จ่ายในการเดินทางไปราชการ    
+
+            กรุณาปฏิบัติตามเงื่อนไขต่อไปนี้ในการตอบคำถาม:
+
+            - ใช้ **ภาษาไทย** เท่านั้น  
+            - ตอบในรูปแบบ **Markdown**  
+            - ให้คำตอบที่ **ชัดเจน ละเอียด และเป็นลำดับขั้นตอน**  
+            - หากจำเป็นให้สรุปเป็น **ตาราง Markdown**  
+            - หากข้อมูลในคำถามไม่เพียงพอ ให้ตอบว่า  
+            > `"LannaFinChat ไม่สามารถหาคำตอบจากเอกสารได้ครับ"`  
+            - ใช้คำลงท้าย "**ครับ**" หรือ "**ไม่ครับ**"  
+            - ทุกคำตอบต้องมี **อารมณ์ ความเป็นมิตร และสุภาพ** เพื่อให้ผู้อ่านรู้สึกดีครับ  
+
+            > ตัวอย่างการขึ้นต้นคำตอบ:  
+            > สวัสดีครับ 😊 LannaFinChat ขออธิบายขั้นตอน ดังนี้ต่อไปครับ...
+
+            Context:
             
         {context}
         คำถามต้นฉบับ: {question}
@@ -79,15 +77,11 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
         model="text-embedding-3-large",
     )
 
-    # Setup Qdrant client and vector store
-    url = os.getenv("QDRANT_VECTERDB_HOST")
-    COLLECTION = os.getenv("COLLECTION_NAME")
-
     # Create the Qdrant client and vector store
-    qdrant_client = QdrantClient(url)
+    qdrant_client = QdrantClient(QDRANT_URL)
     qdrant_store = QdrantVectorStore(
         client=qdrant_client,
-        collection_name=os.getenv("COLLECTION_NAME"),
+        collection_name=COLLECTION_NAME,
         embedding=embeddings,
     )
 
@@ -95,10 +89,6 @@ def create_chatbot_chain() -> ConversationalRetrievalChain:
     return ConversationalRetrievalChain.from_llm(
         llm=ChatOpenAI(
             model="gpt-4o-mini",
-            temperature=0.3,
-            max_tokens=3000,
-            timeout=30,
-            max_retries=5,
         ),
         retriever=qdrant_store.as_retriever(
             search_type="similarity", search_kwargs={"k": 10, "score_threshold": 0.5}
@@ -137,7 +127,5 @@ def chatbot(user_massage: str) -> str:
     )
 
     return {
-        "message": result["answer"],
-        "source": source_document,
-        "page": source_document_page,
+        "message": result["answer"]
     }

@@ -11,6 +11,7 @@ qdrant = QdrantClient(host="localhost", port=6333)
 
 
 def embed(texts):
+    
     response = llm.embeddings.create(
         model="text-embedding-3-small", input=texts, dimensions=512
     )
