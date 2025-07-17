@@ -20,7 +20,7 @@ async def read_root():
     Root endpoint of the API.
     Returns a simple message to indicate that the API is running.
     """
-    return {"message": "API endpoint for RMUTL chatbot login system is running..."}
+    return {"message": "API endpoint for LannaFinChat is running..."}
 
 
 @router.post("/register")
