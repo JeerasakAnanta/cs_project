@@ -104,7 +104,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
               <span className="text-blue-500">สวัสดี👋 ผมคือ </span>
               <span className="text-white">LannaFinChat</span>
             </div>
-            <p className="text-gray-400 text-lg">มีคำถามอะไรให้ช่วยตอบหรือไม่</p>
+            <p className="text-gray-400 text-lg">มีคำถามอะไรให้ช่วยตอบหรือไหมครับ</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12 w-full max-w-3xl">
               {exampleQuestions.map((q, i) => (
                 <button
