@@ -11,6 +11,9 @@ const Register: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  // default role is user
+  const default_role = 'user';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -20,10 +23,10 @@ const Register: React.FC = () => {
       const response = await fetch(`${BACKEND_API}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, email, password, role: default_role }),
       });
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         setSuccess('สมัครสมาชิกสำเร็จ! กำลังนำคุณไปยังหน้าเข้าสู่ระบบ...');
         setTimeout(() => {
           navigate('/login');
@@ -109,7 +112,7 @@ const Register: React.FC = () => {
           </button>
         </form>
         <p className="text-center mt-6">
-          มีบัญชีอยู่แล้ว?{' '}
+          มีบัญชีอยู่แล้ว{' '}
           <Link to="/login" className="text-blue-400 hover:underline">
             เข้าสู่ระบบที่นี่
           </Link>
