@@ -10,6 +10,7 @@ import Register from './components/Register';
 import Chatbot from './components/Chatbot';
 import Pagenotfound from './components/Pagenotfound';
 import AdminDashboard from './components/AdminDashboard';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Auth Wrapper
 import PrivateRoute from './components/PrivateRoute';
@@ -151,11 +152,15 @@ const AppContent: React.FC = () => {
       });
       
       const botMessageData = await response.json();
-      const lastBotMessage = botMessageData[botMessageData.length -1]
-      const formattedText = await formatBotMessage(lastBotMessage.content);
-      const botMessage: Message = { id: lastBotMessage.id, text: formattedText, sender: 'bot' };
-      
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
+      if (botMessageData && botMessageData.length > 0) {
+        const lastBotMessage = botMessageData[botMessageData.length - 1];
+        const formattedText = await formatBotMessage(lastBotMessage.content);
+        const botMessage: Message = { id: lastBotMessage.id, text: formattedText, sender: 'bot' };
+        
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
+      } else {
+        console.error('No bot message received');
+      }
 
     } catch (error) {
       console.error('Error sending message or getting response:', error);
@@ -210,11 +215,13 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   );
 };
 

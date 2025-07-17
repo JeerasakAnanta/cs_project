@@ -4,7 +4,7 @@ import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
 
 // use env
-const VITE_HOST = import.meta.env.VITE_HOST;
+const VITE_HOST = import.meta.env.VITE_BACKEND_DOCS_API;
 
 const Uploadpdf: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);

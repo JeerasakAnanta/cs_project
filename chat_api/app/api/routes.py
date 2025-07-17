@@ -105,7 +105,7 @@ async def upload_file(file: UploadFile = File(...)):
     # Save the uploaded file to the local directory
     with open(file_path, "wb") as f:
         content = await file.read()  # Read the file content asynchronously
-        # f.write(content)  # Write the content to the file
+        f.write(content)  # Write the content to the file
 
     # Process the PDF after saving it
     process_pdf(file_path)

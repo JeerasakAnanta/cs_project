@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: lannafinchat_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+      POSTGRES_DB: ${DB_NAME:-lannafinchat_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - lannafinchat_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Qdrant Vector Database
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: lannafinchat_qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - lannafinchat_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Backend API
+  backend:
+    build:
+      context: ./chat_api
+      dockerfile: Dockerfile
+    container_name: lannafinchat_backend
+    restart: unless-stopped
+    environment:
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-changeme}
+      - DB_HOST=postgres
+      - DB_NAME=${DB_NAME:-lannafinchat_db}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - QDRANT_VECTERDB_HOST=http://qdrant:6333
+      - COLLECTION_NAME=${COLLECTION_NAME:-lannafinchat_docs}
+      - ACCESS_SECRET=${ACCESS_SECRET}
+      - REFRESH_SECRET=${REFRESH_SECRET}
+      - ALGORITHM=${ALGORITHM:-HS256}
+      - EMBEDDINGS_MODEL=${EMBEDDINGS_MODEL:-text-embedding-3-large}
+      - DEBUG=${DEBUG:-false}
+    volumes:
+      - pdf_storage:/app/pdfs
+      - log_storage:/app/log
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    networks:
+      - lannafinchat_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lannafinchat_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - lannafinchat_network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx Reverse Proxy (Optional - for SSL termination)
+  nginx:
+    image: nginx:alpine
+    container_name: lannafinchat_nginx
+    restart: unless-stopped
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - lannafinchat_network
+    profiles:
+      - ssl
+
+volumes:
+  postgres_data:
+    driver: local
+  qdrant_data:
+    driver: local
+  pdf_storage:
+    driver: local
+  log_storage:
+    driver: local
+
+networks:
+  lannafinchat_network:
+    driver: bridge 

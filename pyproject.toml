@@ -3,7 +3,7 @@ name = "cs-project"
 version = "0.1.0"
 description = "final project for CS RMUTL RAG"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "docling>=2.34.0",
     "fastapi>=0.115.12",

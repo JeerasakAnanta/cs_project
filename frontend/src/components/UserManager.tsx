@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import LoadingSpinner from './LoadingSpinner';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 
@@ -39,11 +40,24 @@ const UserManagement: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner size="large" text="กำลังโหลดข้อมูลผู้ใช้..." />;
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+        <div className="max-w-md w-full bg-gray-800 rounded-lg shadow-lg p-8 text-center">
+          <h2 className="text-2xl font-bold mb-4">เกิดข้อผิดพลาด</h2>
+          <p className="text-gray-300 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300"
+          >
+            ลองใหม่
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (

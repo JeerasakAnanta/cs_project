@@ -20,11 +20,26 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="LannaFinChat API", description="API for LannaFinChat")
 
 # Middleware for CORS
+import os
+from app.utils.config import DEBUG
+
+# Configure CORS based on environment
+if DEBUG:
+    # Development: Allow all origins
+    origins = ["*"]
+else:
+    # Production: Allow specific origins
+    origins = [
+        "http://localhost:8000",
+        "http://localhost:3000",
+        "https://your-production-domain.com"
+    ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 

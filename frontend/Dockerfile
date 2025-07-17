@@ -1,35 +1,47 @@
-# Stage 1: Build the React application
-FROM node:20-alpine3.21 AS builder
+# Build stage
+FROM node:18-alpine AS builder
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package files
 COPY package*.json ./
 
-# Install the dependencies
-RUN npm install
+# Install dependencies
+RUN npm ci --only=production
 
-# Copy the rest of the application
+# Copy source code
 COPY . .
 
-# Build the application (adjust to `build` or `build:prod` if needed)
+# Build the application
 RUN npm run build
 
-# Stage 2: Serve the application using a lightweight server
+# Production stage
 FROM nginx:alpine
 
-# Remove default nginx static files
-RUN rm -rf /usr/share/nginx/html/*
-
-# Copy the build output to the Nginx html folder
+# Copy built application from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy custom Nginx config if needed (optional)
-# COPY nginx.conf /etc/nginx/nginx.conf
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Expose port 80
+# Create nginx user if it doesn't exist
+RUN addgroup -g 1001 -S nginx && \
+    adduser -S -D -H -u 1001 -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx
+
+# Set proper permissions
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chmod -R 755 /usr/share/nginx/html
+
+# Switch to nginx user
+USER nginx
+
+# Expose port
 EXPOSE 80
 
-# Command to run Nginx
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
+
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
