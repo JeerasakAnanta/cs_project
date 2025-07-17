@@ -30,9 +30,23 @@ const Register: React.FC = () => {
         }, 2000);
       } else {
         const errorData = await response.json();
-        setError(errorData.detail || 'เกิดข้อผิดพลาดในการสมัครสมาชิก');
+
+        // Check if errorData.detail is an array and format it
+        let errorMsg = 'เกิดข้อผิดพลาดในการสมัครสมาชิก';
+        if (errorData.detail) {
+          if (Array.isArray(errorData.detail)) {
+            // Extract messages from Pydantic validation errors
+            errorMsg = errorData.detail.map((err: any) => err.msg || String(err)).join(', ');
+          } else if (typeof errorData.detail === 'string') {
+            errorMsg = errorData.detail;
+          } else if (typeof errorData.detail === 'object' && errorData.detail !== null) {
+            errorMsg = JSON.stringify(errorData.detail);
+          }
+        }
+
+        setError(errorMsg);
       }
-    } catch (err) {
+    } catch (err: any) {
       setError('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
     }
   };
@@ -41,7 +55,11 @@ const Register: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
       <div className="max-w-md w-full bg-gray-800 rounded-lg shadow-lg p-8">
         <h2 className="text-3xl font-bold text-center mb-6">สมัครสมาชิก</h2>
-        {error && <p className="bg-red-500 text-white p-3 rounded mb-4">{error}</p>}
+        {error && (
+          <pre className="bg-red-500 text-white p-3 rounded mb-4 whitespace-pre-wrap">
+            {error}
+          </pre>
+        )}
         {success && <p className="bg-green-500 text-white p-3 rounded mb-4">{success}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -101,4 +119,4 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register; 
+export default Register;
