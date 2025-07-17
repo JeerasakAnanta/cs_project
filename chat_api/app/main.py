@@ -17,12 +17,12 @@ from app.routers.router_admin import router as router_admin
 models.Base.metadata.create_all(bind=engine)
 
 # Initialize FastAPI
-app = FastAPI()
+app = FastAPI(title="LannaFinChat API", description="API for LannaFinChat")
 
 # Middleware for CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust this to your needs
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
