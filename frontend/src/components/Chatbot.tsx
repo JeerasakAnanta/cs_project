@@ -5,7 +5,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAuth } from '../contexts/AuthContext';
 import FeedbackButtons from './FeedbackButtons';
 import FeedbackModal from './FeedbackModal';
-import { Edit2, ThumbsDown, ThumbsUp } from 'lucide-react';
 import './TypingIndicator.css';
 
 interface Message {
@@ -23,23 +22,22 @@ interface ChatbotProps {
   conversations: { id: number; title: string }[];
 }
 
-
 const Chatbot: React.FC<ChatbotProps> = ({
   currentConversationId,
+  setCurrentConversationId,
   messages,
   setMessages,
   onSendMessage,
   conversations,
 }) => {
-  const [userInput, setUserInput] = useState<string>('');
-  const [isTyping, setIsTyping] = useState<boolean>(false);
-  const chatBoxRef = useRef<HTMLDivElement>(null);
+  const [userInput, setUserInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState<number | null>(null);
+  const chatBoxRef = useRef<HTMLDivElement>(null);
 
   const { currentUser } = useAuth();
   const currentConversation = conversations.find(c => c.id === currentConversationId);
-
 
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -53,50 +51,73 @@ const Chatbot: React.FC<ChatbotProps> = ({
     const userMessage: Message = { text: userInput, sender: 'user' };
     setMessages([...messages, userMessage]);
 
-    const originalUserInput = userInput;
+    const originalInput = userInput;
     setUserInput('');
     setIsTyping(true);
-
-    await onSendMessage(originalUserInput);
-
+    await onSendMessage(originalInput);
     setIsTyping(false);
   };
 
-  const handleFeedbackSubmit = (
+  const handleFeedbackSubmit = async (
     messageId: number,
     feedbackType: 'like' | 'dislike',
     comment: string,
     reason: string
   ) => {
-    // ... feedback logic
+    const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      console.error('No token found');
+      return;
+    }
+
+    const feedbackData = {
+      message_id: messageId,
+      feedback_type: feedbackType,
+      comment: reason ? `${reason}: ${comment}` : comment,
+    };
+
+    try {
+      const res = await fetch(`${BACKEND_API}/chat/feedback/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify(feedbackData),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      console.log('Feedback submitted');
+    } catch (err) {
+      console.error('Feedback error:', err);
+    } finally {
+      setIsFeedbackModalOpen(false);
+    }
   };
 
-  const handleDislikeClick = (messageId: number) => {
-    setSelectedMessageId(messageId);
+  const handleDislikeClick = (id: number) => {
+    setSelectedMessageId(id);
     setIsFeedbackModalOpen(true);
   };
 
-  const handleExampleQuestionClick = (question: string) => {
-    setUserInput(question);
-  };
+  const handleExampleQuestionClick = (text: string) => setUserInput(text);
 
   const exampleQuestions = [
-    'ตัวอย่างค่าเบี้ยเดินทางในประเทศ',
-    'ค่าใช้จ่ายในการฝึกอบรม จัดงาน',
-    'ค่าใช้จ่ายในการประชุม',
-    'ค่าตอบแทนปฏิบัติงานนอกเวลาราชการ',
+    'ใบเสร็จรับเงินค่าน้ำมันเชื้อเพลิง ใช้เป็นหลักฐานทางราชการได้หรือไม่',
+    'หากต้องจ่ายค่าเช่าที่พักสูง กว่าอัตราที่ระเบียบกำหนด จะสามารถเบิกจ่ายได้หรือไม่',
+    'เขียนรายงานการเดินทางและใบรับรองแทน ใบเสร็จรับเงินก่อนเสร็จสิ้นการเดินทางได้หรือไม่',
+    'การเดินทางไปท้องถิ่นที่ไม่มีโรงแรมแต่พักบ้าน ชาวบ้านหรือโฮมสเตย์ที่ไม่มีใบเสร็จรับเงิน ทำได้หรือไม่',
   ];
 
   return (
     <div className="flex flex-col h-full bg-[#343541]">
-      {/* Chat Header */}
       {currentConversation && (
-        <div className="p-4 border-b border-gray-700 flex justify-between items-center flex-shrink-0">
+        <div className="p-4 border-b border-gray-700 flex justify-between items-center">
           <h2 className="text-lg font-semibold text-white">{currentConversation.title}</h2>
         </div>
       )}
 
-      {/* Chat Messages */}
       <div ref={chatBoxRef} className="flex-1 overflow-y-auto p-6">
         {messages.length === 0 && !isTyping ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
@@ -104,13 +125,13 @@ const Chatbot: React.FC<ChatbotProps> = ({
               <span className="text-blue-500">สวัสดี👋 ผมคือ </span>
               <span className="text-white">LannaFinChat</span>
             </div>
-            <p className="text-gray-400 text-lg">มีคำถามอะไรให้ช่วยตอบหรือไหมครับ</p>
+            <p className="text-gray-400 text-lg">มีคำถามอะไรให้ช่วยตอบ เกี่ยวกับ ค่าใช้จ่ายในการเดินทาง หรือไหมครับ</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12 w-full max-w-3xl">
               {exampleQuestions.map((q, i) => (
                 <button
                   key={i}
                   onClick={() => handleExampleQuestionClick(q)}
-                  className="bg-gray-700 p-4 rounded-lg text-left hover:bg-gray-600 transition-colors"
+                  className="bg-gray-700 p-4 rounded-lg text-left hover:bg-gray-600"
                 >
                   <p className="text-white font-semibold">{q}</p>
                 </button>
@@ -125,7 +146,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
                 className={`flex items-start my-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div className={`flex items-start max-w-2xl ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-600 text-white flex-shrink-0 mx-2">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-600 text-white mx-2">
                     {msg.sender === 'bot' ? <SmartToyIcon /> : <AccountCircleIcon />}
                   </div>
                   <div className={`p-4 rounded-lg ${msg.sender === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-200'}`}>
@@ -134,8 +155,8 @@ const Chatbot: React.FC<ChatbotProps> = ({
                       <FeedbackButtons
                         messageId={msg.id}
                         onDislikeClick={() => handleDislikeClick(msg.id!)}
-                        onFeedbackSubmit={(feedbackType, comment, reason) =>
-                          handleFeedbackSubmit(msg.id!, feedbackType, comment || '', reason || '')
+                        onFeedbackSubmit={(type, comment, reason) =>
+                          handleFeedbackSubmit(msg.id!, type, comment || '', reason || '')
                         }
                       />
                     )}
@@ -145,10 +166,11 @@ const Chatbot: React.FC<ChatbotProps> = ({
             ))}
           </div>
         )}
+
         {isTyping && (
           <div className="flex justify-start my-4">
             <div className="flex items-start max-w-2xl">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-600 text-white flex-shrink-0 mx-2">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-600 text-white mx-2">
                 <SmartToyIcon />
               </div>
               <div className="bg-gray-700 p-4 rounded-lg flex items-center">
@@ -163,13 +185,12 @@ const Chatbot: React.FC<ChatbotProps> = ({
         )}
       </div>
 
-      {/* Message Input */}
-      <div className="p-4 bg-[#343541] border-t border-gray-700 flex-shrink-0">
+      <div className="p-4 bg-[#343541] border-t border-gray-700">
         <div className="relative max-w-3xl mx-auto bg-gray-700 rounded-lg">
           <textarea
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
-            onKeyPress={(e) => {
+            onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 handleSendMessage();
@@ -187,16 +208,14 @@ const Chatbot: React.FC<ChatbotProps> = ({
             <SendIcon />
           </button>
         </div>
-        <p className="text-xs text-center text-gray-500 mt-2">
-          สร้างโดย AI เพื่อใช้ในการอ้างอิงเท่านั้น
-        </p>
+        <p className="text-xs text-center text-gray-500 mt-2">สร้างโดย AI เพื่อใช้ในการอ้างอิงเท่านั้น</p>
       </div>
 
       <FeedbackModal
         isOpen={isFeedbackModalOpen}
         onClose={() => setIsFeedbackModalOpen(false)}
         onSubmit={(comment, reason) => {
-          if (selectedMessageId) {
+          if (selectedMessageId != null) {
             handleFeedbackSubmit(selectedMessageId, 'dislike', comment, reason);
           }
         }}

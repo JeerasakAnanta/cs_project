@@ -41,7 +41,7 @@ def process_pdf(file_path: str):
         logger.info("convert  txt to  markdown")
 
         # Split the text into chunks
-        text_splitter = MarkdownTextSplitter(chunk_size=1000, chunk_overlap=200)
+        text_splitter = MarkdownTextSplitter(chunk_size=500, chunk_overlap=200)
 
         logger.info("spliter data susscerfull")
         chunks = text_splitter.create_documents([serup_text])
