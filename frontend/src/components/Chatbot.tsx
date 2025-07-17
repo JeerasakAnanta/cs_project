@@ -13,6 +13,7 @@ interface Message {
   sender: 'user' | 'bot';
 }
 
+
 interface ChatbotProps {
   currentConversationId: number | null;
   setCurrentConversationId: (id: number | null) => void;
@@ -24,7 +25,6 @@ interface ChatbotProps {
 
 const Chatbot: React.FC<ChatbotProps> = ({
   currentConversationId,
-  setCurrentConversationId,
   messages,
   setMessages,
   onSendMessage,
@@ -36,7 +36,6 @@ const Chatbot: React.FC<ChatbotProps> = ({
   const [selectedMessageId, setSelectedMessageId] = useState<number | null>(null);
   const chatBoxRef = useRef<HTMLDivElement>(null);
 
-  const { currentUser } = useAuth();
   const currentConversation = conversations.find(c => c.id === currentConversationId);
 
   useEffect(() => {
@@ -58,6 +57,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
     setIsTyping(false);
   };
 
+  // feedback submit 
   const handleFeedbackSubmit = async (
     messageId: number,
     feedbackType: 'like' | 'dislike',
