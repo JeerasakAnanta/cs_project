@@ -14,7 +14,7 @@ def validate_environment():
         "DB_PASSWORD",
         "DB_HOST",
         "DB_NAME",
-        "ACCESS_SECRET",
+        "SECRET_KEY",
         "REFRESH_SECRET",
         "ALGORITHM"
     ]
@@ -47,7 +47,7 @@ DB_HOST = os.getenv("DB_HOST")
 DB_NAME = os.getenv("DB_NAME")
 
 # JWT Configuration
-ACCESS_SECRET = os.getenv("ACCESS_SECRET")
+ACCESS_SECRET = os.getenv("SECRET_KEY")
 REFRESH_SECRET = os.getenv("REFRESH_SECRET")
 ALGORITHM = os.getenv("ALGORITHM")
 
