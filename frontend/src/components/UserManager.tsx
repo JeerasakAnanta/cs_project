@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import LoadingSpinner from './LoadingSpinner';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
@@ -15,7 +14,6 @@ const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { currentUser } = useAuth();
 
   useEffect(() => {
     fetchUsers();
@@ -61,16 +59,16 @@ const UserManagement: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">User Management</h1>
-      <table className="min-w-full bg-white">
+    <div className="container mx-auto p-4 ">
+      <h1 className="text-2xl font-bold mb-4">ระบบจัดการผู้ใช้งาน</h1>
+      <table className="min-w-full bg-white text-black ">
         <thead>
           <tr>
-            <th className="py-2">ID</th>
-            <th className="py-2">Email</th>
-            <th className="py-2">Username</th>
-            <th className="py-2">Role</th>
-            <th className="py-2">Actions</th>
+            <th className="py-2">รหัสผู้ใช้งาน</th>
+            <th className="py-2">อีเมล</th>
+            <th className="py-2">ชื่อผู้ใช้งาน</th>
+            <th className="py-2">สิทธิ์</th> 
+            <th className="py-2">จัดการ</th>
           </tr>
         </thead>
         <tbody>
@@ -80,9 +78,9 @@ const UserManagement: React.FC = () => {
               <td className="border px-4 py-2">{user.email}</td>
               <td className="border px-4 py-2">{user.username}</td>
               <td className="border px-4 py-2">{user.role}</td>
-              <td className="border px-4 py-2">
-                <button className="bg-blue-500 text-white px-2 py-1 rounded">Edit</button>
-                <button className="bg-red-500 text-white px-2 py-1 rounded ml-2">Delete</button>
+              <td className="border px-4 py-2 flex justify-center">
+                <button className="bg-blue-500 text-white px-2 py-1 rounded">เเก้ไข</button>
+                <button className="bg-red-500 text-white px-2 py-1 rounded ml-2">ลบ</button>
               </td>
             </tr>
           ))}

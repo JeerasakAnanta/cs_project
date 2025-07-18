@@ -1,36 +1,62 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { Home, ArrowLeft, Search, Sparkles } from 'lucide-react';
 
 const Pagenotfound: React.FC = () => {
   return (
-    <>
-      {/*
-        This example requires updating your template:
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-chat-bg via-neutral-900 to-chat-bg relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+      </div>
 
-        ```
-        <html class="h-full">
-        <body class="h-full">
-        ```
-      */}
-      <main className="grid min-h-screen place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
-        <div className="text-center">
-          <div className="text-3xl font-semibold text-green-950 ">404</div>
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-green-900 sm:text-5xl">
-            ไม่พบหน้าที่คุณหา{' '}
-          </h1>
-          <p className="mt-6 text-base leading-7 text-gray-600">
-            "ขออภัย เราไม่พบหน้าที่คุณกำลังมองหา"
+      <div className="relative z-10 text-center px-6">
+        <div className="card p-12 shadow-2xl border border-neutral-700/50 backdrop-blur-sm max-w-md mx-auto">
+          {/* 404 Icon */}
+          <div className="mb-8">
+            <div className="w-24 h-24 bg-gradient-to-br from-red-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-glow">
+              <Search className="w-12 h-12 text-white" />
+            </div>
+            <h1 className="text-8xl font-bold gradient-text mb-4">404</h1>
+          </div>
+
+          {/* Content */}
+          <h2 className="text-2xl font-bold text-white mb-4">ไม่พบหน้าเว็บ</h2>
+          <p className="text-neutral-400 mb-8 leading-relaxed">
+            หน้าที่คุณกำลังค้นหาอาจถูกลบ ย้าย หรือไม่มีอยู่จริง
           </p>
-          <div className="mt-10 flex items-center justify-center gap-x-6">
-            <a
-              href="/"
-              className="rounded-md bg-green-700 px-3.5 py-2.5 text-xl font-semibold text-white shadow-sm hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+
+          {/* Action buttons */}
+          <div className="space-y-4">
+            <Link
+              to="/"
+              className="w-full btn-primary py-3 text-base font-semibold flex items-center justify-center"
             >
-              กลับ หน้าหลัก
-            </a>
+              <Home className="w-5 h-5 mr-2" />
+              กลับหน้าหลัก
+            </Link>
+            
+            <button
+              onClick={() => window.history.back()}
+              className="w-full btn-secondary py-3 text-base font-semibold flex items-center justify-center"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              กลับไปหน้าก่อนหน้า
+            </button>
+          </div>
+
+          {/* Decorative element */}
+          <div className="mt-8 flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+              <Sparkles className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-neutral-500 text-sm">LannaFinChat</span>
           </div>
         </div>
-      </main>
-    </>
+      </div>
+    </div>
   );
 };
 

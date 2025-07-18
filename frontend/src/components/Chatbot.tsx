@@ -5,6 +5,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAuth } from '../contexts/AuthContext';
 import FeedbackButtons from './FeedbackButtons';
 import FeedbackModal from './FeedbackModal';
+import { Sparkles, Send, Bot, User } from 'lucide-react';
 import './TypingIndicator.css';
 
 interface Message {
@@ -12,7 +13,6 @@ interface Message {
   text: string;
   sender: 'user' | 'bot';
 }
-
 
 interface ChatbotProps {
   currentConversationId: number | null;
@@ -57,7 +57,6 @@ const Chatbot: React.FC<ChatbotProps> = ({
     setIsTyping(false);
   };
 
-  // feedback submit 
   const handleFeedbackSubmit = async (
     messageId: number,
     feedbackType: 'like' | 'dislike',
@@ -111,54 +110,98 @@ const Chatbot: React.FC<ChatbotProps> = ({
   ];
 
   return (
-    <div className="flex flex-col h-full bg-[#343541]">
+    <div className="flex flex-col h-full bg-chat-bg">
+      {/* Conversation header */}
       {currentConversation && (
-        <div className="p-4 border-b border-gray-700 flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-white">{currentConversation.title}</h2>
+        <div className="p-4 border-b border-neutral-700/50 bg-neutral-800/30 backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <h2 className="text-lg font-semibold text-white">{currentConversation.title}</h2>
+            </div>
+          </div>
         </div>
       )}
 
-      <div ref={chatBoxRef} className="flex-1 overflow-y-auto p-6">
+      {/* Chat messages area */}
+      <div ref={chatBoxRef} className="flex-1 overflow-y-auto">
         {messages.length === 0 && !isTyping ? (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <div className="text-5xl font-bold mb-4">
-              <span className="text-blue-500">สวัสดี👋 ผมคือ </span>
-              <span className="text-white">LannaFinChat</span>
+          // Welcome screen
+          <div className="flex flex-col items-center justify-center h-full text-center px-6">
+            <div className="mb-8">
+              <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-glow">
+                <Sparkles className="w-10 h-10 text-white" />
+              </div>
+              <h1 className="text-4xl font-bold mb-4">
+                <span className="gradient-text">สวัสดี👋</span>
+              </h1>
+              <h2 className="text-2xl font-semibold text-white mb-2">ผมคือ LannaFinChat</h2>
+              <p className="text-neutral-400 text-lg max-w-2xl">
+                "มีคำถามอะไร ให้ช่วยเกี่ยวกับการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน ไหมครับ"
+              </p>
             </div>
-            <p className="text-gray-400 text-lg">"มีคำถามอะไร ให้ช่วยเกี่ยวกับการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน ไหมครับ"</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12 w-full max-w-3xl">
+
+            {/* Example questions */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl">
               {exampleQuestions.map((q, i) => (
                 <button
                   key={i}
                   onClick={() => handleExampleQuestionClick(q)}
-                  className="bg-gray-700 p-4 rounded-lg text-left hover:bg-gray-600"
+                  className="card p-6 text-left hover:bg-neutral-700/50 transition-all duration-200 transform hover:scale-105 focus-ring group"
                 >
-                  <p className="text-white font-semibold">{q}</p>
+                  <div className="flex items-start">
+                    <div className="w-8 h-8 bg-gradient-to-br from-primary-500/20 to-purple-600/20 rounded-lg flex items-center justify-center mr-3 mt-1 group-hover:from-primary-500/30 group-hover:to-purple-600/30 transition-all duration-200">
+                      <Sparkles className="w-4 h-4 text-primary-400" />
+                    </div>
+                    <p className="text-white font-medium leading-relaxed">{q}</p>
+                  </div>
                 </button>
               ))}
             </div>
           </div>
         ) : (
-          <div className="p-6">
+          // Messages list
+          <div className="p-6 space-y-6">
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`flex items-start my-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex items-start ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} message-enter`}
               >
-                <div className={`flex items-start max-w-2xl ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-600 text-white mx-2">
-                    {msg.sender === 'bot' ? <SmartToyIcon /> : <AccountCircleIcon />}
+                <div className={`flex items-start max-w-3xl ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
+                  {/* Avatar */}
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center mx-3 flex-shrink-0 ${
+                    msg.sender === 'bot' 
+                      ? 'bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow' 
+                      : 'bg-gradient-to-br from-neutral-600 to-neutral-700'
+                  }`}>
+                    {msg.sender === 'bot' ? (
+                      <Bot className="w-5 h-5 text-white" />
+                    ) : (
+                      <User className="w-5 h-5 text-white" />
+                    )}
                   </div>
-                  <div className={`p-4 rounded-lg ${msg.sender === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-200'}`}>
+
+                  {/* Message content */}
+                  <div className={`p-4 rounded-2xl max-w-2xl ${
+                    msg.sender === 'user' 
+                      ? 'bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-lg' 
+                      : 'bg-neutral-800/80 backdrop-blur-sm border border-neutral-700/50 text-neutral-200'
+                  }`}>
                     <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: msg.text }} />
+                    
+                    {/* Feedback buttons for bot messages */}
                     {msg.sender === 'bot' && msg.id && (
-                      <FeedbackButtons
-                        messageId={msg.id}
-                        onDislikeClick={() => handleDislikeClick(msg.id!)}
-                        onFeedbackSubmit={(type, comment, reason) =>
-                          handleFeedbackSubmit(msg.id!, type, comment || '', reason || '')
-                        }
-                      />
+                      <div className="mt-3">
+                        <FeedbackButtons
+                          messageId={msg.id}
+                          onDislikeClick={() => handleDislikeClick(msg.id!)}
+                          onFeedbackSubmit={(type, comment, reason) =>
+                            handleFeedbackSubmit(msg.id!, type, comment || '', reason || '')
+                          }
+                        />
+                      </div>
                     )}
                   </div>
                 </div>
@@ -167,13 +210,14 @@ const Chatbot: React.FC<ChatbotProps> = ({
           </div>
         )}
 
+        {/* Typing indicator */}
         {isTyping && (
-          <div className="flex justify-start my-4">
-            <div className="flex items-start max-w-2xl">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-600 text-white mx-2">
-                <SmartToyIcon />
+          <div className="flex justify-start p-6">
+            <div className="flex items-start max-w-3xl">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center mx-3 bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow">
+                <Bot className="w-5 h-5 text-white" />
               </div>
-              <div className="bg-gray-700 p-4 rounded-lg flex items-center">
+              <div className="bg-neutral-800/80 backdrop-blur-sm border border-neutral-700/50 p-4 rounded-2xl flex items-center">
                 <div className="typing-indicator">
                   <span></span>
                   <span></span>
@@ -185,30 +229,36 @@ const Chatbot: React.FC<ChatbotProps> = ({
         )}
       </div>
 
-      <div className="p-4 bg-[#343541] border-t border-gray-700">
-        <div className="relative max-w-3xl mx-auto bg-gray-700 rounded-lg">
-          <textarea
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSendMessage();
-              }
-            }}
-            placeholder="ส่งข้อความถึง LannaFinChat..."
-            className="w-full bg-transparent p-4 pr-16 text-white placeholder-gray-400 focus:outline-none resize-none"
-            rows={1}
-          />
-          <button
-            onClick={handleSendMessage}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-blue-500 disabled:text-gray-500"
-            disabled={!userInput.trim() || isTyping}
-          >
-            <SendIcon />
-          </button>
+      {/* Input area */}
+      <div className="p-6 bg-neutral-800/30 backdrop-blur-sm border-t border-neutral-700/50">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative bg-neutral-800/80 backdrop-blur-sm border border-neutral-700/50 rounded-2xl shadow-lg">
+            <textarea
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage();
+                }
+              }}
+              placeholder="ส่งข้อความถึง LannaFinChat..."
+              className="w-full bg-transparent p-4 pr-16 text-white placeholder-neutral-400 focus:outline-none resize-none rounded-2xl"
+              rows={1}
+              style={{ minHeight: '56px', maxHeight: '200px' }}
+            />
+            <button
+              onClick={handleSendMessage}
+              disabled={!userInput.trim() || isTyping}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-gradient-to-br from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 disabled:from-neutral-600 disabled:to-neutral-700 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 focus-ring"
+            >
+              <Send className="w-5 h-5 text-white" />
+            </button>
+          </div>
+          <p className="text-xs text-center text-neutral-500 mt-3">
+            สร้างโดย AI เพื่อใช้ในการอ้างอิงเท่านั้น
+          </p>
         </div>
-        <p className="text-xs text-center text-gray-500 mt-2">สร้างโดย AI เพื่อใช้ในการอ้างอิงเท่านั้น</p>
       </div>
 
       <FeedbackModal

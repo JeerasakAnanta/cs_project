@@ -181,7 +181,7 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-[#343541] text-white overflow-hidden">
+    <div className="flex h-screen bg-chat-bg text-white overflow-hidden">
       <Navbar
         onNewConversation={handleNewConversation}
         onSelectConversation={handleSelectConversation}
