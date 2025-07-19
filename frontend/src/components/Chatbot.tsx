@@ -105,7 +105,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
         console.error('Feedback API error:', res.status, errorText);
         throw new Error(`HTTP ${res.status}: ${errorText}`);
       }
-      
+
       const result = await res.json();
       console.log('Feedback submitted successfully:', result);
       setAlertState({
@@ -145,7 +145,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
     <div className="flex flex-col h-full bg-chat-bg">
       {/* Conversation header */}
       {currentConversation && (
-          <div className="p-4 border-b border-neutral-700/50 bg-neutral-800/30 backdrop-blur-sm">
+        <div className="p-4 border-b border-neutral-700/50 bg-neutral-800/30 backdrop-blur-sm">
           <h2 className="text-lg font-semibold text-white text-center">{currentConversation.title}</h2>
         </div>
       )}
@@ -160,7 +160,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
                 <Sparkles className="w-10 h-10 text-white" />
               </div>
               <h1 className="text-4xl font-bold mb-4">
-              สวัสดี👋 ผมคือ <span className="gradient-text"> LannaFinChat</span>
+                สวัสดี👋 ผมคือ <span className="gradient-text"> LannaFinChat</span>
               </h1>
               <p className="text-neutral-400 text-lg max-w-2xl">
                 "มีคำถามอะไร ให้ช่วยเกี่ยวกับการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน ไหมครับ"
@@ -195,11 +195,10 @@ const Chatbot: React.FC<ChatbotProps> = ({
               >
                 <div className={`flex items-start max-w-3xl ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
                   {/* Avatar */}
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center mx-3 flex-shrink-0 ${
-                    msg.sender === 'bot' 
-                      ? 'bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow' 
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center mx-3 flex-shrink-0 ${msg.sender === 'bot'
+                      ? 'bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow'
                       : 'bg-gradient-to-br from-neutral-600 to-neutral-700'
-                  }`}>
+                    }`}>
                     {msg.sender === 'bot' ? (
                       <Bot className="w-5 h-5 text-white" />
                     ) : (
@@ -208,13 +207,12 @@ const Chatbot: React.FC<ChatbotProps> = ({
                   </div>
 
                   {/* Message content */}
-                  <div className={`p-4 rounded-2xl max-w-2xl ${
-                    msg.sender === 'user' 
-                      ? 'bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-lg' 
+                  <div className={`p-4 rounded-2xl max-w-2xl ${msg.sender === 'user'
+                      ? 'bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-lg'
                       : 'bg-neutral-800/80 backdrop-blur-sm border border-neutral-700/50 text-neutral-200'
-                  }`}>
+                    }`}>
                     <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: msg.text }} />
-                    
+
                     {/* Feedback buttons for bot messages */}
                     {msg.sender === 'bot' && msg.id && (
                       <div className="mt-3">
@@ -254,7 +252,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
       </div>
 
       {/* Input area */}
-      <div className="p-6 bg-neutral-800/30 backdrop-blur-sm border-t border-neutral-700/50">
+      <div className="p-3 bg-neutral-800/30 bg-opacity-80 backdrop-blur-sm border-t border-neutral-700/50 tr">
         <div className="max-w-4xl mx-auto">
           <div className="relative bg-neutral-800/80 backdrop-blur-sm border border-neutral-700/50 rounded-2xl shadow-lg">
             <textarea
@@ -279,7 +277,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
               <Send className="w-5 h-5 text-white" />
             </button>
           </div>
-          <p className="text-xs text-center text-neutral-500 mt-3">
+          <p className="text-xs text-center text-neutral-500 mt-2">
             สร้างโดย AI เพื่อใช้ในการอ้างอิงเท่านั้น
           </p>
         </div>
