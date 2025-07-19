@@ -1,8 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import SendIcon from '@mui/icons-material/Send';
-import SmartToyIcon from '@mui/icons-material/SmartToy';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useAuth } from '../contexts/AuthContext';
 import FeedbackButtons from './FeedbackButtons';
 import FeedbackModal from './FeedbackModal';
 import { Sparkles, Send, Bot, User } from 'lucide-react';
@@ -113,15 +109,8 @@ const Chatbot: React.FC<ChatbotProps> = ({
     <div className="flex flex-col h-full bg-chat-bg">
       {/* Conversation header */}
       {currentConversation && (
-        <div className="p-4 border-b border-neutral-700/50 bg-neutral-800/30 backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <h2 className="text-lg font-semibold text-white">{currentConversation.title}</h2>
-            </div>
-          </div>
+          <div className="p-4 border-b border-neutral-700/50 bg-neutral-800/30 backdrop-blur-sm">
+          <h2 className="text-lg font-semibold text-white text-center">{currentConversation.title}</h2>
         </div>
       )}
 

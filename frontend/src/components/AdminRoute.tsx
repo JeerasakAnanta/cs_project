@@ -6,7 +6,7 @@ const AdminRoute: React.FC = () => {
   const { isAuthenticated, isAdmin } = useAuth();
 
   if (!isAuthenticated()) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" />;  
   }
 
   if (!isAdmin()) {
