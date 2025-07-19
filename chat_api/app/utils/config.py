@@ -10,6 +10,8 @@ def validate_environment():
         "OPENAI_API_KEY",
         "QDRANT_VECTERDB_HOST", 
         "COLLECTION_NAME",
+        "EMBEDDINGS_MODEL",
+        "OPENAI_MODEL", 
         "DB_USER",
         "DB_PASSWORD",
         "DB_HOST",
@@ -36,6 +38,11 @@ except ValueError as e:
 
 # Environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL")
+EMBEDDINGS_MODEL = os.getenv("EMBEDDINGS_MODEL") 
+
+
+# Qdrant Configuration  
 QDRANT_VECTERDB_HOST = os.getenv("QDRANT_VECTERDB_HOST")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME")
 QDRANT_URL = os.getenv("QDRANT_VECTERDB_HOST")
@@ -51,8 +58,7 @@ ACCESS_SECRET = os.getenv("SECRET_KEY")
 REFRESH_SECRET = os.getenv("REFRESH_SECRET")
 ALGORITHM = os.getenv("ALGORITHM")
 
-# OpenAI Configuration
-EMBEDDINGS_MODEL = os.getenv("EMBEDDINGS_MODEL", "text-embedding-3-large")
+
 
 # Development settings
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
