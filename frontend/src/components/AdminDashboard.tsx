@@ -3,12 +3,8 @@ import { Link } from 'react-router-dom';
 import { 
   FileText, 
   Users, 
-  Settings, 
-  BarChart3, 
   ArrowLeft, 
   Shield,
-  Sparkles,
-  Database,
   Activity
 } from 'lucide-react';
 import PdfManager from './PdfManager';

@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { 
   Settings as SettingsIcon,
   User,
-  Palette,
-  Bell,
   MessageSquare,
   Shield,
   Info,
@@ -11,7 +9,6 @@ import {
   Monitor,
   Volume2,
   Database,
-  Globe,
   Trash2
 } from 'lucide-react';
 

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
 interface FeedbackModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (comment: string, feedbackType: string) => void;
+  onSubmit: (comment: string, reason: string) => void;
 }
 
 const feedbackOptions = ['ไม่เกี่ยวกับปัญหาที่ถาม', 'ข้อมูลเท็จ', 'ไม่มีประโยชน์', 'อื่นๆ'];
@@ -12,6 +12,14 @@ const feedbackOptions = ['ไม่เกี่ยวกับปัญหาท
 const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose, onSubmit }) => {
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [comment, setComment] = useState<string>('');
+
+  // Reset state when modal opens/closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedOption('');
+      setComment('');
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

@@ -33,7 +33,6 @@ const AppContent: React.FC = () => {
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversations, setConversations] = useState<{ id: number; title: string }[]>([]);
-  const authToken = localStorage.getItem('authToken');
 
   const handleConversationDeleted = (id: number) => {
     setConversations((prev) => prev.filter((c) => c.id !== id));

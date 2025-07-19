@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import FeedbackButtons from './FeedbackButtons';
 import FeedbackModal from './FeedbackModal';
+import CustomAlert from './CustomAlert';
 import { Sparkles, Send, Bot, User } from 'lucide-react';
 import './TypingIndicator.css';
 
@@ -30,6 +31,16 @@ const Chatbot: React.FC<ChatbotProps> = ({
   const [isTyping, setIsTyping] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState<number | null>(null);
+  const [alertState, setAlertState] = useState<{
+    isOpen: boolean;
+    type: 'success' | 'error' | 'warning' | 'info';
+    title: string;
+    message?: string;
+  }>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+  });
   const chatBoxRef = useRef<HTMLDivElement>(null);
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
@@ -63,6 +74,12 @@ const Chatbot: React.FC<ChatbotProps> = ({
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
       console.error('No token found');
+      setAlertState({
+        isOpen: true,
+        type: 'error',
+        title: 'ข้อผิดพลาด',
+        message: 'กรุณาเข้าสู่ระบบใหม่',
+      });
       return;
     }
 
@@ -73,6 +90,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
     };
 
     try {
+      console.log('Sending feedback:', feedbackData);
       const res = await fetch(`${BACKEND_API}/chat/feedback/`, {
         method: 'POST',
         headers: {
@@ -82,10 +100,28 @@ const Chatbot: React.FC<ChatbotProps> = ({
         body: JSON.stringify(feedbackData),
       });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      console.log('Feedback submitted');
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Feedback API error:', res.status, errorText);
+        throw new Error(`HTTP ${res.status}: ${errorText}`);
+      }
+      
+      const result = await res.json();
+      console.log('Feedback submitted successfully:', result);
+      setAlertState({
+        isOpen: true,
+        type: 'success',
+        title: 'ส่งความคิดเห็นสำเร็จ',
+        message: 'ขอบคุณสำหรับความคิดเห็นครับ เราจะนำไปปรับปรุงบริการให้ดียิ่งขึ้น',
+      });
     } catch (err) {
       console.error('Feedback error:', err);
+      setAlertState({
+        isOpen: true,
+        type: 'error',
+        title: 'ไม่สามารถส่งความคิดเห็นได้',
+        message: 'เกิดข้อผิดพลาดในการส่งความคิดเห็น กรุณาลองใหม่อีกครั้ง หรือติดต่อผู้ดูแลระบบ',
+      });
     } finally {
       setIsFeedbackModalOpen(false);
     }
@@ -124,9 +160,8 @@ const Chatbot: React.FC<ChatbotProps> = ({
                 <Sparkles className="w-10 h-10 text-white" />
               </div>
               <h1 className="text-4xl font-bold mb-4">
-                <span className="gradient-text">สวัสดี👋</span>
+              สวัสดี👋 ผมคือ <span className="gradient-text"> LannaFinChat</span>
               </h1>
-              <h2 className="text-2xl font-semibold text-white mb-2">ผมคือ LannaFinChat</h2>
               <p className="text-neutral-400 text-lg max-w-2xl">
                 "มีคำถามอะไร ให้ช่วยเกี่ยวกับการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน ไหมครับ"
               </p>
@@ -258,6 +293,14 @@ const Chatbot: React.FC<ChatbotProps> = ({
             handleFeedbackSubmit(selectedMessageId, 'dislike', comment, reason);
           }
         }}
+      />
+
+      <CustomAlert
+        isOpen={alertState.isOpen}
+        type={alertState.type}
+        title={alertState.title}
+        message={alertState.message}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

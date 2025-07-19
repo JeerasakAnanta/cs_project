@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Lock, User, Mail, Sparkles, CheckCircle } from 'lucide-react';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;

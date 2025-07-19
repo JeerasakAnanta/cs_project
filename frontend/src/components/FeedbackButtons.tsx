@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
 
 interface FeedbackButtonsProps {
@@ -12,7 +12,7 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({ messageId, onFeedback
 
   const handleLike = () => {
     if (feedbackSent) return;
-    onFeedbackSubmit('like');
+    onFeedbackSubmit('like', '', '');
     setFeedbackSent('like');
   };
 
@@ -22,6 +22,11 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({ messageId, onFeedback
     setFeedbackSent('dislike');
     // The actual submission will be handled by the modal
   };
+
+  // Reset feedback state when messageId changes
+  useEffect(() => {
+    setFeedbackSent(null);
+  }, [messageId]);
 
   return (
     <div className="flex items-center space-x-2 mt-2">

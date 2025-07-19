@@ -6,7 +6,6 @@ import {
   Eye, 
   Upload, 
   RefreshCw, 
-  AlertTriangle,
   CheckCircle,
   Database,
   Search
