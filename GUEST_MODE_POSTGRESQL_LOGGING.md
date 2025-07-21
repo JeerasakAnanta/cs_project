@@ -180,6 +180,13 @@ class GuestPostgreSQLService {
 - ลบ feedback-related imports และ state
 - ลบ feedback submission functions
 - ปรับปรุง UI ให้เรียบง่ายขึ้น
+- **อัปเดตธีมใหม่:**
+  - ใช้สีม่วง-ชมพู-แดง (Purple-Pink-Red gradient)
+  - เพิ่ม backdrop blur effects
+  - ปรับปรุง animations และ transitions
+  - เพิ่ม shadow effects และ glow effects
+  - ปรับปรุง layout และ spacing
+  - เพิ่ม hover effects สำหรับ interactive elements
 
 ## การทำงานของระบบ (System Flow)
 
