@@ -14,19 +14,17 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 
 // Auth Wrapper
-import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
 import GuestRoute from './components/GuestRoute';
 
 // Services
 import { guestPostgreSQLService, GuestConversation } from './services/GuestPostgreSQLService';
-import { anonymousChatService } from './services/AnonymousChatService';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC;
 
 interface Message {
-  id?: number;
+  id?: number | string;
   text: string;
   sender: 'user' | 'bot';
 }
@@ -119,12 +117,12 @@ const AppContent: React.FC = () => {
       try {
         const conversation = await guestPostgreSQLService.getConversation(id as string);
         if (conversation) {
-          const formattedMessages = await Promise.all(
+          const formattedMessages: Message[] = await Promise.all(
             conversation.messages.map(async (msg) => {
               if (msg.sender === 'bot') {
-                return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' };
+                return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' as const };
               }
-              return { id: msg.id, text: msg.content, sender: 'user' };
+              return { id: msg.id, text: msg.content, sender: 'user' as const };
             })
           );
           setMessages(formattedMessages);
@@ -143,12 +141,12 @@ const AppContent: React.FC = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          const formattedMessages = await Promise.all(
+          const formattedMessages: Message[] = await Promise.all(
             data.messages.map(async (msg: any) => {
               if (msg.sender === 'bot') {
-                return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' };
+                return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' as const };
               }
-              return { id: msg.id, text: msg.content, sender: 'user' };
+              return { id: msg.id, text: msg.content, sender: 'user' as const };
             })
           );
           setMessages(formattedMessages);
@@ -186,17 +184,17 @@ const AppContent: React.FC = () => {
       }
 
       // Add user message to guest conversation and get bot response
-      const botResponse = await guestPostgreSQLService.addMessage(conversationId, messageContent);
+      await guestPostgreSQLService.addMessage(conversationId, messageContent);
 
       // Update messages state by fetching the updated conversation
       const conversation = await guestPostgreSQLService.getConversation(conversationId);
       if (conversation) {
-        const formattedMessages = await Promise.all(
+        const formattedMessages: Message[] = await Promise.all(
           conversation.messages.map(async (msg) => {
             if (msg.sender === 'bot') {
-              return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' };
+              return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' as const };
             }
-            return { id: msg.id, text: msg.content, sender: 'user' };
+            return { id: msg.id, text: msg.content, sender: 'user' as const };
           })
         );
         setMessages(formattedMessages);
