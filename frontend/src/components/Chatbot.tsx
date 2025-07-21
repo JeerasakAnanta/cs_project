@@ -21,9 +21,12 @@ interface ChatbotProps {
 }
 
 const Chatbot: React.FC<ChatbotProps> = ({
+  currentConversationId,
+  setCurrentConversationId,
   messages,
   setMessages,
   onSendMessage,
+  conversations,
 }) => {
   const [userInput, setUserInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -47,16 +50,32 @@ const Chatbot: React.FC<ChatbotProps> = ({
     feedbackType: null,
   });
   const [feedbackComment, setFeedbackComment] = useState('');
+  const [currentConversationTitle, setCurrentConversationTitle] = useState<string>('');
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const { isGuestMode } = useAuth();
 
-  // const currentConversation = conversations.find(c => c.id === currentConversationId);
+  const currentConversation = conversations.find(c => c.id === currentConversationId);
 
   useEffect(() => {
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (currentConversation) {
+      setCurrentConversationTitle(currentConversation.title);
+    } else if (currentConversationId && messages.length > 0) {
+      // If we have a conversation ID but no conversation object, use the first message as title
+      const firstMessage = messages[0];
+      if (firstMessage && firstMessage.sender === 'user') {
+        const title = firstMessage.text.length > 50 
+          ? firstMessage.text.substring(0, 50) + '...' 
+          : firstMessage.text;
+        setCurrentConversationTitle(title);
+      }
+    }
+  }, [currentConversation, currentConversationId, messages]);
 
   const handleSendMessage = async () => {
     if (!userInput.trim()) return;
@@ -198,6 +217,30 @@ const Chatbot: React.FC<ChatbotProps> = ({
                     ส่ง Feedback
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Conversation Header */}
+      {currentConversationId && messages.length > 0 && (
+        <div className="border-b border-neutral-700/50 bg-neutral-900/50 backdrop-blur-sm">
+          <div className="max-w-5xl mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-white">
+                    {currentConversationTitle || 'การสนทนาใหม่'}
+                  </h2>
+                  <p className="text-sm text-neutral-400">การสนทนาปัจจุบัน</p>
+                </div>
+              </div>
+              <div className="text-sm text-neutral-500">
+                {messages.length} ข้อความ
               </div>
             </div>
           </div>
