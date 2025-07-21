@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { marked } from 'marked';
@@ -12,9 +12,15 @@ import Pagenotfound from './components/Pagenotfound';
 import AdminDashboard from './components/AdminDashboard';
 import ErrorBoundary from './components/ErrorBoundary';
 
+
 // Auth Wrapper
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
+import GuestRoute from './components/GuestRoute';
+
+// Services
+import { guestChatService, GuestConversation } from './services/GuestChatService';
+import { anonymousChatService } from './services/AnonymousChatService';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC;
@@ -27,40 +33,53 @@ interface Message {
 
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const { currentUser } = useAuth();
+  const { currentUser, isGuestMode } = useAuth();
   const isLoginPage = location.pathname === '/login' || location.pathname === '/register';
   const isAdminPage = location.pathname.startsWith('/admin');
-  const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
+  const [currentConversationId, setCurrentConversationId] = useState<number | string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [conversations, setConversations] = useState<{ id: number; title: string }[]>([]);
+  const [conversations, setConversations] = useState<{ id: number | string; title: string }[]>([]);
+  const [guestConversations, setGuestConversations] = useState<GuestConversation[]>([]);
 
-  const handleConversationDeleted = (id: number) => {
-    setConversations((prev) => prev.filter((c) => c.id !== id));
+  const handleConversationDeleted = (id: number | string) => {
+    if (isGuestMode()) {
+      guestChatService.deleteConversation(id as string);
+      setGuestConversations(prev => prev.filter(c => c.id !== id));
+    } else {
+      setConversations((prev) => prev.filter((c) => c.id !== id));
+    }
   };
 
-  // Fetch conversations logic needs to be added or updated in App.tsx
-  // This is a placeholder to show where it should be.
-  useEffect(() => {
-    const fetchConversations = async () => {
-      const authToken = localStorage.getItem('authToken');
-      if (!authToken) return;
+  // Fetch conversations logic
+  const fetchGuestConversations = useCallback(() => {
+    const conversations = guestChatService.getConversations();
+    setGuestConversations(conversations);
+  }, []);
 
-      try {
-        const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setConversations(data);
-        }
-      } catch (error) {
-        console.error('Error fetching conversations:', error);
+  const fetchAuthenticatedConversations = useCallback(async () => {
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) return;
+
+    try {
+      const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setConversations(data);
       }
-    };
-    if (currentUser) {
-      fetchConversations();
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
     }
-  }, [currentUser]);
+  }, []);
+
+  useEffect(() => {
+    if (isGuestMode()) {
+      fetchGuestConversations();
+    } else if (currentUser) {
+      fetchAuthenticatedConversations();
+    }
+  }, [currentUser, isGuestMode, fetchGuestConversations, fetchAuthenticatedConversations]);
 
 
   const handleNewConversation = () => {
@@ -84,34 +103,113 @@ const AppContent: React.FC = () => {
     return formattedText + sourceLink;
   };
 
-  const handleSelectConversation = async (id: number) => {
+  const handleSelectConversation = async (id: number | string) => {
     setCurrentConversationId(id);
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) return;
-    try {
-      const response = await fetch(`${BACKEND_API}/chat/conversations/${id}`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
+    
+    if (isGuestMode()) {
+      // Load guest conversation from localStorage
+      const conversation = guestChatService.getConversation(id as string);
+      if (conversation) {
         const formattedMessages = await Promise.all(
-          data.messages.map(async (msg: any) => {
+          conversation.messages.map(async (msg) => {
             if (msg.sender === 'bot') {
-              return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' };
+              return { id: msg.id, text: await formatBotMessage(msg.text), sender: 'bot' };
             }
-            return { id: msg.id, text: msg.content, sender: 'user' };
+            return { id: msg.id, text: msg.text, sender: 'user' };
           })
         );
         setMessages(formattedMessages);
       }
-    } catch (error) {
-      console.error('Error fetching conversation details:', error);
-      setMessages([]);
+    } else {
+      // Load authenticated user conversation
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) return;
+      try {
+        const response = await fetch(`${BACKEND_API}/chat/conversations/${id}`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const formattedMessages = await Promise.all(
+            data.messages.map(async (msg: any) => {
+              if (msg.sender === 'bot') {
+                return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' };
+              }
+              return { id: msg.id, text: msg.content, sender: 'user' };
+            })
+          );
+          setMessages(formattedMessages);
+        }
+      } catch (error) {
+        console.error('Error fetching conversation details:', error);
+        setMessages([]);
+      }
     }
   };
 
   const handleSendMessage = async (messageContent: string) => {
-    let conversationId = currentConversationId;
+    if (isGuestMode()) {
+      await handleGuestSendMessage(messageContent);
+    } else {
+      await handleAuthenticatedSendMessage(messageContent);
+    }
+  };
+
+  const handleGuestSendMessage = async (messageContent: string) => {
+    let conversationId = currentConversationId as string;
+    
+    // Create a new conversation if one doesn't exist
+    if (!conversationId) {
+      const newConversation = guestChatService.createConversation(messageContent);
+      conversationId = newConversation.id;
+      setCurrentConversationId(newConversation.id);
+      setGuestConversations(prev => [newConversation, ...prev]);
+    }
+
+    // Add user message to guest conversation
+    guestChatService.addMessage(conversationId, {
+      text: messageContent,
+      sender: 'user'
+    });
+
+    // Get bot response from anonymous API
+    try {
+      const botResponse = await anonymousChatService.sendMessage(messageContent);
+      
+      // Add bot message to guest conversation
+      guestChatService.addMessage(conversationId, {
+        text: botResponse,
+        sender: 'bot'
+      });
+
+      // Update messages state
+      const conversation = guestChatService.getConversation(conversationId);
+      if (conversation) {
+        const formattedMessages = await Promise.all(
+          conversation.messages.map(async (msg) => {
+            if (msg.sender === 'bot') {
+              return { id: msg.id, text: await formatBotMessage(msg.text), sender: 'bot' };
+            }
+            return { id: msg.id, text: msg.text, sender: 'user' };
+          })
+        );
+        setMessages(formattedMessages);
+        // Update guest conversations list
+        setGuestConversations(prev => 
+          prev.map(conv => 
+            conv.id === conversationId 
+              ? { ...conv, messages: conversation.messages }
+              : conv
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error in guest mode chat:', error);
+    }
+  };
+
+  const handleAuthenticatedSendMessage = async (messageContent: string) => {
+    let conversationId = currentConversationId as number;
     const authToken = localStorage.getItem('authToken');
     if (!authToken) return;
     
@@ -186,23 +284,25 @@ const AppContent: React.FC = () => {
         onSelectConversation={handleSelectConversation}
         onConversationDeleted={handleConversationDeleted}
         currentConversationId={currentConversationId}
-        conversations={conversations}
+        conversations={isGuestMode() ? guestConversations : conversations}
       />
       <main className="flex-1 flex flex-col overflow-auto">
         <Routes>
           <Route
             path="/"
             element={
-              <PrivateRoute>
-                <Chatbot
-                  currentConversationId={currentConversationId}
-                  setCurrentConversationId={setCurrentConversationId}
-                  messages={messages}
-                  setMessages={setMessages}
-                  onSendMessage={handleSendMessage}
-                  conversations={conversations}
-                />
-              </PrivateRoute>
+              <GuestRoute>
+                <div className="flex-1 flex flex-col">
+                  <Chatbot
+                    currentConversationId={currentConversationId}
+                    setCurrentConversationId={setCurrentConversationId}
+                    messages={messages}
+                    setMessages={setMessages}
+                    onSendMessage={handleSendMessage}
+                    conversations={isGuestMode() ? guestConversations : conversations}
+                  />
+                </div>
+              </GuestRoute>
             }
           />
           <Route path="*" element={<Pagenotfound />} />

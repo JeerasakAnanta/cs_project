@@ -42,6 +42,8 @@ const Login: React.FC = () => {
     }
   };
 
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-chat-bg via-neutral-900 to-chat-bg relative overflow-hidden">
       {/* Animated background elements */}
@@ -138,6 +140,8 @@ const Login: React.FC = () => {
               )}
             </button>
           </form>
+
+
 
           {/* Register link */}
           <div className="mt-8 text-center">

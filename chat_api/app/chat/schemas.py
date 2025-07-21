@@ -32,4 +32,18 @@ class Conversation(ConversationBase):
     messages: List[Message] = []
 
     class Config:
-        from_attributes = True 
+        from_attributes = True
+
+# Anonymous schemas
+class AnonymousMessageCreate(BaseModel):
+    content: str
+
+class AnonymousConversationCreate(BaseModel):
+    title: str
+
+class AnonymousConversation(BaseModel):
+    id: str
+    title: str
+    messages: List[dict] = []
+    created_at: str
+    updated_at: str 

@@ -1,42 +1,54 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, LogOut, User, Menu, X, Trash2, Shield, MessageSquare, Sparkles } from 'lucide-react';
+import { Plus, LogOut, LogIn, User, Menu, X, Trash2, Shield, MessageSquare, Sparkles } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 
 interface Conversation {
-  id: number;
+  id: number | string;
   title: string;
 }
 
 const Navbar: React.FC<{
-  onSelectConversation: (id: number) => void;
+  onSelectConversation: (id: number | string) => void;
   onNewConversation: () => void;
-  onConversationDeleted: (id: number) => void;
-  currentConversationId: number | null;
-  conversations: { id: number; title: string }[];
+  onConversationDeleted: (id: number | string) => void;
+  currentConversationId: number | string | null;
+  conversations: { id: number | string; title: string }[];
 }> = ({ onSelectConversation, onNewConversation, onConversationDeleted, currentConversationId, conversations }) => {
   const [isOpen, setIsOpen] = useState(true);
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, isGuestMode } = useAuth();
   const authToken = localStorage.getItem('authToken');
 
   const handleDeleteConversation: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.stopPropagation();
-    const id = parseInt(e.currentTarget.dataset.id || '');
-    if (isNaN(id)) return;
+    const id = e.currentTarget.dataset.id || '';
+    if (!id) return;
 
-    try {
-      await fetch(`${BACKEND_API}/chat/conversations/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+    if (isGuestMode()) {
+      // For guest mode, just call the callback (localStorage deletion is handled in App.tsx)
       onConversationDeleted(id);
       if (currentConversationId === id) {
         onNewConversation();
       }
-    } catch (error) {
-      console.error('Error deleting conversation:', error);
+    } else {
+      // For authenticated users, delete from backend
+      const numericId = parseInt(id);
+      if (isNaN(numericId)) return;
+
+      try {
+        await fetch(`${BACKEND_API}/chat/conversations/${numericId}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        onConversationDeleted(numericId);
+        if (currentConversationId === numericId) {
+          onNewConversation();
+        }
+      } catch (error) {
+        console.error('Error deleting conversation:', error);
+      }
     }
   };
 
@@ -136,10 +148,10 @@ const Navbar: React.FC<{
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-neutral-200 truncate">
-                  {currentUser?.username || 'ผู้ใช้'}
+                  {currentUser?.username || (isGuestMode() ? 'ผู้เยี่ยมชม' : 'ผู้ใช้')}
                 </p>
                 <p className="text-xs text-neutral-400">
-                  {currentUser?.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ผู้ใช้ทั่วไป'}
+                  {currentUser?.role === 'admin' ? 'ผู้ดูแลระบบ' : (isGuestMode() ? 'โหมดผู้เยี่ยมชม' : 'ผู้ใช้ทั่วไป')}
                 </p>
               </div>
               {currentUser?.role === 'admin' && (
@@ -152,14 +164,24 @@ const Navbar: React.FC<{
               )}
             </div>
 
-            {/* Logout button */}
-            <button
-              onClick={logout}
-              className="w-full flex items-center p-3 rounded-lg hover:bg-red-500/10 border border-transparent hover:border-red-500/30 text-left text-neutral-300 hover:text-red-400 transition-all duration-200 focus-ring"
-            >
-              <LogOut size={16} className="mr-3" />
-              <span className="text-sm font-medium">ออกจากระบบ</span>
-            </button>
+            {/* Login/Logout button */}
+            {isGuestMode() ? (
+              <Link
+                to="/login"
+                className="w-full flex items-center p-3 rounded-lg hover:bg-blue-500/10 border border-transparent hover:border-blue-500/30 text-left text-neutral-300 hover:text-blue-400 transition-all duration-200 focus-ring"
+              >
+                <LogIn size={16} className="mr-3" />
+                <span className="text-sm font-medium">เข้าสู่ระบบ</span>
+              </Link>
+            ) : (
+              <button
+                onClick={logout}
+                className="w-full flex items-center p-3 rounded-lg hover:bg-red-500/10 border border-transparent hover:border-red-500/30 text-left text-neutral-300 hover:text-red-400 transition-all duration-200 focus-ring"
+              >
+                <LogOut size={16} className="mr-3" />
+                <span className="text-sm font-medium">ออกจากระบบ</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
