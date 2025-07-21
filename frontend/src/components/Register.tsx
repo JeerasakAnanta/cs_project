@@ -30,6 +30,19 @@ const Register: React.FC = () => {
       return;
     }
 
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('กรุณากรอกอีเมลให้ถูกต้อง');
+      return;
+    }
+
+    // Basic username validation
+    if (username.length < 3) {
+      setError('ชื่อผู้ใช้ต้องมีอย่างน้อย 3 ตัวอักษร');
+      return;
+    }
+
     setIsLoading(true);
     
     try {
@@ -46,7 +59,18 @@ const Register: React.FC = () => {
         }, 2000);
       } else {
         const errorData = await response.json().catch(() => null);
-        setError(errorData?.detail || 'เกิดข้อผิดพลาดในการสมัครสมาชิก');
+        if (errorData?.detail) {
+          // Handle array of validation errors
+          if (Array.isArray(errorData.detail)) {
+            const errorMessages = errorData.detail.map((err: any) => err.msg).join(', ');
+            setError(errorMessages);
+          } else {
+            // Handle single error message
+            setError(errorData.detail);
+          }
+        } else {
+          setError('เกิดข้อผิดพลาดในการสมัครสมาชิก');
+        }
       }
     } catch (err) {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');

@@ -32,7 +32,8 @@ def register(user: schemas.UserCreate, db: Session):
     db_user = models.User(
         email=user.email,
         username=user.username,
-        hashed_password=hashed_password
+        hashed_password=hashed_password,
+        role=user.role or "user"
     )
 
     # Add the new user to the session and commit to the database
