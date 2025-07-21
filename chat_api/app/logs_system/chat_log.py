@@ -1,7 +1,7 @@
 # app/models/chat_log.py
 from sqlalchemy import Column, Integer, String, Text, DateTime, ARRAY
 from app.utils.database import Base
-from datetime import datetime
+from app.utils.timezone import now
 
 class ChatLog(Base):
     __tablename__ = "chat_logs"
@@ -9,5 +9,5 @@ class ChatLog(Base):
     user_id = Column(String, index=True)
     query = Column(Text)
     response = Column(Text)
-    start_timestamp = Column(DateTime, default=datetime.utcnow)
-    end_timestamp = Column(DateTime, default=datetime.utcnow)
+    start_timestamp = Column(DateTime(timezone=True), default=now)
+    end_timestamp = Column(DateTime(timezone=True), default=now)

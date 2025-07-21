@@ -7,7 +7,8 @@ WORKDIR /app
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app
+    PYTHONPATH=/app \
+    TZ=Asia/Bangkok
 
 # Install system dependencies
 RUN apt-get update \
@@ -15,6 +16,7 @@ RUN apt-get update \
         build-essential \
         curl \
         git \
+        tzdata \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv for faster dependency management

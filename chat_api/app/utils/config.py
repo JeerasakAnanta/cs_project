@@ -62,3 +62,6 @@ ALGORITHM = os.getenv("ALGORITHM")
 
 # Development settings
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
+
+# Timezone settings
+TIMEZONE = os.getenv("TIMEZONE", "Asia/Bangkok")

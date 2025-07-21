@@ -19,7 +19,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     username = Column(String, unique=True, index=True)
     hashed_password = Column(String)
-    role = Column(String, default="user")  # e.g., 'user', 'admin'
+    role = Column(String, default="user")
     is_active = Column(Boolean, default=True)
 
     conversations = relationship("Conversation", back_populates="user")

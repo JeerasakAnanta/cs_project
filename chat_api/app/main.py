@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import logging
 
 # Import database utils and models
 from app.utils.database import engine, Base
 from app.database import models
+from app.utils.logging_config import setup_logging
 
 # Import routers
 from app.chat.router import router as router_chat
@@ -12,6 +14,12 @@ from app.chat.feedback_router import router as router_feedback
 from app.routers.router_pdfs import router as router_pdfs
 from app.routers.router_admin import router as router_admin
 
+
+# Setup logging with system timezone
+setup_logging(
+    log_level="INFO",
+    log_file="log/app.log"
+)
 
 # Create all tables in the database
 models.Base.metadata.create_all(bind=engine)
@@ -59,6 +67,12 @@ app.include_router(router_pdfs)
 
 # Admin routers
 app.include_router(router_admin)
+
+@app.on_event("startup")
+async def startup_event():
+    """Log application startup with system time"""
+    from app.utils.timezone import now, format_datetime
+    logging.info(f"LannaFinChat API started at {format_datetime(now())}")
 
 
 

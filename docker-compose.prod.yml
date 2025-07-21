@@ -10,6 +10,7 @@ services:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
       POSTGRES_DB: ${DB_NAME:-lannafinchat_db}
+      TZ: Asia/Bangkok
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -58,6 +59,7 @@ services:
       - ALGORITHM=${ALGORITHM:-HS256}
       - EMBEDDINGS_MODEL=${EMBEDDINGS_MODEL:-text-embedding-3-large}
       - DEBUG=${DEBUG:-false}
+      - TIMEZONE=${TIMEZONE:-Asia/Bangkok}
     volumes:
       - pdf_storage:/app/pdfs
       - log_storage:/app/log

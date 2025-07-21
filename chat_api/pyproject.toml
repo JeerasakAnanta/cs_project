@@ -24,4 +24,5 @@ dependencies = [
     "python-multipart>=0.0.20",
     "sqlalchemy>=2.0.41",
     "pydantic[email]>=2.11.4",
+    "pytz>=2025.2",
 ]
