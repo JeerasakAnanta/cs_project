@@ -46,4 +46,43 @@ class AnonymousConversation(BaseModel):
     title: str
     messages: List[dict] = []
     created_at: str
-    updated_at: str 
+    updated_at: str
+
+# Guest conversation schemas for PostgreSQL logging
+class GuestMessageBase(BaseModel):
+    sender: str
+    content: str
+
+class GuestMessageCreate(GuestMessageBase):
+    pass
+
+class GuestMessage(GuestMessageBase):
+    id: str
+    conversation_id: str
+    timestamp: datetime
+
+    class Config:
+        from_attributes = True
+
+class GuestConversationBase(BaseModel):
+    title: str = "Guest Conversation"
+
+class GuestConversationCreate(GuestConversationBase):
+    pass
+
+class GuestConversationUpdate(BaseModel):
+    title: str
+
+class GuestConversation(GuestConversationBase):
+    id: str
+    created_at: datetime
+    updated_at: datetime
+    is_deleted: bool
+    messages: List[GuestMessage] = []
+
+    class Config:
+        from_attributes = True
+
+class GuestConversationStats(BaseModel):
+    total_conversations: int
+    total_messages: int 

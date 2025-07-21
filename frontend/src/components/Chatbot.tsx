@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import FeedbackButtons from './FeedbackButtons';
-import FeedbackModal from './FeedbackModal';
 import CustomAlert from './CustomAlert';
 import { Sparkles, Send, Bot, User } from 'lucide-react';
 import './TypingIndicator.css';
@@ -29,8 +27,6 @@ const Chatbot: React.FC<ChatbotProps> = ({
 }) => {
   const [userInput, setUserInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
-  const [selectedMessageId, setSelectedMessageId] = useState<number | null>(null);
   const [alertState, setAlertState] = useState<{
     isOpen: boolean;
     type: 'success' | 'error' | 'warning' | 'info';
@@ -64,192 +60,105 @@ const Chatbot: React.FC<ChatbotProps> = ({
     setIsTyping(false);
   };
 
-  const handleFeedbackSubmit = async (
-    messageId: number,
-    feedbackType: 'like' | 'dislike',
-    comment: string,
-    reason: string
-  ) => {
-    const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-      console.error('No token found');
-      setAlertState({
-        isOpen: true,
-        type: 'error',
-        title: 'ข้อผิดพลาด',
-        message: 'กรุณาเข้าสู่ระบบใหม่',
-      });
-      return;
-    }
-
-    const feedbackData = {
-      message_id: messageId,
-      feedback_type: feedbackType,
-      comment: reason ? `${reason}: ${comment}` : comment,
-    };
-
-    try {
-      console.log('Sending feedback:', feedbackData);
-      const res = await fetch(`${BACKEND_API}/chat/feedback/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`,
-        },
-        body: JSON.stringify(feedbackData),
-      });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('Feedback API error:', res.status, errorText);
-        throw new Error(`HTTP ${res.status}: ${errorText}`);
-      }
-
-      const result = await res.json();
-      console.log('Feedback submitted successfully:', result);
-      setAlertState({
-        isOpen: true,
-        type: 'success',
-        title: 'ส่งความคิดเห็นสำเร็จ',
-        message: 'ขอบคุณสำหรับความคิดเห็นครับ เราจะนำไปปรับปรุงบริการให้ดียิ่งขึ้น',
-      });
-    } catch (err) {
-      console.error('Feedback error:', err);
-      setAlertState({
-        isOpen: true,
-        type: 'error',
-        title: 'ไม่สามารถส่งความคิดเห็นได้',
-        message: 'เกิดข้อผิดพลาดในการส่งความคิดเห็น กรุณาลองใหม่อีกครั้ง หรือติดต่อผู้ดูแลระบบ',
-      });
-    } finally {
-      setIsFeedbackModalOpen(false);
-    }
-  };
-
-  const handleDislikeClick = (id: number) => {
-    setSelectedMessageId(id);
-    setIsFeedbackModalOpen(true);
-  };
-
   const handleExampleQuestionClick = (text: string) => setUserInput(text);
 
-  const exampleQuestions = [
-    'ใบเสร็จรับเงินค่าน้ำมันเชื้อเพลิง ใช้เป็นหลักฐานทางราชการได้หรือไม่',
-    'หากต้องจ่ายค่าเช่าที่พักสูง กว่าอัตราที่ระเบียบกำหนด จะสามารถเบิกจ่ายได้หรือไม่',
-    'ขั้นตอนการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน มีอะไรบ้าง',
-    'การเบิกจ่ายค่าใช้จ่ายใช้หลัก อะไรบ้าง',
-  ];
-
   return (
-    <div className="flex flex-col h-full bg-chat-bg">
-      {/* Conversation header */}
-      {currentConversation && (
-        <div className="p-4 border-b border-neutral-700/50 bg-neutral-800/30 backdrop-blur-sm">
-          <h2 className="text-lg font-semibold text-white text-center">{currentConversation.title}</h2>
-        </div>
-      )}
-
-      {/* Chat messages area */}
-      <div ref={chatBoxRef} className="flex-1 overflow-y-auto">
-        {messages.length === 0 && !isTyping ? (
-          // Welcome screen
-          <div className="flex flex-col items-center justify-center h-full text-center px-6">
-            <div className="mb-8">
-              <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-glow">
-                <Sparkles className="w-10 h-10 text-white" />
+    <div className="flex flex-col h-full bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900">
+      {/* Header */}
+      <div className="p-4 bg-neutral-800/30 bg-opacity-80 backdrop-blur-sm border-b border-neutral-700/50">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow">
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <h1 className="text-4xl font-bold mb-4">
-                สวัสดี👋 ผมคือ <span className="gradient-text"> LannaFinChat</span>
-              </h1>
-              <p className="text-neutral-400 text-lg max-w-2xl">
-                "มีคำถามอะไร ให้ช่วยเกี่ยวกับการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน ไหมครับ"
-              </p>
+              <div>
+                <h1 className="text-xl font-bold text-white">LannaFinChat</h1>
+                <p className="text-sm text-neutral-400">
+                  {currentConversation ? currentConversation.title : 'New Conversation'}
+                </p>
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
 
-            {/* Example questions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl">
-              {exampleQuestions.map((q, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleExampleQuestionClick(q)}
-                  className="card p-6 text-left hover:bg-neutral-700/50 transition-all duration-200 transform hover:scale-105 focus-ring group"
-                >
-                  <div className="flex items-start">
-                    <div className="w-8 h-8 bg-gradient-to-br from-primary-500/20 to-purple-600/20 rounded-lg flex items-center justify-center mr-3 mt-1 group-hover:from-primary-500/30 group-hover:to-purple-600/30 transition-all duration-200">
-                      <Sparkles className="w-4 h-4 text-primary-400" />
+      {/* Chat area */}
+      <div className="flex-1 overflow-y-auto p-4" ref={chatBoxRef}>
+        <div className="max-w-4xl mx-auto">
+          {messages.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow">
+                <Sparkles className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">ยินดีต้อนรับสู่ LannaFinChat</h2>
+              <p className="text-neutral-400 mb-8 max-w-md mx-auto">
+                ผมพร้อมช่วยเหลือคุณในเรื่องการเงินและการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน
+              </p>
+              
+              {/* Example questions */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                {[
+                  'ขั้นตอนการเบิกค่าใช้จ่ายในการเดินทางไปราชการ',
+                  'เอกสารที่ต้องใช้ในการเบิกค่าใช้จ่าย',
+                  'ระยะเวลาการเบิกจ่ายค่าใช้จ่าย',
+                  'การคำนวณค่าใช้จ่ายในการเดินทาง'
+                ].map((question, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleExampleQuestionClick(question)}
+                    className="p-4 text-left bg-neutral-800/80 backdrop-blur-sm border border-neutral-700/50 rounded-xl hover:bg-neutral-700/80 transition-colors text-neutral-300 hover:text-white"
+                  >
+                    <div className="font-medium">{question}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {messages.map((msg, index) => (
+                <div key={index} className="flex justify-start">
+                  <div className="flex items-start max-w-3xl">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center mx-3 bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow">
+                      {msg.sender === 'user' ? (
+                        <User className="w-5 h-5 text-white" />
+                      ) : (
+                        <Bot className="w-5 h-5 text-white" />
+                      )}
                     </div>
-                    <p className="text-white font-medium leading-relaxed">{q}</p>
+                    
+                    {/* Message content */}
+                    <div className={`p-4 rounded-2xl max-w-2xl ${msg.sender === 'user'
+                        ? 'bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-lg'
+                        : 'bg-neutral-800/80 backdrop-blur-sm border border-neutral-700/50 text-neutral-200'
+                      }`}>
+                      <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: msg.text }} />
+                    </div>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
-          </div>
-        ) : (
-          // Messages list
-          <div className="p-6 space-y-6">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`flex items-start ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} message-enter`}
-              >
-                <div className={`flex items-start max-w-3xl ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
-                  {/* Avatar */}
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center mx-3 flex-shrink-0 ${msg.sender === 'bot'
-                      ? 'bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow'
-                      : 'bg-gradient-to-br from-neutral-600 to-neutral-700'
-                    }`}>
-                    {msg.sender === 'bot' ? (
-                      <Bot className="w-5 h-5 text-white" />
-                    ) : (
-                      <User className="w-5 h-5 text-white" />
-                    )}
-                  </div>
+          )}
+        </div>
+      </div>
 
-                  {/* Message content */}
-                  <div className={`p-4 rounded-2xl max-w-2xl ${msg.sender === 'user'
-                      ? 'bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-lg'
-                      : 'bg-neutral-800/80 backdrop-blur-sm border border-neutral-700/50 text-neutral-200'
-                    }`}>
-                    <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: msg.text }} />
-
-                    {/* Feedback buttons for bot messages */}
-                    {msg.sender === 'bot' && msg.id && (
-                      <div className="mt-3">
-                        <FeedbackButtons
-                          messageId={msg.id}
-                          onDislikeClick={() => handleDislikeClick(msg.id!)}
-                          onFeedbackSubmit={(type, comment, reason) =>
-                            handleFeedbackSubmit(msg.id!, type, comment || '', reason || '')
-                          }
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Typing indicator */}
-        {isTyping && (
-          <div className="flex justify-start p-6">
-            <div className="flex items-start max-w-3xl">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center mx-3 bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow">
-                <Bot className="w-5 h-5 text-white" />
-              </div>
-              <div className="bg-neutral-800/80 backdrop-blur-sm border border-neutral-700/50 p-4 rounded-2xl flex items-center">
-                <div className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
+      {/* Typing indicator */}
+      {isTyping && (
+        <div className="flex justify-start p-6">
+          <div className="flex items-start max-w-3xl">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center mx-3 bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow">
+              <Bot className="w-5 h-5 text-white" />
+            </div>
+            <div className="bg-neutral-800/80 backdrop-blur-sm border border-neutral-700/50 p-4 rounded-2xl flex items-center">
+              <div className="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Input area */}
       <div className="p-3 bg-neutral-800/30 bg-opacity-80 backdrop-blur-sm border-t border-neutral-700/50 tr">
@@ -282,16 +191,6 @@ const Chatbot: React.FC<ChatbotProps> = ({
           </p>
         </div>
       </div>
-
-      <FeedbackModal
-        isOpen={isFeedbackModalOpen}
-        onClose={() => setIsFeedbackModalOpen(false)}
-        onSubmit={(comment, reason) => {
-          if (selectedMessageId != null) {
-            handleFeedbackSubmit(selectedMessageId, 'dislike', comment, reason);
-          }
-        }}
-      />
 
       <CustomAlert
         isOpen={alertState.isOpen}

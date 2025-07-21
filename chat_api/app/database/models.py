@@ -5,6 +5,7 @@ from sqlalchemy import (
     Integer,
     String,
     DateTime,
+    Text,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -60,4 +61,28 @@ class Feedback(Base):
     comment = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    message = relationship("Message", back_populates="feedbacks") 
+    message = relationship("Message", back_populates="feedbacks")
+
+
+class GuestConversation(Base):
+    __tablename__ = "guest_conversations"
+
+    id = Column(String, primary_key=True, index=True)  # UUID string
+    title = Column(String, default="Guest Conversation")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    is_deleted = Column(Boolean, default=False)  # Soft delete flag
+
+    messages = relationship("GuestMessage", back_populates="conversation", cascade="all, delete-orphan")
+
+
+class GuestMessage(Base):
+    __tablename__ = "guest_messages"
+
+    id = Column(String, primary_key=True, index=True)  # UUID string
+    conversation_id = Column(String, ForeignKey("guest_conversations.id"))
+    sender = Column(String)  # "user" or "bot"
+    content = Column(Text)  # Use Text for longer messages
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+    conversation = relationship("GuestConversation", back_populates="messages") 

@@ -19,7 +19,7 @@ import AdminRoute from './components/AdminRoute';
 import GuestRoute from './components/GuestRoute';
 
 // Services
-import { guestChatService, GuestConversation } from './services/GuestChatService';
+import { guestPostgreSQLService, GuestConversation } from './services/GuestPostgreSQLService';
 import { anonymousChatService } from './services/AnonymousChatService';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
@@ -41,19 +41,27 @@ const AppContent: React.FC = () => {
   const [conversations, setConversations] = useState<{ id: number | string; title: string }[]>([]);
   const [guestConversations, setGuestConversations] = useState<GuestConversation[]>([]);
 
-  const handleConversationDeleted = (id: number | string) => {
+  const handleConversationDeleted = async (id: number | string) => {
     if (isGuestMode()) {
-      guestChatService.deleteConversation(id as string);
-      setGuestConversations(prev => prev.filter(c => c.id !== id));
+      try {
+        await guestPostgreSQLService.deleteConversation(id as string);
+        setGuestConversations(prev => prev.filter(c => c.id !== id));
+      } catch (error) {
+        console.error('Error deleting guest conversation:', error);
+      }
     } else {
       setConversations((prev) => prev.filter((c) => c.id !== id));
     }
   };
 
   // Fetch conversations logic
-  const fetchGuestConversations = useCallback(() => {
-    const conversations = guestChatService.getConversations();
-    setGuestConversations(conversations);
+  const fetchGuestConversations = useCallback(async () => {
+    try {
+      const conversations = await guestPostgreSQLService.getConversations();
+      setGuestConversations(conversations);
+    } catch (error) {
+      console.error('Error fetching guest conversations:', error);
+    }
   }, []);
 
   const fetchAuthenticatedConversations = useCallback(async () => {
@@ -107,18 +115,23 @@ const AppContent: React.FC = () => {
     setCurrentConversationId(id);
     
     if (isGuestMode()) {
-      // Load guest conversation from localStorage
-      const conversation = guestChatService.getConversation(id as string);
-      if (conversation) {
-        const formattedMessages = await Promise.all(
-          conversation.messages.map(async (msg) => {
-            if (msg.sender === 'bot') {
-              return { id: msg.id, text: await formatBotMessage(msg.text), sender: 'bot' };
-            }
-            return { id: msg.id, text: msg.text, sender: 'user' };
-          })
-        );
-        setMessages(formattedMessages);
+      // Load guest conversation from PostgreSQL
+      try {
+        const conversation = await guestPostgreSQLService.getConversation(id as string);
+        if (conversation) {
+          const formattedMessages = await Promise.all(
+            conversation.messages.map(async (msg) => {
+              if (msg.sender === 'bot') {
+                return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' };
+              }
+              return { id: msg.id, text: msg.content, sender: 'user' };
+            })
+          );
+          setMessages(formattedMessages);
+        }
+      } catch (error) {
+        console.error('Error fetching guest conversation:', error);
+        setMessages([]);
       }
     } else {
       // Load authenticated user conversation
@@ -158,47 +171,41 @@ const AppContent: React.FC = () => {
   const handleGuestSendMessage = async (messageContent: string) => {
     let conversationId = currentConversationId as string;
     
-    // Create a new conversation if one doesn't exist
-    if (!conversationId) {
-      const newConversation = guestChatService.createConversation(messageContent);
-      conversationId = newConversation.id;
-      setCurrentConversationId(newConversation.id);
-      setGuestConversations(prev => [newConversation, ...prev]);
-    }
-
-    // Add user message to guest conversation
-    guestChatService.addMessage(conversationId, {
-      text: messageContent,
-      sender: 'user'
-    });
-
-    // Get bot response from anonymous API
     try {
-      const botResponse = await anonymousChatService.sendMessage(messageContent);
-      
-      // Add bot message to guest conversation
-      guestChatService.addMessage(conversationId, {
-        text: botResponse,
-        sender: 'bot'
-      });
+      // Create a new conversation if one doesn't exist
+      if (!conversationId) {
+        // Use the user's message as the conversation title (truncate if too long)
+        const title = messageContent.length > 50 
+          ? messageContent.substring(0, 50) + '...' 
+          : messageContent;
+        
+        const newConversation = await guestPostgreSQLService.createConversation(title);
+        conversationId = newConversation.id;
+        setCurrentConversationId(newConversation.id);
+        setGuestConversations(prev => [newConversation, ...prev]);
+      }
 
-      // Update messages state
-      const conversation = guestChatService.getConversation(conversationId);
+      // Add user message to guest conversation and get bot response
+      const botResponse = await guestPostgreSQLService.addMessage(conversationId, messageContent);
+
+      // Update messages state by fetching the updated conversation
+      const conversation = await guestPostgreSQLService.getConversation(conversationId);
       if (conversation) {
         const formattedMessages = await Promise.all(
           conversation.messages.map(async (msg) => {
             if (msg.sender === 'bot') {
-              return { id: msg.id, text: await formatBotMessage(msg.text), sender: 'bot' };
+              return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' };
             }
-            return { id: msg.id, text: msg.text, sender: 'user' };
+            return { id: msg.id, text: msg.content, sender: 'user' };
           })
         );
         setMessages(formattedMessages);
+        
         // Update guest conversations list
         setGuestConversations(prev => 
           prev.map(conv => 
             conv.id === conversationId 
-              ? { ...conv, messages: conversation.messages }
+              ? conversation
               : conv
           )
         );

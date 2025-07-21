@@ -10,6 +10,7 @@ from app.utils.logging_config import setup_logging
 # Import routers
 from app.chat.router import router as router_chat
 from app.chat.anonymous_router import router as router_anonymous
+from app.chat.guest_router import router as router_guest
 from app.routers.router_login import router as router_login
 from app.chat.feedback_router import router as router_feedback
 from app.routers.router_pdfs import router as router_pdfs
@@ -62,6 +63,7 @@ app.include_router(router_login)
 # Chat routers
 app.include_router(router_chat)
 app.include_router(router_anonymous)
+app.include_router(router_guest)
 app.include_router(router_feedback)
 
 # PDF routers
