@@ -64,48 +64,41 @@ async def create_guest_conversation(
         raise HTTPException(status_code=500, detail=f"Error creating conversation: {str(e)}")
 
 
-@router.get("/conversations")
+def conversation_to_response(conv):
+    # แปลง ORM เป็น dict แล้ว map sender
+    conv_dict = conv.__dict__.copy()
+    conv_dict['messages'] = [
+        {
+            **m.__dict__,
+            'sender': m.sender if m.sender is not None else 'unknown'
+        }
+        for m in conv.messages
+    ]
+    return conv_dict
+
+@router.get("/conversations", response_model=List[schemas.GuestConversationResponse])
 async def get_guest_conversations(
     db: Session = Depends(get_db),
     x_machine_id: Optional[str] = Header(None)
 ):
-    """Get all guest conversations for a specific machine"""
     try:
         conversations = guest_crud.get_guest_conversations(db, machine_id=x_machine_id)
-        def fix_sender(conv):
-            conv_dict = conv.__dict__.copy()
-            conv_dict['messages'] = [
-                m if m.sender is not None else type(m)(**{**m.__dict__, 'sender': 'unknown'})
-                for m in conv.messages
-            ]
-            return schemas.GuestConversationResponse.from_orm(type(conv)(**conv_dict))
-        return [fix_sender(conv) for conv in conversations]
+        return [conversation_to_response(conv) for conv in conversations]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching conversations: {str(e)}")
 
-
-@router.get("/conversations/{conversation_id}")
+@router.get("/conversations/{conversation_id}", response_model=schemas.GuestConversationResponse)
 async def get_guest_conversation(
     conversation_id: str,
     db: Session = Depends(get_db),
     x_machine_id: Optional[str] = Header(None)
 ):
-    """Get a specific guest conversation by ID"""
     conversation = guest_crud.get_guest_conversation(db, conversation_id)
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
-    
-    # Optional: Check if conversation belongs to the machine (for security)
     if x_machine_id and conversation.machine_id != x_machine_id:
         raise HTTPException(status_code=403, detail="Access denied to this conversation")
-    
-    # Fix sender=None
-    conv_dict = conversation.__dict__.copy()
-    conv_dict['messages'] = [
-        m if m.sender is not None else type(m)(**{**m.__dict__, 'sender': 'unknown'})
-        for m in conversation.messages
-    ]
-    return schemas.GuestConversationResponse.from_orm(type(conversation)(**conv_dict))
+    return conversation_to_response(conversation)
 
 
 @router.post("/conversations/{conversation_id}/messages")
