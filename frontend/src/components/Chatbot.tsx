@@ -121,9 +121,6 @@ const Chatbot: React.FC<ChatbotProps> = ({
   const handleSendMessage = async () => {
     if (!userInput.trim()) return;
 
-    const userMessage: Message = { text: userInput, sender: 'user' };
-    setMessages([...messages, userMessage]);
-
     const originalInput = userInput;
     setUserInput('');
 
