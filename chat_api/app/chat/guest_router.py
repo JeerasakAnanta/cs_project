@@ -65,15 +65,23 @@ async def create_guest_conversation(
 
 
 def conversation_to_response(conv):
-    # แปลง ORM เป็น dict แล้ว map sender
-    conv_dict = conv.__dict__.copy()
-    conv_dict['messages'] = [
-        {
-            **m.__dict__,
-            'sender': m.sender if m.sender is not None else 'unknown'
-        }
-        for m in conv.messages
-    ]
+    # ดึงเฉพาะ field ที่ schema ต้องการ
+    conv_dict = {
+        "id": conv.id,
+        "machine_id": getattr(conv, "machine_id", None),
+        "title": conv.title,
+        "created_at": conv.created_at,
+        "updated_at": conv.updated_at,
+        "messages": [
+            {
+                "id": m.id,
+                "content": m.content,
+                "sender": m.sender if m.sender is not None else "unknown",
+                "timestamp": m.timestamp,
+            }
+            for m in conv.messages
+        ],
+    }
     return conv_dict
 
 @router.get("/conversations", response_model=List[schemas.GuestConversationResponse])
