@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, LogOut, LogIn, User, Menu, X, Trash2, Shield, MessageSquare, Sparkles } from 'lucide-react';
+import { LogOut, LogIn, User, Menu, X, Trash2, Shield, MessageSquare, MessageCirclePlus } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 
-// interface Conversation {
-//   id: number | string;
-//   title: string;
-// }
 
 const Navbar: React.FC<{
   onSelectConversation: (id: number | string) => void;
@@ -68,16 +64,13 @@ const Navbar: React.FC<{
 
       {/* Sidebar */}
       <div
-        className={`bg-chat-sidebar w-80 h-full flex flex-col transition-all duration-300 ease-in-out border-r border-neutral-700/50 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 md:relative fixed z-40 shadow-2xl`}
+        className={`bg-chat-sidebar w-80 h-full flex flex-col transition-all duration-300 ease-in-out border-r border-neutral-700/50 ${isOpen ? 'translate-x-0' : '-translate-x-full'
+          } md:translate-x-0 md:relative fixed z-40 shadow-2xl`}
       >
         {/* Header */}
         <div className="p-6 border-b border-neutral-700/50">
           <div className="flex items-center justify-center">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl flex items-center justify-center mr-3">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
+
             <h1 className="text-xl font-bold gradient-text">LannaFinChat</h1>
           </div>
           <p className="text-center text-neutral-400 text-xs mt-2">AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่าย</p>
@@ -89,7 +82,7 @@ const Navbar: React.FC<{
             onClick={onNewConversation}
             className="w-full flex items-center justify-center py-3 px-4 bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 rounded-xl text-white font-medium transition-all duration-200 transform hover:scale-105 focus-ring shadow-lg"
           >
-            <Plus size={18} className="mr-2" />
+            <MessageCirclePlus size={18} className="mr-2" />
             แชทใหม่
           </button>
         </div>
@@ -104,11 +97,10 @@ const Navbar: React.FC<{
                   <div
                     key={conv.id}
                     onClick={() => onSelectConversation(conv.id)}
-                    className={`group relative p-3 rounded-lg cursor-pointer transition-all duration-200 ${
-                      currentConversationId === conv.id 
-                        ? 'bg-gradient-to-r from-primary-600/20 to-purple-600/20 border border-primary-500/30' 
-                        : 'hover:bg-neutral-700/50 border border-transparent'
-                    }`}
+                    className={`group relative p-3 rounded-lg cursor-pointer transition-all duration-200 ${currentConversationId === conv.id
+                      ? 'bg-gradient-to-r from-primary-600/20 to-purple-600/20 border border-primary-500/30'
+                      : 'hover:bg-neutral-700/50 border border-transparent'
+                      }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center min-w-0 flex-1">
@@ -155,8 +147,8 @@ const Navbar: React.FC<{
                 </p>
               </div>
               {currentUser?.role === 'admin' && (
-                <Link 
-                  to="/admin" 
+                <Link
+                  to="/admin"
                   className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 transition-all duration-200 focus-ring"
                 >
                   <Shield size={16} className="text-white" />
@@ -188,7 +180,7 @@ const Navbar: React.FC<{
 
       {/* Backdrop for mobile */}
       {isOpen && (
-        <div 
+        <div
           className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
           onClick={toggleSidebar}
         />

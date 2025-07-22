@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { User, Bot, Send, Sparkles, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { User, Bot, Send, Sparkles, ThumbsUp, ThumbsDown , MessageCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import CustomAlert from './CustomAlert';
 import TypingIndicator from './TypingIndicator';
@@ -253,11 +253,11 @@ const Chatbot: React.FC<ChatbotProps> = ({
       {/* Conversation Header */}
       {currentConversationId && messages.length > 0 && (
         <div className="border-b border-neutral-700/50 bg-neutral-900/50 backdrop-blur-sm">
-          <div className="max-w-5xl mx-auto px-6 py-4">
+          <div className="max-w-5xl mx-auto px-6 py-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-white" />
+                <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <MessageCircle className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-white">
@@ -288,7 +288,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
                 <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
                   <Sparkles className="w-10 h-10 text-white" />
                 </div>
-                <h2 className="text-3xl font-bold gradient-text mb-4">ยินดีต้อนรับสู่ LannaFinChat</h2>
+            <h2 className="text-3xl font-bold gradient-text mb-4"> LannaFinChat</h2>
                 <p className="text-neutral-400 text-lg max-w-2xl mx-auto">
                   AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน 
                   เริ่มต้นการสนทนาโดยการถามคำถามหรือเลือกจากตัวอย่างด้านล่าง
@@ -385,7 +385,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
       )}
 
       {/* Input area at bottom - sticky positioning */}
-      <div className="sticky bottom-0 p-6 border-t border-neutral-700/50 bg-neutral-900/95 backdrop-blur-xl shadow-2xl z-10">
+      <div className="sticky bottom-0 p-3 border-t border-neutral-700/50 bg-neutral-900/95 backdrop-blur-xl shadow-2xl z-10">
         <div className="max-w-5xl mx-auto">
           <div className="relative bg-gradient-to-br from-slate-900/80 to-purple-900/70 backdrop-blur-xl border border-purple-500/30 rounded-3xl shadow-2xl shadow-purple-500/10">
             <textarea
@@ -410,7 +410,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
               <Send className="w-4 h-4 text-white" />
             </button>
           </div>
-          <p className="text-xs text-center text-white/80 mt-4 flex items-center justify-center gap-2 font-medium">
+          <p className="text-xs text-center text-white/80 mt-3 flex items-center justify-center gap-2 font-medium">
             <Sparkles className="w-3 h-3" />
             คำตอบสร้างโดย GenAI เพื่อใช้ในการค้นหาข้อมูลเท่านั้น โปรดตรวจสอบข้อมูลก่อนนำไปใช้งาน
           </p>
