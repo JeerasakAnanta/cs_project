@@ -6,6 +6,7 @@ from typing import List, Optional
 # Existing schemas for authenticated users
 class MessageCreate(BaseModel):
     content: str
+    sender: Optional[str] = None
 
 
 class MessageResponse(BaseModel):
