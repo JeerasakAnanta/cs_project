@@ -1,215 +1,260 @@
-const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
+import { BACKEND_API } from '../config';
 
 export interface GuestMessage {
   id: string;
-  conversation_id: string;
-  sender: 'user' | 'bot';
   content: string;
+  sender: 'user' | 'bot';
   timestamp: string;
 }
 
 export interface GuestConversation {
   id: string;
+  machine_id?: string;
   title: string;
   created_at: string;
   updated_at: string;
-  is_deleted: boolean;
   messages: GuestMessage[];
 }
 
-export interface GuestConversationStats {
+export interface GuestStats {
   total_conversations: number;
   total_messages: number;
+  machine_id?: string;
 }
 
 class GuestPostgreSQLService {
-  private baseUrl = `${BACKEND_API}/chat/guest`;
+  private machineId: string | null = null;
 
-  /**
-   * Send a message and get bot response (logs to PostgreSQL)
-   */
-  async sendMessage(content: string): Promise<{ message: string; conversation_id: string }> {
-    try {
-      const response = await fetch(`${this.baseUrl}/message`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content }),
-      });
+  constructor() {
+    this.initializeMachineId();
+  }
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+  private async initializeMachineId(): Promise<void> {
+    // Try to get existing machine ID from localStorage
+    const existingMachineId = localStorage.getItem('guest_machine_id');
+    
+    if (existingMachineId) {
+      this.machineId = existingMachineId;
+    } else {
+      // Generate new machine ID from server
+      try {
+        const response = await fetch(`${BACKEND_API}/chat/guest/machine-id`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          this.machineId = data.machine_id;
+          localStorage.setItem('guest_machine_id', this.machineId);
+        } else {
+          // Fallback: generate client-side machine ID
+          this.machineId = this.generateClientMachineId();
+          localStorage.setItem('guest_machine_id', this.machineId);
+        }
+      } catch (error) {
+        console.error('Error generating machine ID:', error);
+        // Fallback: generate client-side machine ID
+        this.machineId = this.generateClientMachineId();
+        localStorage.setItem('guest_machine_id', this.machineId);
       }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error sending guest message:', error);
-      throw error;
     }
   }
 
-  /**
-   * Create a new guest conversation
-   */
-  async createConversation(title: string = 'Guest Conversation'): Promise<GuestConversation> {
-    try {
-      const response = await fetch(`${this.baseUrl}/conversations`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error creating guest conversation:', error);
-      throw error;
-    }
+  private generateClientMachineId(): string {
+    // Generate a client-side machine ID using browser fingerprinting
+    const userAgent = navigator.userAgent;
+    const screenResolution = `${screen.width}x${screen.height}`;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const language = navigator.language;
+    
+    // Create a hash from browser characteristics
+    const fingerprint = `${userAgent}-${screenResolution}-${timezone}-${language}`;
+    const hash = this.simpleHash(fingerprint);
+    
+    return `client-${hash}-${Date.now()}`;
   }
 
-  /**
-   * Get all guest conversations
-   */
+  private simpleHash(str: string): string {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return Math.abs(hash).toString(36);
+  }
+
+  private getHeaders(): HeadersInit {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (this.machineId) {
+      headers['X-Machine-ID'] = this.machineId;
+    }
+    
+    return headers;
+  }
+
+  async createConversation(title: string): Promise<GuestConversation> {
+    const response = await fetch(`${BACKEND_API}/chat/guest/conversations`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify({
+        title,
+        machine_id: this.machineId
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create conversation: ${response.statusText}`);
+    }
+
+    return await response.json();
+  }
+
   async getConversations(): Promise<GuestConversation[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/conversations`);
+    const response = await fetch(`${BACKEND_API}/chat/guest/conversations`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch conversations: ${response.statusText}`);
+    }
+
+    return await response.json();
+  }
+
+  async getConversation(id: string): Promise<GuestConversation | null> {
+    const response = await fetch(`${BACKEND_API}/chat/guest/conversations/${id}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
       }
+      throw new Error(`Failed to fetch conversation: ${response.statusText}`);
+    }
 
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching guest conversations:', error);
-      throw error;
+    return await response.json();
+  }
+
+  async addMessage(conversationId: string, content: string): Promise<string> {
+    const response = await fetch(`${BACKEND_API}/chat/guest/conversations/${conversationId}/messages`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify({
+        content,
+        machine_id: this.machineId
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to add message: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.message;
+  }
+
+  async deleteConversation(id: string): Promise<void> {
+    const response = await fetch(`${BACKEND_API}/chat/guest/conversations/${id}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete conversation: ${response.statusText}`);
     }
   }
 
-  /**
-   * Get a specific guest conversation
-   */
-  async getConversation(conversationId: string): Promise<GuestConversation> {
-    try {
-      const response = await fetch(`${this.baseUrl}/conversations/${conversationId}`);
+  async getStats(): Promise<GuestStats> {
+    const response = await fetch(`${BACKEND_API}/chat/guest/stats`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching guest conversation:', error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to fetch stats: ${response.statusText}`);
     }
+
+    return await response.json();
   }
 
-  /**
-   * Add a message to a guest conversation
-   */
-  async addMessage(conversationId: string, content: string): Promise<{ message: string }> {
-    try {
-      const response = await fetch(`${this.baseUrl}/conversations/${conversationId}/messages`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content }),
-      });
+  async sendMessage(content: string): Promise<{ message: string; machine_id: string }> {
+    const response = await fetch(`${BACKEND_API}/chat/guest/message`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify({
+        content,
+        machine_id: this.machineId
+      }),
+    });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error adding guest message:', error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to send message: ${response.statusText}`);
     }
+
+    return await response.json();
   }
 
-  /**
-   * Get messages for a guest conversation
-   */
-  async getMessages(conversationId: string): Promise<GuestMessage[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/conversations/${conversationId}/messages`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching guest messages:', error);
-      throw error;
-    }
+  getMachineId(): string | null {
+    return this.machineId;
   }
 
-  /**
-   * Update conversation title
-   */
-  async updateConversationTitle(conversationId: string, title: string): Promise<GuestConversation> {
-    try {
-      const response = await fetch(`${this.baseUrl}/conversations/${conversationId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error updating guest conversation title:', error);
-      throw error;
-    }
+  async resetMachineId(): Promise<void> {
+    // Remove existing machine ID
+    localStorage.removeItem('guest_machine_id');
+    this.machineId = null;
+    
+    // Generate new machine ID
+    await this.initializeMachineId();
   }
 
-  /**
-   * Delete a guest conversation (soft delete)
-   */
-  async deleteConversation(conversationId: string): Promise<{ message: string }> {
-    try {
-      const response = await fetch(`${this.baseUrl}/conversations/${conversationId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error deleting guest conversation:', error);
-      throw error;
-    }
+  // Export conversations for backup
+  async exportConversations(): Promise<string> {
+    const conversations = await this.getConversations();
+    const exportData = {
+      machine_id: this.machineId,
+      export_date: new Date().toISOString(),
+      conversations: conversations
+    };
+    
+    return JSON.stringify(exportData, null, 2);
   }
 
-  /**
-   * Get guest conversation statistics
-   */
-  async getStats(): Promise<GuestConversationStats> {
+  // Import conversations from backup
+  async importConversations(importData: string): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/stats`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const data = JSON.parse(importData);
+      
+      // Validate import data
+      if (!data.conversations || !Array.isArray(data.conversations)) {
+        throw new Error('Invalid import data format');
       }
 
-      return await response.json();
+      // Import each conversation
+      for (const conversation of data.conversations) {
+        if (conversation.title && conversation.messages) {
+          // Create new conversation with current machine ID
+          const newConversation = await this.createConversation(conversation.title);
+          
+          // Import messages
+          for (const message of conversation.messages) {
+            if (message.content && message.sender) {
+              await this.addMessage(newConversation.id, message.content);
+            }
+          }
+        }
+      }
     } catch (error) {
-      console.error('Error fetching guest stats:', error);
-      throw error;
+      throw new Error(`Failed to import conversations: ${error}`);
     }
   }
 }

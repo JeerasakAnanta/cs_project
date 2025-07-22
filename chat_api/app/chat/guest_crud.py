@@ -7,11 +7,12 @@ import uuid
 from app.database.models import GuestConversation, GuestMessage
 
 
-def create_guest_conversation(db: Session, title: str = "Guest Conversation") -> GuestConversation:
-    """Create a new guest conversation"""
+def create_guest_conversation(db: Session, title: str = "Guest Conversation", machine_id: str = None) -> GuestConversation:
+    """Create a new guest conversation with machine identifier"""
     conversation_id = str(uuid.uuid4())
     db_conversation = GuestConversation(
         id=conversation_id,
+        machine_id=machine_id,
         title=title,
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow()
@@ -23,7 +24,7 @@ def create_guest_conversation(db: Session, title: str = "Guest Conversation") ->
 
 
 def get_guest_conversation(db: Session, conversation_id: str) -> Optional[GuestConversation]:
-    """Get a guest conversation by ID (only non-deleted conversations)"""
+    """Get a guest conversation by ID"""
     return db.query(GuestConversation).filter(
         and_(
             GuestConversation.id == conversation_id,
@@ -32,11 +33,24 @@ def get_guest_conversation(db: Session, conversation_id: str) -> Optional[GuestC
     ).first()
 
 
-def get_all_guest_conversations(db: Session) -> List[GuestConversation]:
-    """Get all non-deleted guest conversations ordered by updated_at desc"""
-    return db.query(GuestConversation).filter(
-        GuestConversation.is_deleted == False
-    ).order_by(GuestConversation.updated_at.desc()).all()
+def get_guest_conversations(db: Session, machine_id: str = None) -> List[GuestConversation]:
+    """Get all guest conversations for a specific machine"""
+    query = db.query(GuestConversation).filter(GuestConversation.is_deleted == False)
+    
+    if machine_id:
+        query = query.filter(GuestConversation.machine_id == machine_id)
+    
+    return query.order_by(GuestConversation.updated_at.desc()).all()
+
+
+def delete_guest_conversation(db: Session, conversation_id: str) -> bool:
+    """Soft delete a guest conversation"""
+    conversation = get_guest_conversation(db, conversation_id)
+    if conversation:
+        conversation.is_deleted = True
+        db.commit()
+        return True
+    return False
 
 
 def add_guest_message(
@@ -80,43 +94,27 @@ def get_guest_messages(db: Session, conversation_id: str) -> List[GuestMessage]:
     ).order_by(GuestMessage.timestamp.asc()).all()
 
 
-def soft_delete_guest_conversation(db: Session, conversation_id: str) -> bool:
-    """Soft delete a guest conversation (mark as deleted but keep in database)"""
-    conversation = get_guest_conversation(db, conversation_id)
-    if not conversation:
-        return False
+def get_guest_conversation_stats(db: Session, machine_id: str = None) -> dict:
+    """Get statistics for guest conversations"""
+    query = db.query(GuestConversation).filter(GuestConversation.is_deleted == False)
     
-    conversation.is_deleted = True
-    conversation.updated_at = datetime.utcnow()
-    db.commit()
-    return True
-
-
-def update_guest_conversation_title(db: Session, conversation_id: str, title: str) -> bool:
-    """Update the title of a guest conversation"""
-    conversation = get_guest_conversation(db, conversation_id)
-    if not conversation:
-        return False
+    if machine_id:
+        query = query.filter(GuestConversation.machine_id == machine_id)
     
-    conversation.title = title
-    conversation.updated_at = datetime.utcnow()
-    db.commit()
-    return True
-
-
-def get_guest_conversation_stats(db: Session) -> dict:
-    """Get statistics about guest conversations"""
-    total_conversations = db.query(GuestConversation).filter(
+    total_conversations = query.count()
+    
+    # Get total messages
+    message_query = db.query(GuestMessage).join(GuestConversation).filter(
         GuestConversation.is_deleted == False
-    ).count()
+    )
     
-    total_messages = db.query(GuestMessage).join(
-        GuestConversation
-    ).filter(
-        GuestConversation.is_deleted == False
-    ).count()
+    if machine_id:
+        message_query = message_query.filter(GuestConversation.machine_id == machine_id)
+    
+    total_messages = message_query.count()
     
     return {
         "total_conversations": total_conversations,
-        "total_messages": total_messages
+        "total_messages": total_messages,
+        "machine_id": machine_id
     } 

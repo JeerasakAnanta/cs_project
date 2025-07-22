@@ -14,7 +14,6 @@ import ErrorBoundary from './components/ErrorBoundary';
 import TypingTest from './components/TypingTest';
 
 
-
 // Auth Wrapper
 import AdminRoute from './components/AdminRoute';
 import GuestRoute from './components/GuestRoute';
@@ -41,6 +40,7 @@ const AppContent: React.FC = () => {
   const [conversations, setConversations] = useState<{ id: number | string; title: string }[]>([]);
   const [guestConversations, setGuestConversations] = useState<GuestConversation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
 
   const handleConversationDeleted = async (id: number | string) => {
     if (isGuestMode()) {
@@ -99,17 +99,14 @@ const AppContent: React.FC = () => {
   const formatBotMessage = async (content: string): Promise<string> => {
     const sourceRegex = /อ้างอิง: <a href="[^"]+"[^>]+>([^<]+)<\/a>/;
     const match = content.match(sourceRegex);
-    let text = content;
-    let sourceLink = '';
-
+    
     if (match) {
-      text = content.replace(sourceRegex, '').trim();
-      const sourceData = match[1];
-      sourceLink = `\n\nอ้างอิง: <a href="${DOCS_STATIC}/file/${sourceData}" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline hover:text-blue-300">${sourceData}</a>`;
+      const fileName = match[1];
+      const fileUrl = `${DOCS_STATIC}/pdfs/${encodeURIComponent(fileName)}`;
+      return content.replace(sourceRegex, `อ้างอิง: <a href="${fileUrl}" target="_blank" class="text-blue-400 hover:text-blue-300 underline">${fileName}</a>`);
     }
-
-    const formattedText = await marked.parse(text);
-    return formattedText + sourceLink;
+    
+    return content;
   };
 
   const handleSelectConversation = async (id: number | string) => {
@@ -248,7 +245,10 @@ const AppContent: React.FC = () => {
         }
       }
 
-      // Send the user message
+      // Add user message to the conversation
+      const userMessage: Message = { id: Date.now(), text: messageContent, sender: 'user' };
+      setMessages((prevMessages) => [...prevMessages, userMessage]);
+
       try {
         await fetch(`${BACKEND_API}/chat/conversations/${conversationId}/messages/`, {
           method: 'POST',
@@ -309,6 +309,7 @@ const AppContent: React.FC = () => {
             element={
               <GuestRoute>
                 <div className="flex-1 flex flex-col h-full">
+
                   <Chatbot
                     currentConversationId={currentConversationId}
                     messages={messages}

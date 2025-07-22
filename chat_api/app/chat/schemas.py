@@ -2,87 +2,116 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import List, Optional
 
-class MessageBase(BaseModel):
-    sender: str
+
+# Existing schemas for authenticated users
+class MessageCreate(BaseModel):
     content: str
 
-class MessageCreate(MessageBase):
-    pass
 
-class Message(MessageBase):
+class MessageResponse(BaseModel):
     id: int
-    conversation_id: int
+    content: str
+    sender: str
 
     class Config:
         from_attributes = True
 
-class ConversationBase(BaseModel):
-    title: Optional[str] = "New Conversation"
 
-class ConversationCreate(ConversationBase):
-    pass
+# Alias for backward compatibility
+Message = MessageResponse
+
+
+class ConversationCreate(BaseModel):
+    title: str
+
+
+class ConversationResponse(BaseModel):
+    id: int
+    title: str
+    created_at: datetime
+    messages: List[MessageResponse] = []
+
+    class Config:
+        from_attributes = True
+
+
+# Alias for backward compatibility
+Conversation = ConversationResponse
+
 
 class ConversationUpdate(BaseModel):
     title: str
 
-class Conversation(ConversationBase):
-    id: int
-    user_id: int
-    created_at: datetime
-    messages: List[Message] = []
 
-    class Config:
-        from_attributes = True
-
-# Anonymous schemas
+# Schemas for anonymous users
 class AnonymousMessageCreate(BaseModel):
     content: str
 
+
 class AnonymousConversationCreate(BaseModel):
     title: str
+    machine_id: Optional[str] = None
 
-class AnonymousConversation(BaseModel):
+
+class AnonymousMessageResponse(BaseModel):
     id: str
-    title: str
-    messages: List[dict] = []
-    created_at: str
-    updated_at: str
-
-# Guest conversation schemas for PostgreSQL logging
-class GuestMessageBase(BaseModel):
-    sender: str
     content: str
-
-class GuestMessageCreate(GuestMessageBase):
-    pass
-
-class GuestMessage(GuestMessageBase):
-    id: str
-    conversation_id: str
+    sender: str
     timestamp: datetime
 
     class Config:
         from_attributes = True
 
-class GuestConversationBase(BaseModel):
-    title: str = "Guest Conversation"
 
-class GuestConversationCreate(GuestConversationBase):
-    pass
-
-class GuestConversationUpdate(BaseModel):
-    title: str
-
-class GuestConversation(GuestConversationBase):
+class AnonymousConversation(BaseModel):
     id: str
+    machine_id: Optional[str] = None
+    title: str
     created_at: datetime
     updated_at: datetime
-    is_deleted: bool
-    messages: List[GuestMessage] = []
+    messages: List[AnonymousMessageResponse] = []
 
     class Config:
         from_attributes = True
 
-class GuestConversationStats(BaseModel):
+
+# Guest mode schemas with machine_id support
+class GuestMessageCreate(BaseModel):
+    content: str
+    machine_id: Optional[str] = None
+
+
+class GuestConversationCreate(BaseModel):
+    title: str
+    machine_id: Optional[str] = None
+
+
+class GuestMessageResponse(BaseModel):
+    id: str
+    content: str
+    sender: str
+    timestamp: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class GuestConversationResponse(BaseModel):
+    id: str
+    machine_id: Optional[str] = None
+    title: str
+    created_at: datetime
+    updated_at: datetime
+    messages: List[GuestMessageResponse] = []
+
+    class Config:
+        from_attributes = True
+
+
+class GuestStatsResponse(BaseModel):
     total_conversations: int
-    total_messages: int 
+    total_messages: int
+    machine_id: Optional[str] = None
+
+    class Config:
+        from_attributes = True 

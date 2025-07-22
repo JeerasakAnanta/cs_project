@@ -68,6 +68,7 @@ class GuestConversation(Base):
     __tablename__ = "guest_conversations"
 
     id = Column(String, primary_key=True, index=True)  # UUID string
+    machine_id = Column(String, index=True)  # Machine identifier for device separation
     title = Column(String, default="Guest Conversation")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

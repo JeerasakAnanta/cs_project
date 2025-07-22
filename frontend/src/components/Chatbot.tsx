@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { User, Bot, Send, Sparkles, ThumbsUp, ThumbsDown , MessageCircle } from 'lucide-react';
+import { User, Bot, Send, Sparkles, ThumbsUp, ThumbsDown, MessageCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import CustomAlert from './CustomAlert';
 import TypingIndicator from './TypingIndicator';
+import { marked } from 'marked';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 
@@ -56,6 +57,29 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
 
+  // Configure marked for security and styling
+  marked.setOptions({
+    breaks: true,
+    gfm: true,
+  });
+
+  // Function to render markdown content safely
+  const renderMarkdown = (content: string): string => {
+    try {
+      // Basic sanitization to prevent XSS
+      const sanitizedContent = content
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+        .replace(/javascript:/gi, '')
+        .replace(/on\w+\s*=/gi, '');
+      
+      return marked.parse(sanitizedContent) as string;
+    } catch (error) {
+      console.error('Error rendering markdown:', error);
+      return content; // Fallback to plain text
+    }
+  };
+
   const scrollToBottom = () => {
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTo({
@@ -86,8 +110,8 @@ const Chatbot: React.FC<ChatbotProps> = ({
       // If we have a conversation ID but no conversation object, use the first message as title
       const firstMessage = messages[0];
       if (firstMessage && firstMessage.sender === 'user') {
-        const title = firstMessage.text.length > 50 
-          ? firstMessage.text.substring(0, 50) + '...' 
+        const title = firstMessage.text.length > 50
+          ? firstMessage.text.substring(0, 50) + '...'
           : firstMessage.text;
         setCurrentConversationTitle(title);
       }
@@ -102,12 +126,12 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
     const originalInput = userInput;
     setUserInput('');
-    
+
     // Scroll to bottom after adding user message
     setTimeout(() => {
       scrollToBottom();
     }, 100);
-    
+
     await onSendMessage(originalInput);
   };
 
@@ -275,8 +299,8 @@ const Chatbot: React.FC<ChatbotProps> = ({
       )}
 
       {/* Chat container - with proper flex layout */}
-      <div 
-        className="flex-1 overflow-y-auto p-6 pb-4 scroll-smooth" 
+      <div
+        className="flex-1 overflow-y-auto p-6 pb-4 scroll-smooth"
         ref={chatBoxRef}
         style={{ scrollBehavior: 'smooth' }}
       >
@@ -288,9 +312,9 @@ const Chatbot: React.FC<ChatbotProps> = ({
                 <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
                   <Sparkles className="w-10 h-10 text-white" />
                 </div>
-            <h2 className="text-3xl font-bold gradient-text mb-4"> LannaFinChat</h2>
+                <h2 className="text-3xl font-bold gradient-text mb-4"> LannaFinChat</h2>
                 <p className="text-neutral-400 text-lg max-w-2xl mx-auto">
-                  AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน 
+                  AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน
                   เริ่มต้นการสนทนาโดยการถามคำถามหรือเลือกจากตัวอย่างด้านล่าง
                 </p>
               </div>
@@ -340,8 +364,17 @@ const Chatbot: React.FC<ChatbotProps> = ({
                       ? 'bg-blue-600 text-white shadow-lg'
                       : 'bg-neutral-800/80 backdrop-blur-xl border border-neutral-600 text-white'
                       }`}>
-                      <div className="prose prose-invert max-w-none prose-p:text-white prose-strong:text-white prose-a:text-blue-300" dangerouslySetInnerHTML={{ __html: msg.text }} />
-                      
+                      {msg.sender === 'bot' && (
+                        <div className="flex items-center gap-2 mb-3 text-xs text-neutral-400">
+                          <Sparkles className="w-3 h-3" />
+                          <span>Markdown รองรับ</span>
+                        </div>
+                      )}
+                      <div 
+                        className="prose prose-invert max-w-none prose-p:text-white prose-strong:text-white prose-a:text-blue-300 prose-headings:text-white prose-code:text-primary-300 prose-pre:bg-neutral-800 prose-pre:border prose-pre:border-neutral-700 prose-blockquote:border-l-primary-500 prose-blockquote:text-neutral-300 prose-ul:text-white prose-ol:text-white prose-li:text-white" 
+                        dangerouslySetInnerHTML={{ __html: msg.sender === 'bot' ? renderMarkdown(msg.text) : msg.text }} 
+                      />
+
                       {/* Feedback buttons for bot messages - only for authenticated users */}
                       {msg.sender === 'bot' && msg.id && typeof msg.id === 'number' && !isGuestMode() && (
                         <div className="flex items-center gap-2 mt-4 pt-4 border-t border-neutral-600/50">
