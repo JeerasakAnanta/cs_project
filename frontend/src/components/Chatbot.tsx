@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { User, Bot, Send, Sparkles, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import CustomAlert from './CustomAlert';
+import TypingIndicator from './TypingIndicator';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 
@@ -13,23 +14,22 @@ interface Message {
 
 interface ChatbotProps {
   currentConversationId: number | string | null;
-  setCurrentConversationId: (id: number | string | null) => void;
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   onSendMessage: (message: string) => Promise<void>;
   conversations: { id: number | string; title: string }[];
+  isLoading?: boolean;
 }
 
 const Chatbot: React.FC<ChatbotProps> = ({
   currentConversationId,
-  setCurrentConversationId,
   messages,
   setMessages,
   onSendMessage,
   conversations,
+  isLoading = false,
 }) => {
   const [userInput, setUserInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const [alertState, setAlertState] = useState<{
     isOpen: boolean;
     type: 'success' | 'error' | 'warning' | 'info';
@@ -56,11 +56,28 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
 
-  useEffect(() => {
+  const scrollToBottom = () => {
     if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+      chatBoxRef.current.scrollTo({
+        top: chatBoxRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
     }
+  };
+
+  useEffect(() => {
+    // Scroll to bottom when messages change
+    scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    // Scroll to bottom when loading state changes (for typing indicator)
+    if (isLoading) {
+      scrollToBottom();
+    }
+  }, [isLoading]);
+
+
 
   useEffect(() => {
     if (currentConversation) {
@@ -85,12 +102,22 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
     const originalInput = userInput;
     setUserInput('');
-    setIsTyping(true);
+    
+    // Scroll to bottom after adding user message
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    
     await onSendMessage(originalInput);
-    setIsTyping(false);
   };
 
-  const handleExampleQuestionClick = (text: string) => setUserInput(text);
+  const handleExampleQuestionClick = (text: string) => {
+    setUserInput(text);
+    // Scroll to bottom when example question is clicked
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+  };
 
   const handleFeedback = (messageId: number, feedbackType: 'like' | 'dislike') => {
     setFeedbackModal({
@@ -162,7 +189,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full">
+    <div className="flex-1 flex flex-col h-full overflow-hidden">
       {/* Custom Alert */}
       <CustomAlert
         isOpen={alertState.isOpen}
@@ -248,7 +275,11 @@ const Chatbot: React.FC<ChatbotProps> = ({
       )}
 
       {/* Chat container - with proper flex layout */}
-      <div className="flex-1 overflow-y-auto p-6 pb-32" ref={chatBoxRef}>
+      <div 
+        className="flex-1 overflow-y-auto p-6 pb-4 scroll-smooth" 
+        ref={chatBoxRef}
+        style={{ scrollBehavior: 'smooth' }}
+      >
         <div className="max-w-5xl mx-auto">
           {/* Welcome message when no conversation */}
           {messages.length === 0 ? (
@@ -291,7 +322,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
           ) : (
             <div className="space-y-4">
               {messages.map((msg, index) => (
-                <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} ${index === messages.length - 1 ? 'mb-4' : ''}`}>
                   <div className={`flex items-start max-w-4xl ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-4 ${msg.sender === 'user'
                       ? 'bg-blue-600 shadow-lg'
@@ -340,25 +371,21 @@ const Chatbot: React.FC<ChatbotProps> = ({
       </div>
 
       {/* Typing indicator */}
-      {isTyping && (
+      {isLoading && (
         <div className="px-6 py-4">
           <div className="flex items-center space-x-2 max-w-4xl mx-auto">
             <div className="w-12 h-12 rounded-2xl bg-neutral-700 shadow-lg flex items-center justify-center">
               <Bot className="w-6 h-6 text-white" />
             </div>
             <div className="p-4 rounded-3xl bg-neutral-800/80 backdrop-blur-xl border border-neutral-600">
-              <div className="typing-indicator">
-                <div className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-              </div>
+              <TypingIndicator variant="dots" size="medium" />
             </div>
           </div>
         </div>
       )}
 
-      {/* Fixed Input area at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 p-6 border-t border-neutral-700/50 bg-neutral-900/90 backdrop-blur-xl shadow-2xl z-10 md:left-80">
+      {/* Input area at bottom - sticky positioning */}
+      <div className="sticky bottom-0 p-6 border-t border-neutral-700/50 bg-neutral-900/95 backdrop-blur-xl shadow-2xl z-10">
         <div className="max-w-5xl mx-auto">
           <div className="relative bg-gradient-to-br from-slate-900/80 to-purple-900/70 backdrop-blur-xl border border-purple-500/30 rounded-3xl shadow-2xl shadow-purple-500/10">
             <textarea
@@ -377,7 +404,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
             />
             <button
               onClick={handleSendMessage}
-              disabled={!userInput.trim() || isTyping}
+              disabled={!userInput.trim() || isLoading}
               className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-neutral-700 hover:bg-neutral-600 disabled:bg-neutral-800 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 focus:ring-4 focus:ring-neutral-500/25 shadow-lg"
             >
               <Send className="w-4 h-4 text-white" />

@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+import './components/TypingIndicator.css';
 import { AuthProvider } from './contexts/AuthContext.tsx';
 
 // Global error handler to catch extension-related errors

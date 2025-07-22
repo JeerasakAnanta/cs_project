@@ -48,4 +48,139 @@
 
 .typing-indicator span:hover {
   animation: glow 2s infinite;
+}
+
+/* New dots animation for chatbot waiting */
+.chatbot-typing-dots {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.chatbot-typing-dots .dot {
+  width: 8px !important;
+  height: 8px !important;
+  background: #a855f7 !important;
+  border-radius: 50% !important;
+  animation: typingDot 1.4s infinite ease-in-out !important;
+  opacity: 0.3 !important;
+  display: block !important;
+}
+
+.chatbot-typing-dots .dot:nth-child(1) {
+  animation-delay: 0s !important;
+}
+
+.chatbot-typing-dots .dot:nth-child(2) {
+  animation-delay: 0.2s !important;
+}
+
+.chatbot-typing-dots .dot:nth-child(3) {
+  animation-delay: 0.4s !important;
+}
+
+@keyframes typingDot {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Alternative pulsing dots animation */
+.chatbot-typing-pulse {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.chatbot-typing-pulse .dot {
+  width: 6px !important;
+  height: 6px !important;
+  background: #a855f7 !important;
+  border-radius: 50% !important;
+  animation: pulseDot 1.5s infinite ease-in-out !important;
+  display: block !important;
+}
+
+.chatbot-typing-pulse .dot:nth-child(1) {
+  animation-delay: 0s !important;
+}
+
+.chatbot-typing-pulse .dot:nth-child(2) {
+  animation-delay: 0.3s !important;
+}
+
+.chatbot-typing-pulse .dot:nth-child(3) {
+  animation-delay: 0.6s !important;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
+}
+
+/* Size variants for dots */
+.chatbot-typing-dots.small {
+  gap: 2px !important;
+}
+
+.chatbot-typing-dots.small .dot {
+  width: 4px !important;
+  height: 4px !important;
+}
+
+.chatbot-typing-dots.medium {
+  gap: 4px !important;
+}
+
+.chatbot-typing-dots.medium .dot {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+.chatbot-typing-dots.large {
+  gap: 6px !important;
+}
+
+.chatbot-typing-dots.large .dot {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+/* Size variants for pulse */
+.chatbot-typing-pulse.small {
+  gap: 2px !important;
+}
+
+.chatbot-typing-pulse.small .dot {
+  width: 4px !important;
+  height: 4px !important;
+}
+
+.chatbot-typing-pulse.medium {
+  gap: 6px !important;
+}
+
+.chatbot-typing-pulse.medium .dot {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+.chatbot-typing-pulse.large {
+  gap: 8px !important;
+}
+
+.chatbot-typing-pulse.large .dot {
+  width: 10px !important;
+  height: 10px !important;
 } 

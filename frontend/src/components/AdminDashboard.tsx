@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   FileText, 
@@ -10,7 +10,7 @@ import {
 import PdfManager from './PdfManager';
 import UserManager from './UserManager';
 
-type AdminPage = 'dashboard' | 'knowledge' | 'users' | 'settings';
+// type AdminPage = 'dashboard' | 'knowledge' | 'users' | 'settings';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('pdf');

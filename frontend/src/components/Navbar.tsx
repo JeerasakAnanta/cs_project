@@ -5,10 +5,10 @@ import { useAuth } from '../contexts/AuthContext';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 
-interface Conversation {
-  id: number | string;
-  title: string;
-}
+// interface Conversation {
+//   id: number | string;
+//   title: string;
+// }
 
 const Navbar: React.FC<{
   onSelectConversation: (id: number | string) => void;

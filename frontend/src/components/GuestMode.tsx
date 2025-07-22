@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, LogIn, Save } from 'lucide-react';
+import { AlertCircle, LogIn } from 'lucide-react';
 
 interface GuestModeProps {
   onLoginClick: () => void;

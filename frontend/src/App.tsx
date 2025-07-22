@@ -11,6 +11,8 @@ import Chatbot from './components/Chatbot';
 import Pagenotfound from './components/Pagenotfound';
 import AdminDashboard from './components/AdminDashboard';
 import ErrorBoundary from './components/ErrorBoundary';
+import TypingTest from './components/TypingTest';
+
 
 
 // Auth Wrapper
@@ -38,6 +40,7 @@ const AppContent: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversations, setConversations] = useState<{ id: number | string; title: string }[]>([]);
   const [guestConversations, setGuestConversations] = useState<GuestConversation[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleConversationDeleted = async (id: number | string) => {
     if (isGuestMode()) {
@@ -169,6 +172,7 @@ const AppContent: React.FC = () => {
   const handleGuestSendMessage = async (messageContent: string) => {
     let conversationId = currentConversationId as string;
     
+    setIsLoading(true);
     try {
       // Create a new conversation if one doesn't exist
       if (!conversationId) {
@@ -210,6 +214,8 @@ const AppContent: React.FC = () => {
       }
     } catch (error) {
       console.error('Error in guest mode chat:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -218,54 +224,59 @@ const AppContent: React.FC = () => {
     const authToken = localStorage.getItem('authToken');
     if (!authToken) return;
     
-    // Create a new conversation if one doesn't exist
-    if (!conversationId) {
+    setIsLoading(true);
+    try {
+      // Create a new conversation if one doesn't exist
+      if (!conversationId) {
+        try {
+          const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
+            body: JSON.stringify({ title: messageContent }), // Use message as title
+          });
+          if (response.ok) {
+            const newConversation = await response.json();
+            conversationId = newConversation.id;
+            setCurrentConversationId(newConversation.id);
+            setConversations((prev) => [newConversation, ...prev]);
+          } else {
+            throw new Error('Failed to create new conversation');
+          }
+        } catch (error) {
+          console.error(error);
+          return; // Exit if conversation creation fails
+        }
+      }
+
+      // Send the user message
       try {
-        const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
+        await fetch(`${BACKEND_API}/chat/conversations/${conversationId}/messages/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
-          body: JSON.stringify({ title: messageContent }), // Use message as title
+          body: JSON.stringify({ sender: 'user', content: messageContent }),
         });
-        if (response.ok) {
-          const newConversation = await response.json();
-          conversationId = newConversation.id;
-          setCurrentConversationId(newConversation.id);
-          setConversations((prev) => [newConversation, ...prev]);
-        } else {
-          throw new Error('Failed to create new conversation');
-        }
-      } catch (error) {
-        console.error(error);
-        return; // Exit if conversation creation fails
-      }
-    }
 
-    // Send the user message
-    try {
-      await fetch(`${BACKEND_API}/chat/conversations/${conversationId}/messages/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
-        body: JSON.stringify({ sender: 'user', content: messageContent }),
-      });
-
-      // Now, get the bot's response
-      const response = await fetch(`${BACKEND_API}/chat/conversations/${conversationId}/messages/`, {
-          headers: { Authorization: `Bearer ${authToken}` },
-      });
-      
-      const botMessageData = await response.json();
-      if (botMessageData && botMessageData.length > 0) {
-        const lastBotMessage = botMessageData[botMessageData.length - 1];
-        const formattedText = await formatBotMessage(lastBotMessage.content);
-        const botMessage: Message = { id: lastBotMessage.id, text: formattedText, sender: 'bot' };
+        // Now, get the bot's response
+        const response = await fetch(`${BACKEND_API}/chat/conversations/${conversationId}/messages/`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+        });
         
-        setMessages((prevMessages) => [...prevMessages, botMessage]);
-      } else {
-        console.error('No bot message received');
-      }
+        const botMessageData = await response.json();
+        if (botMessageData && botMessageData.length > 0) {
+          const lastBotMessage = botMessageData[botMessageData.length - 1];
+          const formattedText = await formatBotMessage(lastBotMessage.content);
+          const botMessage: Message = { id: lastBotMessage.id, text: formattedText, sender: 'bot' };
+          
+          setMessages((prevMessages) => [...prevMessages, botMessage]);
+        } else {
+          console.error('No bot message received');
+        }
 
-    } catch (error) {
-      console.error('Error sending message or getting response:', error);
+      } catch (error) {
+        console.error('Error sending message or getting response:', error);
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -291,25 +302,27 @@ const AppContent: React.FC = () => {
         currentConversationId={currentConversationId}
         conversations={isGuestMode() ? guestConversations : conversations}
       />
-      <main className="flex-1 flex flex-col overflow-auto">
+      <main className="flex-1 flex flex-col overflow-hidden">
         <Routes>
           <Route
             path="/"
             element={
               <GuestRoute>
-                <div className="flex-1 flex flex-col">
+                <div className="flex-1 flex flex-col h-full">
                   <Chatbot
                     currentConversationId={currentConversationId}
-                    setCurrentConversationId={setCurrentConversationId}
                     messages={messages}
                     setMessages={setMessages}
                     onSendMessage={handleSendMessage}
                     conversations={isGuestMode() ? guestConversations : conversations}
+                    isLoading={isLoading}
                   />
                 </div>
               </GuestRoute>
             }
           />
+
+          <Route path="/typing-test" element={<TypingTest />} />
           <Route path="*" element={<Pagenotfound />} />
         </Routes>
       </main>
