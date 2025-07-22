@@ -72,7 +72,14 @@ async def get_guest_conversations(
     """Get all guest conversations for a specific machine"""
     try:
         conversations = guest_crud.get_guest_conversations(db, machine_id=x_machine_id)
-        return [schemas.GuestConversationResponse.from_orm(conv) for conv in conversations]
+        def fix_sender(conv):
+            conv_dict = conv.__dict__.copy()
+            conv_dict['messages'] = [
+                m if m.sender is not None else type(m)(**{**m.__dict__, 'sender': 'unknown'})
+                for m in conv.messages
+            ]
+            return schemas.GuestConversationResponse.from_orm(type(conv)(**conv_dict))
+        return [fix_sender(conv) for conv in conversations]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching conversations: {str(e)}")
 
@@ -92,7 +99,13 @@ async def get_guest_conversation(
     if x_machine_id and conversation.machine_id != x_machine_id:
         raise HTTPException(status_code=403, detail="Access denied to this conversation")
     
-    return schemas.GuestConversationResponse.from_orm(conversation)
+    # Fix sender=None
+    conv_dict = conversation.__dict__.copy()
+    conv_dict['messages'] = [
+        m if m.sender is not None else type(m)(**{**m.__dict__, 'sender': 'unknown'})
+        for m in conversation.messages
+    ]
+    return schemas.GuestConversationResponse.from_orm(type(conversation)(**conv_dict))
 
 
 @router.post("/conversations/{conversation_id}/messages")
