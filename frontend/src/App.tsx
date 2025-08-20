@@ -76,6 +76,12 @@ const AppContent: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         setConversations(data);
+      } else if (response.status === 401) {
+        // Token is invalid or expired, clear it and redirect to login
+        localStorage.removeItem('authToken');
+        window.location.href = '/login';
+      } else {
+        console.error('Error fetching conversations:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('Error fetching conversations:', error);
@@ -150,6 +156,13 @@ const AppContent: React.FC = () => {
             })
           );
           setMessages(formattedMessages);
+        } else if (response.status === 401) {
+          // Token is invalid or expired, clear it and redirect to login
+          localStorage.removeItem('authToken');
+          window.location.href = '/login';
+        } else {
+          console.error('Error fetching conversation details:', response.status, response.statusText);
+          setMessages([]);
         }
       } catch (error) {
         console.error('Error fetching conversation details:', error);
@@ -231,14 +244,19 @@ const AppContent: React.FC = () => {
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
             body: JSON.stringify({ title: messageContent }), // Use message as title
           });
-          if (response.ok) {
-            const newConversation = await response.json();
-            conversationId = newConversation.id;
-            setCurrentConversationId(newConversation.id);
-            setConversations((prev) => [newConversation, ...prev]);
-          } else {
-            throw new Error('Failed to create new conversation');
-          }
+                  if (response.ok) {
+          const newConversation = await response.json();
+          conversationId = newConversation.id;
+          setCurrentConversationId(newConversation.id);
+          setConversations((prev) => [newConversation, ...prev]);
+        } else if (response.status === 401) {
+          // Token is invalid or expired, clear it and redirect to login
+          localStorage.removeItem('authToken');
+          window.location.href = '/login';
+          return;
+        } else {
+          throw new Error('Failed to create new conversation');
+        }
         } catch (error) {
           console.error(error);
           return; // Exit if conversation creation fails
@@ -261,15 +279,24 @@ const AppContent: React.FC = () => {
             headers: { Authorization: `Bearer ${authToken}` },
         });
         
-        const botMessageData = await response.json();
-        if (botMessageData && botMessageData.length > 0) {
-          const lastBotMessage = botMessageData[botMessageData.length - 1];
-          const formattedText = await formatBotMessage(lastBotMessage.content);
-          const botMessage: Message = { id: lastBotMessage.id, text: formattedText, sender: 'bot' };
-          
-          setMessages((prevMessages) => [...prevMessages, botMessage]);
+        if (response.ok) {
+          const botMessageData = await response.json();
+          if (botMessageData && botMessageData.length > 0) {
+            const lastBotMessage = botMessageData[botMessageData.length - 1];
+            const formattedText = await formatBotMessage(lastBotMessage.content);
+            const botMessage: Message = { id: lastBotMessage.id, text: formattedText, sender: 'bot' };
+            
+            setMessages((prevMessages) => [...prevMessages, botMessage]);
+          } else {
+            console.error('No bot message received');
+          }
+        } else if (response.status === 401) {
+          // Token is invalid or expired, clear it and redirect to login
+          localStorage.removeItem('authToken');
+          window.location.href = '/login';
+          return;
         } else {
-          console.error('No bot message received');
+          console.error('Error getting bot response:', response.status, response.statusText);
         }
 
       } catch (error) {

@@ -5,15 +5,34 @@ import {
   Users, 
   ArrowLeft, 
   Shield,
-  Activity
+  Activity,
+  BarChart3,
+  TrendingUp,
+  MessageSquare,
+  Search
 } from 'lucide-react';
 import PdfManager from './PdfManager';
 import UserManager from './UserManager';
+import SystemStatistics from './admin/SystemStatistics';
+import ConversationSearch from './admin/ConversationSearch';
+import ConversationAnalytics from './admin/ConversationAnalytics';
+import ConversationDetail from './admin/ConversationDetail';
 
-// type AdminPage = 'dashboard' | 'knowledge' | 'users' | 'settings';
+interface Conversation {
+  id: string;
+  user_id: string;
+  username: string;
+  question: string;
+  bot_response: string;
+  satisfaction_rating?: number;
+  response_time_ms?: number;
+  created_at: string;
+  updated_at: string;
+}
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('pdf');
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -21,6 +40,12 @@ const AdminDashboard = () => {
         return <PdfManager />;
       case 'user':
         return <UserManager />;
+      case 'statistics':
+        return <SystemStatistics />;
+      case 'conversations':
+        return <ConversationSearch onConversationSelect={setSelectedConversation} />;
+      case 'analytics':
+        return <ConversationAnalytics conversations={[]} />; // TODO: Pass real conversations data
       default:
         return <PdfManager />;
     }
@@ -38,8 +63,54 @@ const AdminDashboard = () => {
       label: 'จัดการผู้ใช้งาน',
       icon: Users,
       description: 'ดูและจัดการบัญชีผู้ใช้'
+    },
+    {
+      id: 'statistics',
+      label: 'สถิติระบบ',
+      icon: BarChart3,
+      description: 'ดูสถิติระบบและการใช้งาน'
+    },
+    {
+      id: 'conversations',
+      label: 'ค้นหาการสนทนา',
+      icon: Search,
+      description: 'ค้นหาและดูรายละเอียดการสนทนา'
+    },
+    {
+      id: 'analytics',
+      label: 'วิเคราะห์การสนทนา',
+      icon: MessageSquare,
+      description: 'กราฟและสถิติการสนทนา'
     }
   ];
+
+  const getContentTitle = () => {
+    switch (activeTab) {
+      case 'pdf': return 'จัดการไฟล์ PDF';
+      case 'user': return 'จัดการผู้ใช้งาน';
+      case 'statistics': return 'สถิติระบบ';
+      case 'conversations': return 'ค้นหาการสนทนา';
+      case 'analytics': return 'วิเคราะห์การสนทนา';
+      default: return 'จัดการไฟล์ PDF';
+    }
+  };
+
+  const getContentDescription = () => {
+    switch (activeTab) {
+      case 'pdf': 
+        return 'อัปโหลด จัดการ และควบคุมเอกสาร PDF ในระบบ';
+      case 'user':
+        return 'ดูและจัดการบัญชีผู้ใช้ทั้งหมดในระบบ';
+      case 'statistics':
+        return 'ดูสถิติการใช้งานระบบทั้งหมด รวมถึงผู้ใช้ การสนทนา และข้อความ';
+      case 'conversations':
+        return 'ค้นหา ดูรายละเอียด และวิเคราะห์การสนทนาระหว่างผู้ใช้และ Bot';
+      case 'analytics':
+        return 'ดูกราฟและสถิติการสนทนา ความพึงพอใจ และเวลาตอบสนอง';
+      default:
+        return 'อัปโหลด จัดการ และควบคุมเอกสาร PDF ในระบบ';
+    }
+  };
 
   return (
     <div className="flex h-screen bg-chat-bg">
@@ -99,27 +170,7 @@ const AdminDashboard = () => {
             })}
           </nav>
 
-          {/* Quick Stats */}
-          <div className="mt-8 p-4 bg-neutral-800/50 rounded-xl border border-neutral-700/30">
-            <h3 className="text-sm font-medium text-neutral-300 mb-3 flex items-center">
-              <Activity className="w-4 h-4 mr-2" />
-              สถิติระบบ
-            </h3>
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs">
-                <span className="text-neutral-400">ผู้ใช้ทั้งหมด</span>
-                <span className="text-primary-400 font-medium">1,234</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-neutral-400">ไฟล์ PDF</span>
-                <span className="text-purple-400 font-medium">567</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-neutral-400">การสนทนา</span>
-                <span className="text-green-400 font-medium">8,901</span>
-              </div>
-            </div>
-          </div>
+          
         </div>
 
         {/* Footer */}
@@ -141,13 +192,10 @@ const AdminDashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-white">
-                {activeTab === 'pdf' ? 'จัดการไฟล์ PDF' : 'จัดการผู้ใช้งาน'}
+                {getContentTitle()}
               </h2>
               <p className="text-neutral-400 text-sm mt-1">
-                {activeTab === 'pdf' 
-                  ? 'อัปโหลด จัดการ และควบคุมเอกสาร PDF ในระบบ' 
-                  : 'ดูและจัดการบัญชีผู้ใช้ทั้งหมดในระบบ'
-                }
+                {getContentDescription()}
               </p>
             </div>
             <div className="flex items-center space-x-2">
@@ -164,6 +212,14 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Conversation Detail Modal */}
+      {selectedConversation && (
+        <ConversationDetail
+          conversation={selectedConversation}
+          onClose={() => setSelectedConversation(null)}
+        />
+      )}
     </div>
   );
 };

@@ -1,71 +1,62 @@
 #!/bin/bash
 
-# Database Migration Script for Guest Mode Machine Separation
-# This script adds machine_id column to guest_conversations table
+echo "🚀 Starting Conversation Migration Script"
+echo "=========================================="
 
-echo "🚀 Starting Database Migration for Guest Mode Machine Separation..."
-echo ""
-
-# Check if we're in the correct directory
-if [ ! -f "chat_api/alembic.ini" ]; then
-    echo "❌ Error: alembic.ini not found. Please run this script from the project root."
+# Check if we're in the right directory
+if [ ! -f "chat_api/app/main.py" ]; then
+    echo "❌ Error: Please run this script from the project root directory"
+    echo "Current directory: $(pwd)"
+    echo "Expected to find: chat_api/app/main.py"
     exit 1
 fi
 
-# Navigate to chat_api directory
-cd chat_api
+echo "✅ Project structure verified"
 
 # Check if virtual environment exists
-if [ ! -d ".venv" ]; then
-    echo "📦 Creating virtual environment..."
-    python -m venv .venv
+if [ ! -d "chat_api/.venv" ]; then
+    echo "❌ Error: Virtual environment not found at chat_api/.venv"
+    echo "Please create the virtual environment first:"
+    echo "cd chat_api && python -m venv .venv"
+    exit 1
 fi
+
+echo "✅ Virtual environment found"
+
+# Activate virtual environment and run migration
+echo "🔄 Activating virtual environment and running migration..."
+cd chat_api
 
 # Activate virtual environment
-echo "🔧 Activating virtual environment..."
 source .venv/bin/activate
 
-# Install dependencies if needed
-if [ ! -f "uv.lock" ] || [ ! -d ".venv/lib/python3.13/site-packages" ]; then
-    echo "📦 Installing dependencies..."
-    uv sync
+# Check if required packages are installed
+echo "📦 Checking required packages..."
+python -c "import sqlalchemy, fastapi" 2>/dev/null
+if [ $? -ne 0 ]; then
+    echo "❌ Error: Required packages not installed"
+    echo "Please install requirements: pip install -r requirements.txt"
+    exit 1
 fi
 
-# Check if alembic is installed
-if ! python -c "import alembic" 2>/dev/null; then
-    echo "📦 Installing alembic..."
-    pip install alembic
-fi
+echo "✅ Required packages verified"
 
-# Run migration
-echo "🔄 Running database migration..."
-echo "This will add machine_id column to guest_conversations table"
-echo ""
+# Run migration script
+echo "🔄 Running migration script..."
+python migrate_conversations.py
 
-# Check current migration status
-echo "📊 Current migration status:"
-alembic current
-
-echo ""
-echo "🔄 Applying migration..."
-alembic upgrade head
-
-# Check migration status after upgrade
-echo ""
-echo "📊 Migration status after upgrade:"
-alembic current
-
-echo ""
-echo "✅ Migration completed successfully!"
-echo ""
-echo "📋 Summary of changes:"
-echo "   - Added machine_id column to guest_conversations table"
-echo "   - Created index on machine_id for better performance"
-echo "   - Guest mode conversations will now be separated by machine"
-echo ""
-echo "🔄 Please restart your backend service to apply changes:"
-echo "   docker-compose restart backend"
-echo "   or"
-echo "   cd chat_api && uvicorn app.main:app --reload"
-echo ""
-echo "🎉 Guest Mode Machine Separation is now ready!" 
+if [ $? -eq 0 ]; then
+    echo ""
+    echo "✅ Migration completed successfully!"
+    echo ""
+    echo "Next steps:"
+    echo "1. Start the backend server: cd chat_api && python -m uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload"
+    echo "2. Start the frontend: cd frontend && npm run dev"
+    echo "3. Open Admin Panel: http://localhost:3000/admin"
+    echo "4. Go to 'ค้นหาการสนทนา' or 'วิเคราะห์การสนทนา' tabs"
+else
+    echo ""
+    echo "❌ Migration failed!"
+    echo "Please check the error messages above"
+    exit 1
+fi 

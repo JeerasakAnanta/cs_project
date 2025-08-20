@@ -15,6 +15,7 @@ from app.routers.router_login import router as router_login
 from app.chat.feedback_router import router as router_feedback
 from app.routers.router_pdfs import router as router_pdfs
 from app.routers.router_admin import router as router_admin
+from app.routers.router_admin_conversations import router as router_admin_conversations
 
 
 # Setup logging with system timezone
@@ -44,6 +45,10 @@ else:
         "http://localhost:3000",
     ]
 
+# For development, always allow localhost:8000
+if "http://localhost:8000" not in origins:
+    origins.append("http://localhost:8000")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -70,6 +75,7 @@ app.include_router(router_pdfs)
 
 # Admin routers
 app.include_router(router_admin)
+app.include_router(router_admin_conversations)
 
 @app.on_event("startup")
 async def startup_event():

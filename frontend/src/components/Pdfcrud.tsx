@@ -11,7 +11,8 @@ import {
   Search
 } from 'lucide-react';
 
-const VITE_HOST = import.meta.env.VITE_BACKEND_DOCS_API;
+// Fix: Use correct backend port (8001) instead of incorrect port (8004)
+const VITE_HOST = import.meta.env.VITE_BACKEND_DOCS_API || 'http://localhost:8001';
 
 const PdfCrud: React.FC = () => {
   const [pdfs, setPdfs] = useState<string[]>([]);
@@ -31,22 +32,41 @@ const PdfCrud: React.FC = () => {
   const fetchPdfs = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${VITE_HOST}/pdflist`, {
+      console.log('🔍 Fetching PDFs from:', `${VITE_HOST}/api/pdfs/`);
+      
+      // Get authentication token
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        console.warn('⚠️ No authentication token found, PDFs may not load');
+        setPdfs([]);
+        return;
+      }
+      
+      const response = await fetch(`${VITE_HOST}/api/pdfs/`, {
         method: 'GET',
-        headers: { accept: 'application/json' },
+        headers: { 
+          'accept': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
       });
 
-      if (!response.ok) throw new Error('Network response was not ok');
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('ไม่ได้รับอนุญาตให้เข้าถึง PDFs กรุณาเข้าสู่ระบบใหม่');
+        }
+        throw new Error(`Network response was not ok: ${response.status}`);
+      }
 
-      const { pdfs } = await response.json();
+      const pdfs = await response.json();
       if (Array.isArray(pdfs)) {
         setPdfs(pdfs);
+        console.log('✅ PDFs fetched successfully:', pdfs.length, 'files');
       } else {
         console.error('Expected an array of PDFs, but received:', pdfs);
         setPdfs([]);
       }
     } catch (error) {
-      console.error('Error fetching PDFs:', error);
+      console.error('❌ Error fetching PDFs:', error);
       setPdfs([]);
     } finally {
       setIsLoading(false);
@@ -91,8 +111,20 @@ const PdfCrud: React.FC = () => {
     );
     if (!confirm) return;
 
+    // Get authentication token
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      alert('⚠️ ไม่พบข้อมูลการยืนยันตัวตน กรุณาเข้าสู่ระบบใหม่');
+      return;
+    }
+
     const deletePromises = selectedPdfs.map((filename) =>
-      fetch(`${VITE_HOST}/delete/${filename}`, { method: 'DELETE' })
+      fetch(`${VITE_HOST}/api/pdfs/${filename}`, { 
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      })
     );
 
     try {
@@ -140,7 +172,6 @@ const PdfCrud: React.FC = () => {
             <FileText className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">🗃 มาตรการสินเชื่อที่ upload</h2>
             <p className="text-neutral-400 text-sm">จัดการไฟล์ PDF ในระบบ ({pdfs.length} ไฟล์)</p>
           </div>
         </div>

@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
 
-// use env
-const VITE_HOST = import.meta.env.VITE_BACKEND_DOCS_API;
+// Fix: Use correct backend port (8001) instead of incorrect port
+const VITE_HOST = import.meta.env.VITE_BACKEND_DOCS_API || 'http://localhost:8001';
 
 const Uploadpdf: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -32,21 +32,33 @@ const Uploadpdf: React.FC = () => {
       return;
     }
 
+    // Check authentication
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      setStatusText('⚠️ ไม่พบข้อมูลการยืนยันตัวตน กรุณาเข้าสู่ระบบใหม่');
+      return;
+    }
+
     setStatusText('');
     setIsLoading(true);
     const formData = new FormData();
     formData.append('file', selectedFile);
 
     try {
-      await axios.post(`${VITE_HOST}/upload`, formData, {
+      await axios.post(`${VITE_HOST}/api/pdfs/upload/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${authToken}`
         },
       });
       setStatusText('อัปโหลดสำเร็จ!');
       setSelectedFile(null); // Reset the selected file
-    } catch (err) {
-      setStatusText('เกิดข้อผิดพลาดในการอัปโหลด. กรุณาลองใหม่อีกครั้ง.');
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        setStatusText('⚠️ ไม่ได้รับอนุญาตให้อัปโหลด PDF กรุณาเข้าสู่ระบบใหม่');
+      } else {
+        setStatusText('เกิดข้อผิดพลาดในการอัปโหลด. กรุณาลองใหม่อีกครั้ง.');
+      }
     } finally {
       setIsLoading(false);
     }

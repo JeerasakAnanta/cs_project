@@ -6,6 +6,7 @@ from sqlalchemy import (
     String,
     DateTime,
     Text,
+    Float,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -47,6 +48,9 @@ class Message(Base):
     conversation_id = Column(Integer, ForeignKey("conversations.id"))
     sender = Column(String)  # "user" or "bot"
     content = Column(String)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    satisfaction_rating = Column(Integer, nullable=True)  # 1-5 rating
+    response_time_ms = Column(Integer, nullable=True)  # Response time in milliseconds
 
     conversation = relationship("Conversation", back_populates="messages")
     feedbacks = relationship("Feedback", back_populates="message", cascade="all, delete-orphan")
@@ -85,5 +89,25 @@ class GuestMessage(Base):
     sender = Column(String)  # "user" or "bot"
     content = Column(Text)  # Use Text for longer messages
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    satisfaction_rating = Column(Integer, nullable=True)  # 1-5 rating
+    response_time_ms = Column(Integer, nullable=True)  # Response time in milliseconds
 
-    conversation = relationship("GuestConversation", back_populates="messages") 
+    conversation = relationship("GuestConversation", back_populates="messages")
+
+
+# New model for admin conversation analytics
+class AdminConversation(Base):
+    __tablename__ = "admin_conversations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # Can be null for guest users
+    username = Column(String, index=True)  # Store username for easier querying
+    question = Column(Text)  # User's question
+    bot_response = Column(Text)  # Bot's response
+    satisfaction_rating = Column(Integer, nullable=True)  # 1-5 rating
+    response_time_ms = Column(Integer, nullable=True)  # Response time in milliseconds
+    conversation_type = Column(String, default="regular")  # "regular", "guest", "admin"
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    user = relationship("User", foreign_keys=[user_id]) 

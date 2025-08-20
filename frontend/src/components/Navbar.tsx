@@ -34,13 +34,22 @@ const Navbar: React.FC<{
       if (isNaN(numericId)) return;
 
       try {
-        await fetch(`${BACKEND_API}/chat/conversations/${numericId}`, {
+        const response = await fetch(`${BACKEND_API}/chat/conversations/${numericId}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${authToken}` },
         });
-        onConversationDeleted(numericId);
-        if (currentConversationId === numericId) {
-          onNewConversation();
+        if (response.ok) {
+          onConversationDeleted(numericId);
+          if (currentConversationId === numericId) {
+            onNewConversation();
+          }
+        } else if (response.status === 401) {
+          // Token is invalid or expired, clear it and redirect to login
+          localStorage.removeItem('authToken');
+          window.location.href = '/login';
+          return;
+        } else {
+          console.error('Error deleting conversation:', response.status, response.statusText);
         }
       } catch (error) {
         console.error('Error deleting conversation:', error);
