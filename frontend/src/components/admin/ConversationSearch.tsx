@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Clock, ThumbsUp, ThumbsDown, MessageSquare, User, Bot, Download } from 'lucide-react';
 import { conversationService, Conversation, ConversationFilters } from '../../services/conversationService';
+import { marked } from 'marked';
+import './ConversationSearch.css';
 
 interface ConversationSearchProps {
   onConversationSelect?: (conversation: Conversation) => void;
@@ -23,6 +25,7 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [expandedResponses, setExpandedResponses] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     loadConversations();
@@ -140,6 +143,19 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
     setCurrentPage(page);
   };
 
+  // Function to toggle expanded response
+  const toggleExpandedResponse = (conversationId: string) => {
+    setExpandedResponses(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(conversationId)) {
+        newSet.delete(conversationId);
+      } else {
+        newSet.add(conversationId);
+      }
+      return newSet;
+    });
+  };
+
   const filterConversations = (term: string, filters: ConversationFilters) => {
     let filtered = conversations;
 
@@ -212,6 +228,28 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('th-TH');
+  };
+
+  // Function to truncate text to approximately 4 lines
+  const truncateText = (text: string, maxLength: number = 200) => {
+    if (text.length <= maxLength) return { text: text, isTruncated: false };
+    return { text: text.substring(0, maxLength) + '...', isTruncated: true };
+  };
+
+  // Function to render markdown safely
+  const renderMarkdown = (text: string) => {
+    try {
+      // Configure marked options for security
+      marked.setOptions({
+        breaks: true,
+        gfm: true
+      });
+      
+      return marked(text);
+    } catch (error) {
+      console.error('Error rendering markdown:', error);
+      return text; // Fallback to plain text
+    }
   };
 
   return (
@@ -360,7 +398,27 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
                         <User className="w-4 h-4 text-blue-400" />
                         <span className="text-sm font-medium text-neutral-300">คำถาม:</span>
                       </div>
-                      <p className="text-white">{conversation.question}</p>
+                      <div className="space-y-2">
+                        <div 
+                          className="text-white markdown-content"
+                          dangerouslySetInnerHTML={{
+                            __html: expandedResponses.has(`q_${conversation.id}`) 
+                              ? renderMarkdown(conversation.question)
+                              : renderMarkdown(truncateText(conversation.question).text)
+                          }}
+                        />
+                        {truncateText(conversation.question).isTruncated && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleExpandedResponse(`q_${conversation.id}`);
+                            }}
+                            className="text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                          >
+                            {expandedResponses.has(`q_${conversation.id}`) ? 'ซ่อน' : 'ดูเพิ่มเติม'}
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     {/* Bot Response */}
@@ -369,7 +427,27 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
                         <Bot className="w-4 h-4 text-green-400" />
                         <span className="text-sm font-medium text-neutral-300">คำตอบ:</span>
                       </div>
-                      <p className="text-white">{conversation.bot_response}</p>
+                      <div className="space-y-2">
+                        <div 
+                          className="text-white markdown-content"
+                          dangerouslySetInnerHTML={{
+                            __html: expandedResponses.has(conversation.id) 
+                              ? renderMarkdown(conversation.bot_response)
+                              : renderMarkdown(truncateText(conversation.bot_response).text)
+                          }}
+                        />
+                        {truncateText(conversation.bot_response).isTruncated && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleExpandedResponse(conversation.id);
+                            }}
+                            className="text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                          >
+                            {expandedResponses.has(conversation.id) ? 'ซ่อน' : 'ดูเพิ่มเติม'}
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     {/* Metrics */}

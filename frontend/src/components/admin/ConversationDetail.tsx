@@ -1,5 +1,7 @@
 import React from 'react';
 import { X, Clock, ThumbsUp, ThumbsDown, MessageSquare, User, Bot, Calendar, Star } from 'lucide-react';
+import { marked } from 'marked';
+import './ConversationDetail.css';
 
 interface Conversation {
   id: string;
@@ -61,6 +63,22 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
     if (ms < 1000) return `${ms}ms`;
     if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
     return `${(ms / 60000).toFixed(1)}m`;
+  };
+
+  // Function to render markdown safely
+  const renderMarkdown = (text: string) => {
+    try {
+      // Configure marked options for security
+      marked.setOptions({
+        breaks: true,
+        gfm: true
+      });
+      
+      return marked(text);
+    } catch (error) {
+      console.error('Error rendering markdown:', error);
+      return text; // Fallback to plain text
+    }
   };
 
   return (
@@ -160,7 +178,12 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
               คำถามจากผู้ใช้
             </h3>
             <div className="bg-blue-500/20 p-4 rounded-lg border border-blue-500/30">
-              <p className="text-white text-lg leading-relaxed">{conversation.question}</p>
+              <div 
+                className="text-white text-lg leading-relaxed markdown-content-full"
+                dangerouslySetInnerHTML={{
+                  __html: renderMarkdown(conversation.question)
+                }}
+              />
             </div>
           </div>
 
@@ -171,7 +194,12 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
               คำตอบจาก Bot
             </h3>
             <div className="bg-green-500/20 p-4 rounded-lg border border-green-500/30">
-              <p className="text-white text-lg leading-relaxed">{conversation.bot_response}</p>
+              <div 
+                className="text-white text-lg leading-relaxed markdown-content-full"
+                dangerouslySetInnerHTML={{
+                  __html: renderMarkdown(conversation.bot_response)
+                }}
+              />
             </div>
           </div>
 
