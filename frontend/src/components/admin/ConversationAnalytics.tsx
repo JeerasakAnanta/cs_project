@@ -231,8 +231,8 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
           <div className="space-y-3">
             {Object.entries(stats.response_time_distribution).map(([key, count]) => {
               const percentage = stats.total_conversations > 0 ? Math.round((count / stats.total_conversations) * 100) : 0;
-              const color = key === 'fast' ? 'bg-green-500' : key === 'medium' ? 'bg-blue-500' : 'bg-red-500';
-              const label = key === 'fast' ? 'เร็วมาก (≤1s)' : key === 'medium' ? 'เร็ว (1-2s)' : 'ช้า (≥3s)';
+              const color = key === 'fast' ? 'bg-green-500' : key === 'medium' ? 'bg-yellow-500' : 'bg-red-500';
+              const label = key === 'fast' ? 'เร็วมาก (≤1s) 🟢' : key === 'medium' ? 'เร็ว (1-2s) 🟡' : 'ช้า (≥3s) 🔴';
               
               return (
                 <div key={key} className="flex items-center justify-between">

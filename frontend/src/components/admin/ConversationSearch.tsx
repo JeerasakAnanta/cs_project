@@ -189,8 +189,8 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
   };
 
   const getResponseTimeColor = (time: number) => {
-    if (time < 1000) return 'text-green-500';
-    if (time < 2000) return 'text-yellow-500';
+    if (time <= 1000) return 'text-green-500';
+    if (time <= 2000) return 'text-yellow-500';
     return 'text-red-500';
   };
 
@@ -294,9 +294,9 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
               className="px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
             >
               <option value="all">เวลาตอบทั้งหมด</option>
-              <option value="fast">เร็วมาก (≤1s)</option>
-              <option value="medium">เร็ว (1-2s)</option>
-              <option value="slow">ช้า (≥3s)</option>
+              <option value="fast">เร็วมาก (≤1s) 🟢</option>
+              <option value="medium">เร็ว (1-2s) 🟡</option>
+              <option value="slow">ช้า (≥3s) 🔴</option>
             </select>
           </div>
         </div>
