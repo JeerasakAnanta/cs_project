@@ -28,15 +28,14 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
   };
 
   const getResponseTimeColor = (time: number) => {
-    if (time < 1000) return 'text-green-500';
-    if (time < 2000) return 'text-yellow-500';
+    if (time <= 1000) return 'text-green-500';
+    if (time <= 2000) return 'text-yellow-500';
     return 'text-red-500';
   };
 
   const getResponseTimeLabel = (time: number) => {
-    if (time < 1000) return 'เร็วมาก';
-    if (time < 2000) return 'เร็ว';
-    if (time < 3000) return 'ปานกลาง';
+    if (time <= 1000) return 'เร็วมาก';
+    if (time <= 2000) return 'เร็ว';
     return 'ช้า';
   };
 

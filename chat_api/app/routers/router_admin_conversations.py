@@ -57,16 +57,16 @@ async def get_conversations(
         
         if response_time:
             if response_time == "fast":
-                query = query.filter(AdminConversation.response_time_ms < 1000)
+                query = query.filter(AdminConversation.response_time_ms <= 1000)
             elif response_time == "medium":
                 query = query.filter(
                     and_(
-                        AdminConversation.response_time_ms >= 1000,
-                        AdminConversation.response_time_ms < 2000
+                        AdminConversation.response_time_ms > 1000,
+                        AdminConversation.response_time_ms <= 2000
                     )
                 )
             elif response_time == "slow":
-                query = query.filter(AdminConversation.response_time_ms >= 2000)
+                query = query.filter(AdminConversation.response_time_ms >= 3000)
         
         if date_from:
             try:
@@ -185,14 +185,14 @@ async def get_conversation_stats(
         
         # Response time distribution
         response_time_distribution = {
-            "fast": query.filter(AdminConversation.response_time_ms < 1000).count(),
+            "fast": query.filter(AdminConversation.response_time_ms <= 1000).count(),
             "medium": query.filter(
                 and_(
-                    AdminConversation.response_time_ms >= 1000,
-                    AdminConversation.response_time_ms < 2000
+                    AdminConversation.response_time_ms > 1000,
+                    AdminConversation.response_time_ms <= 2000
                 )
             ).count(),
-            "slow": query.filter(AdminConversation.response_time_ms >= 2000).count()
+            "slow": query.filter(AdminConversation.response_time_ms >= 3000).count()
         }
         
         # Top users
@@ -382,16 +382,16 @@ async def export_conversations_csv(
         
         if response_time:
             if response_time == "fast":
-                query = query.filter(AdminConversation.response_time_ms < 1000)
+                query = query.filter(AdminConversation.response_time_ms <= 1000)
             elif response_time == "medium":
                 query = query.filter(
                     and_(
-                        AdminConversation.response_time_ms >= 1000,
-                        AdminConversation.response_time_ms < 2000
+                        AdminConversation.response_time_ms > 1000,
+                        AdminConversation.response_time_ms <= 2000
                     )
                 )
             elif response_time == "slow":
-                query = query.filter(AdminConversation.response_time_ms >= 2000)
+                query = query.filter(AdminConversation.response_time_ms >= 3000)
         
         if date_from:
             try:

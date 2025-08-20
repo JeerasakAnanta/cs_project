@@ -150,11 +150,11 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
     // Response time filter
     if (filters.responseTime && filters.responseTime !== 'all') {
       if (filters.responseTime === 'fast') {
-        filtered = filtered.filter(conv => (conv.response_time_ms || 0) < 1000);
+        filtered = filtered.filter(conv => (conv.response_time_ms || 0) <= 1000);
       } else if (filters.responseTime === 'medium') {
-        filtered = filtered.filter(conv => (conv.response_time_ms || 0) >= 1000 && (conv.response_time_ms || 0) < 2000);
+        filtered = filtered.filter(conv => (conv.response_time_ms || 0) > 1000 && (conv.response_time_ms || 0) <= 2000);
       } else if (filters.responseTime === 'slow') {
-        filtered = filtered.filter(conv => (conv.response_time_ms || 0) >= 2000);
+        filtered = filtered.filter(conv => (conv.response_time_ms || 0) >= 3000);
       }
     }
 
