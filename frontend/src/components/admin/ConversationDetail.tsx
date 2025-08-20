@@ -65,72 +65,72 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-neutral-800 border border-neutral-700/30 rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-neutral-700/30">
           <div className="flex items-center gap-3">
-            <MessageSquare className="w-6 h-6 text-blue-500" />
-            <h2 className="text-xl font-bold text-gray-900">
+            <MessageSquare className="w-6 h-6 text-blue-400" />
+            <h2 className="text-xl font-bold text-white">
               รายละเอียดการสนทนา #{conversation.id}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-neutral-700/30 rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-neutral-400" />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-neutral-700/30 p-4 rounded-lg border border-neutral-600/30">
               <div className="flex items-center gap-2 mb-2">
-                <User className="w-5 h-5 text-blue-500" />
-                <span className="text-sm font-medium text-gray-700">ผู้ใช้</span>
+                <User className="w-5 h-5 text-blue-400" />
+                <span className="text-sm font-medium text-neutral-300">ผู้ใช้</span>
               </div>
-              <p className="text-lg font-semibold text-gray-900">{conversation.username}</p>
-              <p className="text-sm text-gray-500">ID: {conversation.user_id}</p>
+              <p className="text-lg font-semibold text-white">{conversation.username}</p>
+              <p className="text-sm text-neutral-400">ID: {conversation.user_id}</p>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-neutral-700/30 p-4 rounded-lg border border-neutral-600/30">
               <div className="flex items-center gap-2 mb-2">
-                <Calendar className="w-5 h-5 text-purple-500" />
-                <span className="text-sm font-medium text-gray-700">วันที่สร้าง</span>
+                <Calendar className="w-5 h-5 text-purple-400" />
+                <span className="text-sm font-medium text-neutral-300">วันที่สร้าง</span>
               </div>
-              <p className="text-sm text-gray-900">{formatDate(conversation.created_at)}</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-sm text-white">{formatDate(conversation.created_at)}</p>
+              <p className="text-xs text-neutral-400">
                 อัปเดต: {formatDate(conversation.updated_at)}
               </p>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-neutral-700/30 p-4 rounded-lg border border-neutral-600/30">
               <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-5 h-5 text-indigo-500" />
-                <span className="text-sm font-medium text-gray-700">เวลาตอบสนอง</span>
+                <Clock className="w-5 h-5 text-indigo-400" />
+                <span className="text-sm font-medium text-neutral-300">เวลาตอบสนอง</span>
               </div>
               <p className={`text-lg font-semibold ${getResponseTimeColor(conversation.response_time_ms || 0)}`}>
                 {formatDuration(conversation.response_time_ms || 0)}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-neutral-400">
                 {getResponseTimeLabel(conversation.response_time_ms || 0)}
               </p>
             </div>
           </div>
 
           {/* Satisfaction Rating */}
-          <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg border border-blue-200">
+          <div className="bg-gradient-to-r from-blue-500/20 to-green-500/20 p-6 rounded-lg border border-blue-500/30">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">ความพึงพอใจของผู้ใช้</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">ความพึงพอใจของผู้ใช้</h3>
                 <div className="flex items-center gap-3">
                   {getSatisfactionIcon(conversation.satisfaction_rating || 0)}
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-white">
                       {conversation.satisfaction_rating || 'N/A'}/5
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-neutral-400">
                       {getSatisfactionLabel(conversation.satisfaction_rating || 0)}
                     </p>
                   </div>
@@ -145,7 +145,7 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
                     className={`w-8 h-8 ${
                       star <= (conversation.satisfaction_rating || 0)
                         ? 'text-yellow-400 fill-current'
-                        : 'text-gray-300'
+                        : 'text-neutral-500'
                     }`}
                   />
                 ))}
@@ -155,54 +155,54 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
 
           {/* Question Section */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <User className="w-5 h-5 text-blue-500" />
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <User className="w-5 h-5 text-blue-400" />
               คำถามจากผู้ใช้
             </h3>
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <p className="text-gray-800 text-lg leading-relaxed">{conversation.question}</p>
+            <div className="bg-blue-500/20 p-4 rounded-lg border border-blue-500/30">
+              <p className="text-white text-lg leading-relaxed">{conversation.question}</p>
             </div>
           </div>
 
           {/* Bot Response Section */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <Bot className="w-5 h-5 text-green-500" />
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <Bot className="w-5 h-5 text-green-400" />
               คำตอบจาก Bot
             </h3>
-            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-              <p className="text-gray-800 text-lg leading-relaxed">{conversation.bot_response}</p>
+            <div className="bg-green-500/20 p-4 rounded-lg border border-green-500/30">
+              <p className="text-white text-lg leading-relaxed">{conversation.bot_response}</p>
             </div>
           </div>
 
           {/* Performance Metrics */}
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">เมตริกประสิทธิภาพ</h3>
+          <div className="bg-neutral-700/30 p-6 rounded-lg border border-neutral-600/30">
+            <h3 className="text-lg font-semibold text-white mb-4">เมตริกประสิทธิภาพ</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg">
-                <span className="text-gray-600">เวลาตอบสนอง</span>
+              <div className="flex items-center justify-between p-3 bg-neutral-800/50 rounded-lg border border-neutral-600/30">
+                <span className="text-neutral-400">เวลาตอบสนอง</span>
                 <span className={`font-semibold ${getResponseTimeColor(conversation.response_time_ms || 0)}`}>
                   {conversation.response_time_ms || 'N/A'}ms
                 </span>
               </div>
               
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg">
-                <span className="text-gray-600">ความพึงพอใจ</span>
-                <span className="font-semibold text-gray-900">
+              <div className="flex items-center justify-between p-3 bg-neutral-800/50 rounded-lg border border-neutral-600/30">
+                <span className="text-neutral-400">ความพึงพอใจ</span>
+                <span className="font-semibold text-white">
                   {conversation.satisfaction_rating || 'N/A'}/5
                 </span>
               </div>
               
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg">
-                <span className="text-gray-600">สถานะ</span>
-                <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+              <div className="flex items-center justify-between p-3 bg-neutral-800/50 rounded-lg border border-neutral-600/30">
+                <span className="text-neutral-400">สถานะ</span>
+                <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded-full border border-green-500/30">
                   เสร็จสิ้น
                 </span>
               </div>
               
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg">
-                <span className="text-gray-600">ประเภท</span>
-                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+              <div className="flex items-center justify-between p-3 bg-neutral-800/50 rounded-lg border border-neutral-600/30">
+                <span className="text-neutral-400">ประเภท</span>
+                <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full border border-blue-500/30">
                   คำถามทั่วไป
                 </span>
               </div>
@@ -210,14 +210,14 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+          <div className="flex justify-end gap-3 pt-4 border-t border-neutral-700/30">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              className="px-4 py-2 text-neutral-400 bg-neutral-700/30 hover:bg-neutral-600/30 rounded-lg transition-colors"
             >
               ปิด
             </button>
-            <button className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors">
+            <button className="px-4 py-2 bg-primary-600 text-white hover:bg-primary-700 rounded-lg transition-colors">
               แก้ไข
             </button>
             <button className="px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded-lg transition-colors">

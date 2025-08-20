@@ -67,15 +67,15 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <BarChart3 className="w-6 h-6" />
+          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-blue-400" />
             การวิเคราะห์การสนทนา
           </h2>
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400"></div>
         </div>
         <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">กำลังโหลดข้อมูล...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto"></div>
+          <p className="mt-4 text-neutral-400">กำลังโหลดข้อมูล...</p>
         </div>
       </div>
     );
@@ -85,21 +85,21 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <BarChart3 className="w-6 h-6" />
+          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-blue-400" />
             การวิเคราะห์การสนทนา
           </h2>
           <button
             onClick={handleRefresh}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
             ลองใหม่
           </button>
         </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-600 font-medium">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>
-          <p className="text-red-500 text-sm mt-2">{error}</p>
+        <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-6 text-center">
+          <p className="text-red-400 font-medium">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>
+          <p className="text-red-300 text-sm mt-2">{error}</p>
         </div>
       </div>
     );
@@ -109,19 +109,19 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <BarChart3 className="w-6 h-6" />
+          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-blue-400" />
             การวิเคราะห์การสนทนา
           </h2>
           <button
             onClick={handleRefresh}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
             โหลดข้อมูล
           </button>
         </div>
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-neutral-400">
           ไม่มีข้อมูลการสนทนาให้วิเคราะห์
         </div>
       </div>
@@ -132,15 +132,15 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <BarChart3 className="w-6 h-6" />
+        <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+          <BarChart3 className="w-6 h-6 text-blue-400" />
           การวิเคราะห์การสนทนา
         </h2>
         <div className="flex gap-2">
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
           >
             <option value="7d">7 วันล่าสุด</option>
             <option value="30d">30 วันล่าสุด</option>
@@ -148,7 +148,7 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
           </select>
           <button
             onClick={handleRefresh}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
             รีเฟรช
@@ -158,63 +158,63 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-neutral-800/50 border border-neutral-700/30 p-4 rounded-xl">
           <div className="flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-blue-500" />
-            <span className="text-sm text-gray-600">การสนทนาทั้งหมด</span>
+            <MessageSquare className="w-5 h-5 text-blue-400" />
+            <span className="text-sm text-neutral-400">การสนทนาทั้งหมด</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{stats.total_conversations}</p>
+          <p className="text-2xl font-bold text-white">{stats.total_conversations}</p>
         </div>
         
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-neutral-800/50 border border-neutral-700/30 p-4 rounded-xl">
           <div className="flex items-center gap-2">
-            <ThumbsUp className="w-5 h-5 text-green-500" />
-            <span className="text-sm text-gray-600">ความพึงพอใจเฉลี่ย</span>
+            <ThumbsUp className="w-5 h-5 text-green-400" />
+            <span className="text-sm text-neutral-400">ความพึงพอใจเฉลี่ย</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{stats.average_satisfaction.toFixed(1)}/5</p>
+          <p className="text-2xl font-bold text-white">{stats.average_satisfaction.toFixed(1)}/5</p>
         </div>
         
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-neutral-800/50 border border-neutral-700/30 p-4 rounded-xl">
           <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-purple-500" />
-            <span className="text-sm text-gray-600">เวลาตอบเฉลี่ย</span>
+            <Clock className="w-5 h-5 text-purple-400" />
+            <span className="text-sm text-neutral-400">เวลาตอบเฉลี่ย</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{stats.average_response_time}ms</p>
+          <p className="text-2xl font-bold text-white">{stats.average_response_time}ms</p>
         </div>
         
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-neutral-800/50 border border-neutral-700/30 p-4 rounded-xl">
           <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-indigo-500" />
-            <span className="text-sm text-gray-600">ผู้ใช้ที่พึงพอใจ</span>
+            <Users className="w-5 h-5 text-indigo-400" />
+            <span className="text-sm text-neutral-400">ผู้ใช้ที่พึงพอใจ</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{stats.satisfaction_distribution.positive}</p>
+          <p className="text-2xl font-bold text-white">{stats.satisfaction_distribution.positive}</p>
         </div>
       </div>
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Satisfaction Trend */}
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-blue-500" />
+        <div className="bg-neutral-800/50 border border-neutral-700/30 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-blue-400" />
             แนวโน้มความพึงพอใจ ({timeRange === '7d' ? '7' : timeRange === '30d' ? '30' : '90'} วันล่าสุด)
           </h3>
           <div className="space-y-3">
             {stats.daily_stats.map((day, index) => (
               <div key={index} className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 w-16">{day.date}</span>
+                <span className="text-sm text-neutral-400 w-16">{day.date}</span>
                 <div className="flex-1 mx-4">
-                  <div className="bg-gray-200 rounded-full h-2">
+                  <div className="bg-neutral-700 rounded-full h-2">
                     <div 
-                      className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                      className="bg-blue-400 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${(day.avg_satisfaction / 5) * 100}%` }}
                     ></div>
                   </div>
                 </div>
-                <span className="text-sm font-medium text-gray-900 w-12 text-right">
+                <span className="text-sm font-medium text-white w-12 text-right">
                   {day.avg_satisfaction.toFixed(1)}/5
                 </span>
-                <span className="text-xs text-gray-500 w-8 text-right">
+                <span className="text-xs text-neutral-400 w-8 text-right">
                   ({day.count})
                 </span>
               </div>
@@ -223,9 +223,9 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
         </div>
 
         {/* Response Time Distribution */}
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-purple-500" />
+        <div className="bg-neutral-800/50 border border-neutral-700/30 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Clock className="w-5 h-5 text-purple-400" />
             การกระจายเวลาตอบสนอง
           </h3>
           <div className="space-y-3">
@@ -236,16 +236,16 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
               
               return (
                 <div key={key} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 flex-1">{label}</span>
+                  <span className="text-sm text-neutral-400 flex-1">{label}</span>
                   <div className="flex-1 mx-4">
-                    <div className="bg-gray-200 rounded-full h-3">
+                    <div className="bg-neutral-700 rounded-full h-3">
                       <div 
                         className={`${color} h-3 rounded-full transition-all duration-300`}
                         style={{ width: `${percentage}%` }}
                       ></div>
                     </div>
                   </div>
-                  <span className="text-sm font-medium text-gray-900 w-16 text-right">
+                  <span className="text-sm font-medium text-white w-16 text-right">
                     {count} ({percentage}%)
                   </span>
                 </div>
@@ -255,17 +255,17 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
         </div>
 
         {/* Top Users */}
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Users className="w-5 h-5 text-indigo-500" />
+        <div className="bg-neutral-800/50 border border-neutral-700/30 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Users className="w-5 h-5 text-indigo-400" />
             ผู้ใช้ที่มีการใช้งานสูงสุด
           </h3>
           <div className="space-y-3">
             {stats.top_users.map((user, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div key={index} className="flex items-center justify-between p-3 bg-neutral-700/30 rounded-lg">
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">{user.username}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="font-medium text-white">{user.username}</p>
+                  <p className="text-sm text-neutral-400">
                     {user.total_questions} คำถาม • 
                     <span className={getSatisfactionColor(user.avg_satisfaction)}>
                       {' '}{user.avg_satisfaction.toFixed(1)}/5
@@ -273,7 +273,7 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-gray-600">{user.avg_response_time}ms</p>
+                  <p className="text-sm text-neutral-400">{user.avg_response_time}ms</p>
                 </div>
               </div>
             ))}
@@ -281,16 +281,16 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
         </div>
 
         {/* Top Questions */}
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-green-500" />
+        <div className="bg-neutral-800/50 border border-neutral-700/30 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <MessageSquare className="w-5 h-5 text-green-400" />
             คำถามที่พบบ่อย
           </h3>
           <div className="space-y-3">
             {stats.top_questions.map((question, index) => (
-              <div key={index} className="p-3 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-900 mb-2">{question.question}</p>
-                <div className="flex items-center justify-between text-xs text-gray-600">
+              <div key={index} className="p-3 bg-neutral-700/30 rounded-lg">
+                <p className="text-sm text-white mb-2">{question.question}</p>
+                <div className="flex items-center justify-between text-xs text-neutral-400">
                   <span>{question.count} ครั้ง</span>
                   <span className={getSatisfactionColor(question.avg_satisfaction)}>
                     {question.avg_satisfaction.toFixed(1)}/5
@@ -303,35 +303,35 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({ conversat
       </div>
 
       {/* Satisfaction Distribution */}
-      <div className="bg-white p-6 rounded-lg shadow border">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <ThumbsUp className="w-5 h-5 text-green-500" />
+      <div className="bg-neutral-800/50 border border-neutral-700/30 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <ThumbsUp className="w-5 h-5 text-green-400" />
           การกระจายความพึงพอใจ
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-            <div className="w-4 h-4 bg-green-500 rounded-full mx-auto mb-2"></div>
-            <p className="text-sm font-medium text-gray-900">พึงพอใจมาก (4-5 ดาว)</p>
-            <p className="text-2xl font-bold text-green-600">{stats.satisfaction_distribution.positive}</p>
-            <p className="text-xs text-gray-600">
+          <div className="text-center p-4 bg-green-500/20 rounded-lg border border-green-500/30">
+            <div className="w-4 h-4 bg-green-400 rounded-full mx-auto mb-2"></div>
+            <p className="text-sm font-medium text-white">พึงพอใจมาก (4-5 ดาว)</p>
+            <p className="text-2xl font-bold text-green-400">{stats.satisfaction_distribution.positive}</p>
+            <p className="text-xs text-neutral-400">
               {stats.total_conversations > 0 ? Math.round((stats.satisfaction_distribution.positive / stats.total_conversations) * 100) : 0}%
             </p>
           </div>
           
-          <div className="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-            <div className="w-4 h-4 bg-yellow-500 rounded-full mx-auto mb-2"></div>
-            <p className="text-sm font-medium text-gray-900">ปานกลาง (3 ดาว)</p>
-            <p className="text-2xl font-bold text-yellow-600">{stats.satisfaction_distribution.neutral}</p>
-            <p className="text-xs text-gray-600">
+          <div className="text-center p-4 bg-yellow-500/20 rounded-lg border border-yellow-500/30">
+            <div className="w-4 h-4 bg-yellow-400 rounded-full mx-auto mb-2"></div>
+            <p className="text-sm font-medium text-white">ปานกลาง (3 ดาว)</p>
+            <p className="text-2xl font-bold text-yellow-400">{stats.satisfaction_distribution.neutral}</p>
+            <p className="text-xs text-neutral-400">
               {stats.total_conversations > 0 ? Math.round((stats.satisfaction_distribution.neutral / stats.total_conversations) * 100) : 0}%
             </p>
           </div>
           
-          <div className="text-center p-4 bg-red-50 rounded-lg border border-red-200">
-            <div className="w-4 h-4 bg-red-500 rounded-full mx-auto mb-2"></div>
-            <p className="text-sm font-medium text-gray-900">ไม่พึงพอใจ (1-2 ดาว)</p>
-            <p className="text-2xl font-bold text-red-600">{stats.satisfaction_distribution.negative}</p>
-            <p className="text-xs text-gray-600">
+          <div className="text-center p-4 bg-red-500/20 rounded-lg border border-red-500/30">
+            <div className="w-4 h-4 bg-red-400 rounded-full mx-auto mb-2"></div>
+            <p className="text-sm font-medium text-white">ไม่พึงพอใจ (1-2 ดาว)</p>
+            <p className="text-2xl font-bold text-red-400">{stats.satisfaction_distribution.negative}</p>
+            <p className="text-xs text-neutral-400">
               {stats.total_conversations > 0 ? Math.round((stats.satisfaction_distribution.negative / stats.total_conversations) * 100) : 0}%
             </p>
           </div>

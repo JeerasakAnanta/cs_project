@@ -202,8 +202,8 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <MessageSquare className="w-6 h-6" />
+        <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+          <MessageSquare className="w-6 h-6 text-blue-400" />
           ค้นหาและวิเคราะห์การสนทนา
         </h2>
         <div className="flex gap-2">
@@ -216,7 +216,7 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
           </button>
           <button
             onClick={loadConversations}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
             รีเฟรช
           </button>
@@ -225,52 +225,52 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-neutral-800/50 border border-neutral-700/30 p-4 rounded-xl">
           <div className="flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-blue-500" />
-            <span className="text-sm text-gray-600">การสนทนาทั้งหมด</span>
+            <MessageSquare className="w-5 h-5 text-blue-400" />
+            <span className="text-sm text-neutral-400">การสนทนาทั้งหมด</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{stats.totalConversations}</p>
+          <p className="text-2xl font-bold text-white">{stats.totalConversations}</p>
         </div>
         
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-neutral-800/50 border border-neutral-700/30 p-4 rounded-xl">
           <div className="flex items-center gap-2">
-            <ThumbsUp className="w-5 h-5 text-green-500" />
-            <span className="text-sm text-gray-600">ความพึงพอใจเฉลี่ย</span>
+            <ThumbsUp className="w-5 h-5 text-green-400" />
+            <span className="text-sm text-neutral-400">ความพึงพอใจเฉลี่ย</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{stats.averageSatisfaction}/5</p>
+          <p className="text-2xl font-bold text-white">{stats.averageSatisfaction}/5</p>
         </div>
         
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-neutral-800/50 border border-neutral-700/30 p-4 rounded-xl">
           <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-purple-500" />
-            <span className="text-sm text-gray-600">เวลาตอบเฉลี่ย</span>
+            <Clock className="w-5 h-5 text-purple-400" />
+            <span className="text-sm text-neutral-400">เวลาตอบเฉลี่ย</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{stats.averageResponseTime}ms</p>
+          <p className="text-2xl font-bold text-white">{stats.averageResponseTime}ms</p>
         </div>
         
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-neutral-800/50 border border-neutral-700/30 p-4 rounded-xl">
           <div className="flex items-center gap-2">
-            <User className="w-5 h-5 text-indigo-500" />
-            <span className="text-sm text-gray-600">ผู้ใช้ที่พึงพอใจ</span>
+            <User className="w-5 h-5 text-indigo-400" />
+            <span className="text-sm text-neutral-400">ผู้ใช้ที่พึงพอใจ</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{stats.satisfactionDistribution.positive}</p>
+          <p className="text-2xl font-bold text-white">{stats.satisfactionDistribution.positive}</p>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white p-4 rounded-lg shadow border">
+      <div className="bg-neutral-800/50 border border-neutral-700/30 p-4 rounded-xl">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search */}
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
               <input
                 type="text"
                 placeholder="ค้นหาคำถาม, คำตอบ, หรือชื่อผู้ใช้..."
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-neutral-400"
               />
             </div>
           </div>
@@ -280,7 +280,7 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
             <select
               value={selectedFilters.satisfaction || 'all'}
               onChange={(e) => handleFilterChange('satisfaction', e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
             >
               <option value="all">ความพึงพอใจทั้งหมด</option>
               <option value="positive">พึงพอใจ (4-5)</option>
@@ -291,82 +291,82 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
             <select
               value={selectedFilters.responseTime || 'all'}
               onChange={(e) => handleFilterChange('responseTime', e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
             >
               <option value="all">เวลาตอบทั้งหมด</option>
-              <option value="fast">เร็ว (&lt;1s)</option>
-              <option value="medium">ปานกลาง (1-2s)</option>
-              <option value="slow">ช้า (&gt;2s)</option>
+              <option value="fast">เร็วมาก (≤1s)</option>
+              <option value="medium">เร็ว (1-2s)</option>
+              <option value="slow">ช้า (≥3s)</option>
             </select>
           </div>
         </div>
       </div>
 
       {/* Conversations List */}
-      <div className="bg-white rounded-lg shadow border">
-        <div className="p-4 border-b">
-          <h3 className="text-lg font-semibold text-gray-900">
+      <div className="bg-neutral-800/50 border border-neutral-700/30 rounded-xl">
+        <div className="p-4 border-b border-neutral-700/30">
+          <h3 className="text-lg font-semibold text-white">
             รายการการสนทนา ({filteredConversations.length})
           </h3>
         </div>
 
         {isLoading ? (
           <div className="p-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">กำลังโหลดข้อมูล...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto"></div>
+            <p className="mt-2 text-neutral-400">กำลังโหลดข้อมูล...</p>
           </div>
         ) : filteredConversations.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-8 text-center text-neutral-400">
             ไม่พบการสนทนาที่ตรงกับเงื่อนไขการค้นหา
           </div>
         ) : (
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-neutral-700/30">
             {filteredConversations.map((conversation) => (
               <div
                 key={conversation.id}
-                className="p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                className="p-4 hover:bg-neutral-700/30 cursor-pointer transition-colors"
                 onClick={() => onConversationSelect?.(conversation)}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1 space-y-3">
                     {/* User Info */}
                     <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-gray-500" />
-                      <span className="font-medium text-gray-900">{conversation.username}</span>
-                      <span className="text-sm text-gray-500">
+                      <User className="w-4 h-4 text-neutral-400" />
+                      <span className="font-medium text-white">{conversation.username}</span>
+                      <span className="text-sm text-neutral-400">
                         {formatDate(conversation.created_at)}
                       </span>
                     </div>
 
                     {/* Question */}
-                    <div className="bg-gray-50 p-3 rounded-lg">
+                    <div className="bg-neutral-700/30 p-3 rounded-lg">
                       <div className="flex items-center gap-2 mb-2">
-                        <User className="w-4 h-4 text-blue-500" />
-                        <span className="text-sm font-medium text-gray-700">คำถาม:</span>
+                        <User className="w-4 h-4 text-blue-400" />
+                        <span className="text-sm font-medium text-neutral-300">คำถาม:</span>
                       </div>
-                      <p className="text-gray-800">{conversation.question}</p>
+                      <p className="text-white">{conversation.question}</p>
                     </div>
 
                     {/* Bot Response */}
-                    <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="bg-blue-500/20 p-3 rounded-lg border border-blue-500/30">
                       <div className="flex items-center gap-2 mb-2">
-                        <Bot className="w-4 h-4 text-green-500" />
-                        <span className="text-sm font-medium text-gray-700">คำตอบ:</span>
+                        <Bot className="w-4 h-4 text-green-400" />
+                        <span className="text-sm font-medium text-neutral-300">คำตอบ:</span>
                       </div>
-                      <p className="text-gray-800">{conversation.bot_response}</p>
+                      <p className="text-white">{conversation.bot_response}</p>
                     </div>
 
                     {/* Metrics */}
                     <div className="flex items-center gap-4 text-sm">
                       <div className="flex items-center gap-1">
                         {getSatisfactionIcon(conversation.satisfaction_rating || 0)}
-                        <span className="text-gray-600">
+                        <span className="text-neutral-400">
                           ความพึงพอใจ: {conversation.satisfaction_rating || 'N/A'}/5
                         </span>
                       </div>
                       
                       <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4 text-gray-500" />
+                        <Clock className="w-4 h-4 text-neutral-400" />
                         <span className={`${getResponseTimeColor(conversation.response_time_ms || 0)}`}>
                           เวลาตอบ: {conversation.response_time_ms || 'N/A'}ms
                         </span>
