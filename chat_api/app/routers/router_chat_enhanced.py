@@ -9,7 +9,7 @@ import asyncio
 import logging
 
 from app.utils.database import get_db
-from app.database.models import Conversation, Message, Document, DocumentChunk
+from app.database.models import Conversation, Message, Document, DocumentChunk, AdminConversation
 from app.login_system.auth import get_current_user
 from app.rag_system.rag_engine import RAGEngine
 
@@ -18,6 +18,53 @@ logger = logging.getLogger(__name__)
 
 # สร้าง RAG Engine
 rag_engine = RAGEngine()
+
+async def sync_to_admin_conversation(
+    conversation_id: str,
+    question: str,
+    bot_response: str,
+    username: str,
+    response_time_ms: int,
+    db: Session
+):
+    """
+    Auto-sync conversation data to AdminConversation table
+    """
+    try:
+        # ตรวจสอบว่ามีข้อมูลใน AdminConversation หรือไม่
+        existing = db.query(AdminConversation).filter(
+            AdminConversation.conversation_id == conversation_id
+        ).first()
+        
+        if not existing:
+            # สร้างใหม่
+            admin_conv = AdminConversation(
+                conversation_id=conversation_id,
+                user_id=None,  # จะอัปเดตภายหลัง
+                username=username,
+                question=question,
+                bot_response=bot_response,
+                satisfaction_rating=None,  # ยังไม่มี rating
+                response_time_ms=response_time_ms,
+                conversation_type="regular",
+                created_at=datetime.utcnow(),
+                updated_at=datetime.utcnow()
+            )
+            db.add(admin_conv)
+            db.commit()
+            logger.info(f"New conversation synced to AdminConversation: {conversation_id}")
+        else:
+            # อัปเดตข้อมูลที่มีอยู่
+            existing.question = question
+            existing.bot_response = bot_response
+            existing.response_time_ms = response_time_ms
+            existing.updated_at = datetime.utcnow()
+            db.commit()
+            logger.info(f"Existing conversation updated in AdminConversation: {conversation_id}")
+            
+    except Exception as e:
+        logger.error(f"Error syncing to AdminConversation: {str(e)}")
+        # ไม่ต้อง raise error เพื่อไม่ให้กระทบการทำงานหลัก
 
 @router.post("/conversations/create")
 async def create_conversation(
@@ -286,6 +333,22 @@ async def send_message(
             db.commit()
             db.refresh(assistant_message)
             
+            # คำนวณเวลาตอบสนอง
+            response_time = (assistant_message.created_at - user_message.created_at).total_seconds() * 1000
+            
+            # กำหนด username
+            username = current_user.get("username", "guest") if current_user else f"guest_{machine_id}"
+            
+            # Auto-sync ไปยัง AdminConversation
+            await sync_to_admin_conversation(
+                conversation_id=conversation_id,
+                question=content,
+                bot_response=response,
+                username=username,
+                response_time_ms=int(response_time),
+                db=db
+            )
+            
             logger.info(f"Message sent and response generated: conversation_id={conversation_id}")
             
             return JSONResponse(
@@ -300,10 +363,11 @@ async def send_message(
                     },
                     "assistant_message": {
                         "id": assistant_message.id,
-                        "content": assistant_message.content,
-                        "role": assistant_message.role,
+                        "content": response,
+                        "role": "assistant",
                         "created_at": assistant_message.created_at.isoformat()
                     },
+                    "response_time_ms": int(response_time),
                     "relevant_documents": relevant_docs
                 }
             )

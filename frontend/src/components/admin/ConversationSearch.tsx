@@ -29,12 +29,20 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
 
   useEffect(() => {
     loadConversations();
+    
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      loadConversations();
+    }, 30000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const loadConversations = async () => {
     setIsLoading(true);
     try {
       const data = await conversationService.getConversations();
+      console.log('Loaded conversations:', data); // Debug log
       setConversations(data);
       setFilteredConversations(data);
       calculateStats(data);
@@ -50,35 +58,38 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
   const loadMockData = () => {
     const mockData: Conversation[] = [
       {
-        id: '1',
-        user_id: 'user1',
+        id: 1,
+        user_id: 1,
         username: 'john_doe',
         question: 'วิธีการใช้งานระบบ PDF อย่างไร?',
         bot_response: 'คุณสามารถอัปโหลดไฟล์ PDF และถามคำถามเกี่ยวกับเนื้อหาได้เลยครับ',
         satisfaction_rating: 5,
         response_time_ms: 1200,
+        conversation_type: 'regular',
         created_at: '2024-01-15T10:30:00Z',
         updated_at: '2024-01-15T10:30:05Z'
       },
       {
-        id: '2',
-        user_id: 'user2',
+        id: 2,
+        user_id: 2,
         username: 'jane_smith',
         question: 'ระบบรองรับไฟล์อะไรบ้าง?',
         bot_response: 'ระบบรองรับไฟล์ PDF เท่านั้นครับ กรุณาแปลงไฟล์อื่นเป็น PDF ก่อน',
         satisfaction_rating: 4,
         response_time_ms: 800,
+        conversation_type: 'regular',
         created_at: '2024-01-15T11:15:00Z',
         updated_at: '2024-01-15T11:15:03Z'
       },
       {
-        id: '3',
-        user_id: 'user3',
+        id: 3,
+        user_id: 3,
         username: 'bob_wilson',
         question: 'ทำไมไม่สามารถอัปโหลดไฟล์ได้?',
         bot_response: 'กรุณาตรวจสอบขนาดไฟล์ไม่เกิน 10MB และเป็นไฟล์ PDF เท่านั้น',
         satisfaction_rating: 3,
         response_time_ms: 1500,
+        conversation_type: 'regular',
         created_at: '2024-01-15T14:20:00Z',
         updated_at: '2024-01-15T14:20:04Z'
       }
@@ -359,9 +370,14 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
       {/* Conversations List */}
       <div className="bg-neutral-800/50 border border-neutral-700/30 rounded-xl">
         <div className="p-4 border-b border-neutral-700/30">
-          <h3 className="text-lg font-semibold text-white">
-            รายการการสนทนา ({filteredConversations.length}) - แสดง 10 รายการต่อหน้า
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-white">
+              รายการการสนทนา ({filteredConversations.length}) - แสดง 10 รายการต่อหน้า
+            </h3>
+            <div className="text-xs text-neutral-400">
+              อัปเดตล่าสุด: {new Date().toLocaleTimeString('th-TH')}
+            </div>
+          </div>
         </div>
 
         {isLoading ? (

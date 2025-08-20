@@ -8,6 +8,7 @@ from app.utils.database import get_db
 from app.rag_system.rag_system import chatbot as rag_chatbot
 from . import schemas
 from . import guest_crud
+from app.database.models import AdminConversation
 
 router = APIRouter(
     prefix="/chat/guest",
@@ -17,6 +18,53 @@ router = APIRouter(
 def generate_machine_id() -> str:
     """Generate a unique machine identifier"""
     return str(uuid.uuid4())
+
+async def sync_guest_to_admin_conversation(
+    conversation_id: str,
+    question: str,
+    bot_response: str,
+    machine_id: str,
+    response_time_ms: int,
+    db: Session
+):
+    """
+    Auto-sync guest conversation data to AdminConversation table
+    """
+    try:
+        # ตรวจสอบว่ามีข้อมูลใน AdminConversation หรือไม่
+        existing = db.query(AdminConversation).filter(
+            AdminConversation.conversation_id == conversation_id
+        ).first()
+        
+        if not existing:
+            # สร้างใหม่
+            admin_conv = AdminConversation(
+                conversation_id=conversation_id,
+                user_id=None,
+                username=f"guest_{machine_id}",
+                question=question,
+                bot_response=bot_response,
+                satisfaction_rating=None,
+                response_time_ms=response_time_ms,
+                conversation_type="guest",
+                created_at=datetime.utcnow(),
+                updated_at=datetime.utcnow()
+            )
+            db.add(admin_conv)
+            db.commit()
+            print(f"New guest conversation synced to AdminConversation: {conversation_id}")
+        else:
+            # อัปเดตข้อมูลที่มีอยู่
+            existing.question = question
+            existing.bot_response = bot_response
+            existing.response_time_ms = response_time_ms
+            existing.updated_at = datetime.utcnow()
+            db.commit()
+            print(f"Existing guest conversation updated in AdminConversation: {conversation_id}")
+            
+    except Exception as e:
+        print(f"Error syncing guest to AdminConversation: {str(e)}")
+        # ไม่ต้อง raise error เพื่อไม่ให้กระทบการทำงานหลัก
 
 @router.post("/message")
 async def send_guest_message(
@@ -142,6 +190,19 @@ async def add_message_to_guest_conversation(
             conversation_id, 
             "bot", 
             bot_response['message']
+        )
+        
+        # คำนวณเวลาตอบสนอง (ประมาณการ)
+        response_time_ms = 1000  # Default 1 second
+        
+        # Auto-sync ไปยัง AdminConversation
+        await sync_guest_to_admin_conversation(
+            conversation_id=conversation_id,
+            question=message.content,
+            bot_response=bot_response['message'],
+            machine_id=conversation.machine_id,
+            response_time_ms=response_time_ms,
+            db=db
         )
         
         return {"message": bot_response['message']}
