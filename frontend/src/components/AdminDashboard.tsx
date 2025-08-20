@@ -31,39 +31,33 @@ interface Conversation {
 }
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('pdf');
+  const [activeTab, setActiveTab] = useState('statistics');
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'pdf':
-        return <PdfManager />;
-      case 'user':
-        return <UserManager />;
       case 'statistics':
         return <SystemStatistics />;
       case 'conversations':
         return <ConversationSearch onConversationSelect={setSelectedConversation} />;
       case 'analytics':
         return <ConversationAnalytics conversations={[]} />; // TODO: Pass real conversations data
-      default:
+      case 'admin':
+        return <div className="p-6 text-center">
+          <Shield className="w-16 h-16 text-blue-400 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-white mb-2">แผงควบคุมผู้ดูแลระบบ</h3>
+          <p className="text-neutral-400">การตั้งค่าและควบคุมระบบโดยรวม</p>
+        </div>;
+      case 'user':
+        return <UserManager />;
+      case 'pdf':
         return <PdfManager />;
+      default:
+        return <SystemStatistics />;
     }
   };
 
   const menuItems = [
-    {
-      id: 'pdf',
-      label: 'จัดการไฟล์ PDF',
-      icon: FileText,
-      description: 'อัปโหลดและจัดการเอกสาร PDF'
-    },
-    {
-      id: 'user',
-      label: 'จัดการผู้ใช้งาน',
-      icon: Users,
-      description: 'ดูและจัดการบัญชีผู้ใช้'
-    },
     {
       id: 'statistics',
       label: 'สถิติระบบ',
@@ -81,34 +75,55 @@ const AdminDashboard = () => {
       label: 'วิเคราะห์การสนทนา',
       icon: MessageSquare,
       description: 'กราฟและสถิติการสนทนา'
+    },
+    {
+      id: 'admin',
+      label: 'แผงควบคุมผู้ดูแลระบบ',
+      icon: Shield,
+      description: 'การตั้งค่าและควบคุมระบบ'
+    },
+    {
+      id: 'user',
+      label: 'จัดการผู้ใช้งาน',
+      icon: Users,
+      description: 'ดูและจัดการบัญชีผู้ใช้'
+    },
+    {
+      id: 'pdf',
+      label: 'จัดการไฟล์ PDF',
+      icon: FileText,
+      description: 'อัปโหลดและจัดการเอกสาร PDF'
     }
   ];
 
   const getContentTitle = () => {
     switch (activeTab) {
-      case 'pdf': return 'จัดการไฟล์ PDF';
-      case 'user': return 'จัดการผู้ใช้งาน';
       case 'statistics': return 'สถิติระบบ';
       case 'conversations': return 'ค้นหาการสนทนา';
       case 'analytics': return 'วิเคราะห์การสนทนา';
-      default: return 'จัดการไฟล์ PDF';
+      case 'admin': return 'แผงควบคุมผู้ดูแลระบบ';
+      case 'user': return 'จัดการผู้ใช้งาน';
+      case 'pdf': return 'จัดการไฟล์ PDF';
+      default: return 'สถิติระบบ';
     }
   };
 
   const getContentDescription = () => {
     switch (activeTab) {
-      case 'pdf': 
-        return 'อัปโหลด จัดการ และควบคุมเอกสาร PDF ในระบบ';
-      case 'user':
-        return 'ดูและจัดการบัญชีผู้ใช้ทั้งหมดในระบบ';
       case 'statistics':
         return 'ดูสถิติการใช้งานระบบทั้งหมด รวมถึงผู้ใช้ การสนทนา และข้อความ';
       case 'conversations':
         return 'ค้นหา ดูรายละเอียด และวิเคราะห์การสนทนาระหว่างผู้ใช้และ Bot';
       case 'analytics':
         return 'ดูกราฟและสถิติการสนทนา ความพึงพอใจ และเวลาตอบสนอง';
-      default:
+      case 'admin':
+        return 'การตั้งค่า ควบคุม และจัดการระบบโดยรวม';
+      case 'user':
+        return 'ดูและจัดการบัญชีผู้ใช้ทั้งหมดในระบบ';
+      case 'pdf':
         return 'อัปโหลด จัดการ และควบคุมเอกสาร PDF ในระบบ';
+      default:
+        return 'ดูสถิติการใช้งานระบบทั้งหมด รวมถึงผู้ใช้ การสนทนา และข้อความ';
     }
   };
 
