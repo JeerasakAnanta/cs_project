@@ -21,6 +21,8 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
     averageResponseTime: 0,
     satisfactionDistribution: { positive: 0, neutral: 0, negative: 0 }
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   useEffect(() => {
     loadConversations();
@@ -122,6 +124,20 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
     const newFilters = { ...selectedFilters, [filterType]: value };
     setSelectedFilters(newFilters);
     filterConversations(searchTerm, newFilters);
+    setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  // Pagination functions
+  const getCurrentPageData = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredConversations.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(filteredConversations.length / itemsPerPage);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const filterConversations = (term: string, filters: ConversationFilters) => {
@@ -306,7 +322,7 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
       <div className="bg-neutral-800/50 border border-neutral-700/30 rounded-xl">
         <div className="p-4 border-b border-neutral-700/30">
           <h3 className="text-lg font-semibold text-white">
-            รายการการสนทนา ({filteredConversations.length})
+            รายการการสนทนา ({filteredConversations.length}) - แสดง 10 รายการต่อหน้า
           </h3>
         </div>
 
@@ -321,7 +337,7 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
           </div>
         ) : (
           <div className="divide-y divide-neutral-700/30">
-            {filteredConversations.map((conversation) => (
+            {getCurrentPageData().map((conversation) => (
               <div
                 key={conversation.id}
                 className="p-4 hover:bg-neutral-700/30 cursor-pointer transition-colors"
@@ -376,6 +392,48 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({ onConversationS
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {filteredConversations.length > 0 && totalPages > 1 && (
+          <div className="flex items-center justify-between p-4 border-t border-neutral-700/30">
+            <div className="text-sm text-neutral-400">
+              แสดง {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredConversations.length)} จาก {filteredConversations.length} รายการ
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-3 py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                ก่อนหน้า
+              </button>
+              
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`px-3 py-2 rounded-lg transition-colors ${
+                      currentPage === page
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-neutral-700 text-neutral-300 hover:bg-neutral-600'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+              
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-3 py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                ถัดไป
+              </button>
+            </div>
           </div>
         )}
       </div>
