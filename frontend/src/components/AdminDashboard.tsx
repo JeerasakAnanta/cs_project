@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  FileText, 
-  Users, 
-  ArrowLeft, 
+import {
+  FileText,
+  Users,
+  ArrowLeft,
   Shield,
-  Activity,
   BarChart3,
-  TrendingUp,
   MessageSquare,
   Search
 } from 'lucide-react';
@@ -76,12 +74,7 @@ const AdminDashboard = () => {
       icon: MessageSquare,
       description: 'กราฟและสถิติการสนทนา'
     },
-    {
-      id: 'admin',
-      label: 'แผงควบคุมผู้ดูแลระบบ',
-      icon: Shield,
-      description: 'การตั้งค่าและควบคุมระบบ'
-    },
+
     {
       id: 'user',
       label: 'จัดการผู้ใช้งาน',
@@ -93,6 +86,12 @@ const AdminDashboard = () => {
       label: 'จัดการไฟล์ PDF',
       icon: FileText,
       description: 'อัปโหลดและจัดการเอกสาร PDF'
+    },
+    {
+      id: 'admin',
+      label: 'แผงควบคุมผู้ดูแลระบบ',
+      icon: Shield,
+      description: 'การตั้งค่าและควบคุมระบบ'
     }
   ];
 
@@ -153,26 +152,22 @@ const AdminDashboard = () => {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full text-left p-4 rounded-xl transition-all duration-200 group ${
-                    activeTab === item.id
+                  className={`w-full text-left p-4 rounded-xl transition-all duration-200 group ${activeTab === item.id
                       ? 'bg-gradient-to-r from-primary-600/20 to-purple-600/20 border border-primary-500/30 shadow-lg'
                       : 'hover:bg-neutral-700/50 border border-transparent'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-all duration-200 ${
-                      activeTab === item.id
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-all duration-200 ${activeTab === item.id
                         ? 'bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow'
                         : 'bg-neutral-700/50 group-hover:bg-neutral-600/50'
-                    }`}>
-                      <Icon className={`w-5 h-5 ${
-                        activeTab === item.id ? 'text-white' : 'text-neutral-400 group-hover:text-neutral-300'
-                      }`} />
+                      }`}>
+                      <Icon className={`w-5 h-5 ${activeTab === item.id ? 'text-white' : 'text-neutral-400 group-hover:text-neutral-300'
+                        }`} />
                     </div>
                     <div>
-                      <p className={`font-medium ${
-                        activeTab === item.id ? 'text-white' : 'text-neutral-300 group-hover:text-white'
-                      }`}>
+                      <p className={`font-medium ${activeTab === item.id ? 'text-white' : 'text-neutral-300 group-hover:text-white'
+                        }`}>
                         {item.label}
                       </p>
                       <p className="text-xs text-neutral-500 group-hover:text-neutral-400">
@@ -185,7 +180,7 @@ const AdminDashboard = () => {
             })}
           </nav>
 
-          
+
         </div>
 
         {/* Footer */}

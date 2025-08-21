@@ -5,7 +5,7 @@ const About: React.FC = () => {
   return (
     <div className="container mx-auto p-5">
       <h1 className="text-3xl font-bold text-green-700 mb-4 text-center">
-        แนะนำ น้องน้ำหวาน แชทบอทคู่มือปฏิบัติงาน
+        แนะนำ LannaFinChat แชทบอทคู่มือปฏิบัติงาน
         การเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน{' '}
       </h1>
 
