@@ -9,9 +9,9 @@ const getBackendUrl = () => {
     return import.meta.env.VITE_BACKEND_CHATBOT_API;
   }
   
-  // In production with Cloudflare Tunnel, use the backend IP directly
+  // In production with Cloudflare Tunnel, use HTTPS for backend
   if (isProduction) {
-    return 'http://10.50.5.31:8001';
+    return 'https://10.50.5.31:8001';
   }
   
   // In development, use localhost
@@ -28,9 +28,9 @@ const getDocsUrl = () => {
     return import.meta.env.VITE_BACKEND_DOCS_STATIC;
   }
   
-  // In production with Cloudflare Tunnel, use the backend IP directly
+  // In production with Cloudflare Tunnel, use HTTPS for backend
   if (isProduction) {
-    return 'http://10.50.5.31:8001';
+    return 'https://10.50.5.31:8001';
   }
   
   // In development, use localhost
