@@ -8,7 +8,12 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // Listen on all interfaces
     port: 8000, // Use port 8000
-
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      'chat.jeerasakananta.dev',
+      '.jeerasakananta.dev' // Allow all subdomains
+    ],
   },
   plugins: [react()],
 
