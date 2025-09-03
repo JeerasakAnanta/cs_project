@@ -2,14 +2,24 @@
 
 ## Mixed Content Issue Fix
 
-This project has been updated to automatically handle HTTPS/HTTP URLs based on the current environment.
+This project has been updated to handle HTTPS/HTTP URLs properly and prevent Mixed Content errors.
 
 ### Automatic URL Detection
 
 The frontend now automatically detects the environment and uses appropriate URLs:
 
 - **Development**: Uses `http://localhost:8001`
-- **Production**: Uses `https://[current-hostname]`
+- **Production**: Uses `https://[current-hostname]` (with nginx proxy to backend)
+
+### Nginx Proxy Solution
+
+In production, the frontend uses HTTPS URLs that are proxied through nginx to the HTTP backend:
+
+- Frontend: `https://chat.jeerasakananta.dev`
+- Backend: `http://10.50.5.31:8001` (proxied through nginx)
+- Nginx handles the HTTPS termination and proxies requests to the backend
+
+This prevents Mixed Content errors while maintaining security.
 
 ### Manual Configuration (Optional)
 

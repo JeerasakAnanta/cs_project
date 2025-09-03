@@ -9,9 +9,9 @@ const getBackendUrl = () => {
     return import.meta.env.VITE_BACKEND_CHATBOT_API;
   }
   
-  // In production, use HTTPS with the same hostname
+  // In production, use HTTP with the same hostname (backend is typically on HTTP)
   if (isProduction) {
-    return `https://${window.location.hostname}`;
+    return `http://${window.location.hostname}`;
   }
   
   // In development, use localhost
@@ -28,9 +28,9 @@ const getDocsUrl = () => {
     return import.meta.env.VITE_BACKEND_DOCS_STATIC;
   }
   
-  // In production, use HTTPS with the same hostname
+  // In production, use HTTP with the same hostname (backend is typically on HTTP)
   if (isProduction) {
-    return `https://${window.location.hostname}`;
+    return `http://${window.location.hostname}`;
   }
   
   // In development, use localhost
