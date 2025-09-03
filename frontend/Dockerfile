@@ -13,6 +13,10 @@ RUN npm ci --only=production
 # Copy source code
 COPY . .
 
+# Create production environment file
+RUN echo "VITE_BACKEND_CHATBOT_API=https://chat.jeerasakananta.dev" > .env.production && \
+    echo "VITE_BACKEND_DOCS_STATIC=https://chat.jeerasakananta.dev" >> .env.production
+
 # Build the application
 RUN npm run build
 
