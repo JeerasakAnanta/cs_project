@@ -42,6 +42,8 @@ else:
     origins = [
         "http://localhost:8000",
         "http://localhost:3000",
+        "https://chat.jeerasakananta.dev",
+        "https://apichat.jeerasakananta.dev",
     ]
 
 app.add_middleware(
