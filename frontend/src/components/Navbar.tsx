@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LogOut, LogIn, User, Menu, X, Trash2, Shield, MessageSquare, MessageCirclePlus } from 'lucide-react';
+import { LogOut, LogIn, User, Menu, X, Trash2, Shield, MessageSquare, MessageCirclePlus, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
 
@@ -15,6 +16,7 @@ const Navbar: React.FC<{
 }> = ({ onSelectConversation, onNewConversation, onConversationDeleted, currentConversationId, conversations }) => {
   const [isOpen, setIsOpen] = useState(true);
   const { currentUser, logout, isGuestMode } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const authToken = localStorage.getItem('authToken');
 
   const handleDeleteConversation: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
@@ -64,16 +66,15 @@ const Navbar: React.FC<{
 
       {/* Sidebar */}
       <div
-        className={`bg-chat-sidebar w-80 h-full flex flex-col transition-all duration-300 ease-in-out border-r border-neutral-700/50 ${isOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`bg-chat-sidebar w-80 h-full flex flex-col transition-all duration-300 ease-in-out border-r border-neutral-700/50 dark:border-neutral-700/50 border-neutral-200/30 ${isOpen ? 'translate-x-0' : '-translate-x-full'
           } md:translate-x-0 md:relative fixed z-40 shadow-2xl`}
       >
         {/* Header */}
-        <div className="p-6 border-b border-neutral-700/50">
+        <div className="p-6 border-b border-neutral-700/50 dark:border-neutral-700/50 border-neutral-200/30">
           <div className="flex items-center justify-center">
-
             <h1 className="text-xl font-bold gradient-text">LannaFinChat</h1>
           </div>
-          <p className="text-center text-neutral-400 text-xs mt-2">AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่าย</p>
+          <p className="text-center text-neutral-400 dark:text-neutral-400 text-neutral-500 text-xs mt-2">AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่าย</p>
         </div>
 
         {/* New conversation button */}
@@ -91,7 +92,7 @@ const Navbar: React.FC<{
         <div className="flex-1 overflow-y-auto px-4">
           {conversations.length > 0 ? (
             <>
-              <p className="text-xs text-neutral-400 px-2 mb-3 font-medium">การสนทนาล่าสุด</p>
+              <p className="text-xs text-neutral-400 dark:text-neutral-400 text-neutral-500 px-2 mb-3 font-medium">การสนทนาล่าสุด</p>
               <div className="space-y-1">
                 {conversations.map((conv) => (
                   <div
@@ -99,20 +100,20 @@ const Navbar: React.FC<{
                     onClick={() => onSelectConversation(conv.id)}
                     className={`group relative p-3 rounded-lg cursor-pointer transition-all duration-200 ${currentConversationId === conv.id
                       ? 'bg-gradient-to-r from-primary-600/20 to-purple-600/20 border border-primary-500/30'
-                      : 'hover:bg-neutral-700/50 border border-transparent'
+                      : 'hover:bg-neutral-700/50 dark:hover:bg-neutral-700/50 hover:bg-neutral-100/50 border border-transparent'
                       }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center min-w-0 flex-1">
-                        <MessageSquare size={16} className="text-neutral-400 mr-2 flex-shrink-0" />
-                        <span className="text-sm text-neutral-200 truncate font-medium">
+                        <MessageSquare size={16} className="text-neutral-400 dark:text-neutral-400 text-neutral-500 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-neutral-200 dark:text-neutral-200 text-neutral-700 truncate font-medium">
                           {conv.title}
                         </span>
                       </div>
                       <button
                         data-id={conv.id}
                         onClick={handleDeleteConversation}
-                        className="opacity-0 group-hover:opacity-100 text-neutral-400 hover:text-red-400 transition-all duration-200 p-1 rounded hover:bg-red-500/10"
+                        className="opacity-0 group-hover:opacity-100 text-neutral-400 dark:text-neutral-400 text-neutral-500 hover:text-red-400 dark:hover:text-red-400 transition-all duration-200 p-1 rounded hover:bg-red-500/10"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -123,44 +124,53 @@ const Navbar: React.FC<{
             </>
           ) : (
             <div className="text-center py-8">
-              <MessageSquare size={48} className="text-neutral-600 mx-auto mb-3" />
-              <p className="text-neutral-500 text-sm">ยังไม่มีการสนทนา</p>
-              <p className="text-neutral-600 text-xs mt-1">เริ่มการสนทนาใหม่เพื่อเริ่มต้น</p>
+              <MessageSquare size={48} className="text-neutral-600 dark:text-neutral-600 text-neutral-400 mx-auto mb-3" />
+              <p className="text-neutral-500 dark:text-neutral-500 text-neutral-600 text-sm">ยังไม่มีการสนทนา</p>
+              <p className="text-neutral-600 dark:text-neutral-600 text-neutral-500 text-xs mt-1">เริ่มการสนทนาใหม่เพื่อเริ่มต้น</p>
             </div>
           )}
         </div>
 
         {/* User section */}
-        <div className="border-t border-neutral-700/50 p-4">
+        <div className="border-t border-neutral-700/50 dark:border-neutral-700/50 border-neutral-200/30 p-4">
           <div className="space-y-2">
             {/* User profile */}
-            <div className="flex items-center p-3 rounded-lg bg-neutral-800/50 border border-neutral-700/30">
+            <div className="flex items-center p-3 rounded-lg bg-neutral-800/50 dark:bg-neutral-800/50 bg-neutral-50/50 border border-neutral-700/30 dark:border-neutral-700/30 border-neutral-300/30">
               <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
                 <User size={16} className="text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-neutral-200 truncate">
+                <p className="text-sm font-medium text-neutral-200 dark:text-neutral-200 text-neutral-700 truncate">
                   {currentUser?.username || (isGuestMode() ? 'ผู้เยี่ยมชม' : 'ผู้ใช้')}
                 </p>
-                <p className="text-xs text-neutral-400">
+                <p className="text-xs text-neutral-400 dark:text-neutral-400 text-neutral-500">
                   {currentUser?.role === 'admin' ? 'ผู้ดูแลระบบ' : (isGuestMode() ? 'โหมดผู้เยี่ยมชม' : 'ผู้ใช้ทั่วไป')}
                 </p>
               </div>
-              {currentUser?.role === 'admin' && (
-                <Link
-                  to="/admin"
-                  className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 transition-all duration-200 focus-ring"
+              <div className="flex items-center gap-2">
+                {currentUser?.role === 'admin' && (
+                  <Link
+                    to="/admin"
+                    className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 transition-all duration-200 focus-ring"
+                  >
+                    <Shield size={16} className="text-white" />
+                  </Link>
+                )}
+                <button
+                  onClick={toggleTheme}
+                  className="p-2 rounded-lg bg-neutral-800/50 dark:bg-neutral-800/50 bg-neutral-100/50 hover:bg-neutral-700/50 dark:hover:bg-neutral-700/50 hover:bg-neutral-200/50 border border-neutral-700/30 dark:border-neutral-700/30 border-neutral-300/30 text-neutral-300 dark:text-neutral-300 text-neutral-600 hover:text-yellow-400 dark:hover:text-yellow-400 transition-all duration-200 focus-ring"
+                  title={theme === 'light' ? 'เปลี่ยนเป็นโหมดมืด' : 'เปลี่ยนเป็นโหมดสว่าง'}
                 >
-                  <Shield size={16} className="text-white" />
-                </Link>
-              )}
+                  {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+                </button>
+              </div>
             </div>
 
             {/* Login/Logout button */}
             {isGuestMode() ? (
               <Link
                 to="/login"
-                className="w-full flex items-center p-3 rounded-lg hover:bg-blue-500/10 border border-transparent hover:border-blue-500/30 text-left text-neutral-300 hover:text-blue-400 transition-all duration-200 focus-ring"
+                className="w-full flex items-center p-3 rounded-lg hover:bg-blue-500/10 border border-transparent hover:border-blue-500/30 text-left text-neutral-300 dark:text-neutral-300 text-neutral-600 hover:text-blue-400 dark:hover:text-blue-400 transition-all duration-200 focus-ring"
               >
                 <LogIn size={16} className="mr-3" />
                 <span className="text-sm font-medium">เข้าสู่ระบบ</span>
@@ -168,7 +178,7 @@ const Navbar: React.FC<{
             ) : (
               <button
                 onClick={logout}
-                className="w-full flex items-center p-3 rounded-lg hover:bg-red-500/10 border border-transparent hover:border-red-500/30 text-left text-neutral-300 hover:text-red-400 transition-all duration-200 focus-ring"
+                className="w-full flex items-center p-3 rounded-lg hover:bg-red-500/10 border border-transparent hover:border-red-500/30 text-left text-neutral-300 dark:text-neutral-300 text-neutral-600 hover:text-red-400 dark:hover:text-red-400 transition-all duration-200 focus-ring"
               >
                 <LogOut size={16} className="mr-3" />
                 <span className="text-sm font-medium">ออกจากระบบ</span>

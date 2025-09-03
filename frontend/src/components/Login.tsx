@@ -54,7 +54,7 @@ const Login: React.FC = () => {
       </div>
 
       <div className="relative z-10 w-full max-w-md mx-4">
-        <div className="card p-8 shadow-2xl border border-neutral-700/50 backdrop-blur-sm">
+        <div className="card p-8 shadow-2xl border border-neutral-700/50 dark:border-neutral-700/50 border-neutral-200/30 backdrop-blur-sm">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
@@ -63,7 +63,7 @@ const Login: React.FC = () => {
               </div>
               <h1 className="text-3xl font-bold gradient-text">LannaFinChat</h1>
             </div>
-            <p className="text-neutral-400 text-sm">เข้าสู่ระบบเพื่อเริ่มการสนทนา</p>
+            <p className="text-neutral-400 dark:text-neutral-400 text-neutral-500 text-sm">เข้าสู่ระบบเพื่อเริ่มการสนทนา</p>
           </div>
 
           {/* Error message */}
@@ -76,12 +76,12 @@ const Login: React.FC = () => {
           {/* Login form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2" htmlFor="username">
+              <label className="block text-sm font-medium text-neutral-300 dark:text-neutral-300 text-neutral-700 mb-2" htmlFor="username">
                 ชื่อผู้ใช้
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-neutral-400" />
+                  <User className="h-5 w-5 text-neutral-400 dark:text-neutral-400 text-neutral-500" />
                 </div>
                 <input
                   type="text"
@@ -97,12 +97,12 @@ const Login: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2" htmlFor="password">
+              <label className="block text-sm font-medium text-neutral-300 dark:text-neutral-300 text-neutral-700 mb-2" htmlFor="password">
                 รหัสผ่าน
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-neutral-400" />
+                  <Lock className="h-5 w-5 text-neutral-400 dark:text-neutral-400 text-neutral-500" />
                 </div>
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -117,7 +117,7 @@ const Login: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-neutral-300 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 dark:text-neutral-400 text-neutral-500 hover:text-neutral-300 dark:hover:text-neutral-300 hover:text-neutral-700 transition-colors"
                   disabled={isLoading}
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -145,7 +145,7 @@ const Login: React.FC = () => {
 
           {/* Register link */}
           <div className="mt-8 text-center">
-            <p className="text-neutral-400 text-sm">
+            <p className="text-neutral-400 dark:text-neutral-400 text-neutral-500 text-sm">
               ยังไม่มีบัญชี?{' '}
               <Link 
                 to="/register" 
@@ -159,7 +159,7 @@ const Login: React.FC = () => {
 
         {/* Footer */}
         <div className="text-center mt-6">
-          <p className="text-neutral-500 text-xs">
+          <p className="text-neutral-500 dark:text-neutral-500 text-neutral-500 text-xs">
             © 2025 LannaFinChat. Developed by  CS RMUTL NAN. All rights reserved.
           </p>
         </div>

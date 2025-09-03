@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { marked } from 'marked';
 
 // Components
@@ -294,7 +295,7 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-chat-bg text-white overflow-hidden">
+    <div className="flex h-screen bg-chat-bg overflow-hidden">
       <Navbar
         onNewConversation={handleNewConversation}
         onSelectConversation={handleSelectConversation}
@@ -340,9 +341,11 @@ const App: React.FC = () => {
           v7_relativeSplatPath: true
         }}
       >
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </ThemeProvider>
       </Router>
     </ErrorBoundary>
   );

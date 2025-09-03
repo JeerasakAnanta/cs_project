@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -33,11 +34,11 @@ module.exports = {
           900: '#171717',
         },
         'chat': {
-          'bg': '#0f0f23',
-          'sidebar': '#1a1a2e',
-          'message-user': '#3b82f6',
-          'message-bot': '#1f2937',
-          'input': '#374151',
+          'bg': 'var(--chat-bg, #0f0f23)',
+          'sidebar': 'var(--chat-sidebar, #1a1a2e)',
+          'message-user': 'var(--chat-message-user, #3b82f6)',
+          'message-bot': 'var(--chat-message-bot, #1f2937)',
+          'input': 'var(--chat-input, #374151)',
         }
       },
       fontFamily: {
