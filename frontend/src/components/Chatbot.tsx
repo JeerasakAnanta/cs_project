@@ -25,7 +25,6 @@ interface ChatbotProps {
 const Chatbot: React.FC<ChatbotProps> = ({
   currentConversationId,
   messages,
-  setMessages,
   onSendMessage,
   conversations,
   isLoading = false,

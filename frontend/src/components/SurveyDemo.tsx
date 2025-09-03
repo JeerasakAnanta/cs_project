@@ -7,14 +7,10 @@ import {
   Grid,
   Card,
   CardContent,
-  CardActions,
-  Button,
-  Divider,
   List,
   ListItem,
   ListItemIcon,
-  ListItemText,
-  Chip
+  ListItemText
 } from '@mui/material';
 import {
   Star,
@@ -22,8 +18,6 @@ import {
   Speed,
   Security,
   Support,
-  Design,
-  ContentPaste,
   EmojiEmotions,
   CheckCircle,
   Info
@@ -48,7 +42,7 @@ const SurveyDemo: React.FC = () => {
       description: 'ถามความตั้งใจในการแนะนำ'
     },
     {
-      icon: <Design className="text-purple-500" />,
+      icon: <EmojiEmotions className="text-purple-500" />,
       title: 'เลือกคุณสมบัติ',
       description: 'เลือกคุณสมบัติที่ประทับใจ'
     },

@@ -48,17 +48,17 @@ class GuestPostgreSQLService {
         if (response.ok) {
           const data = await response.json();
           this.machineId = data.machine_id;
-          localStorage.setItem('guest_machine_id', this.machineId);
+          localStorage.setItem('guest_machine_id', this.machineId || '');
         } else {
           // Fallback: generate client-side machine ID
           this.machineId = this.generateClientMachineId();
-          localStorage.setItem('guest_machine_id', this.machineId);
+          localStorage.setItem('guest_machine_id', this.machineId || '');
         }
       } catch (error) {
         console.error('Error generating machine ID:', error);
         // Fallback: generate client-side machine ID
         this.machineId = this.generateClientMachineId();
-        localStorage.setItem('guest_machine_id', this.machineId);
+        localStorage.setItem('guest_machine_id', this.machineId || '');
       }
     }
   }

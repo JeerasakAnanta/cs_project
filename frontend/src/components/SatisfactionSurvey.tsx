@@ -8,7 +8,6 @@ import {
   Rating,
   TextField,
   FormControl,
-  FormLabel,
   RadioGroup,
   FormControlLabel,
   Radio,
@@ -20,9 +19,7 @@ import {
   Alert,
   Snackbar,
   Chip,
-  Divider,
-  IconButton,
-  Tooltip
+  IconButton
 } from '@mui/material';
 import {
   Star,
@@ -34,7 +31,6 @@ import {
   Speed,
   Security,
   Support,
-  Design,
   ContentPaste
 } from '@mui/icons-material';
 
@@ -81,7 +77,7 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
   const [showError, setShowError] = useState(false);
 
   const featureOptions = [
-    { value: 'chat_interface', label: 'ส่วนติดต่อผู้ใช้แชท', icon: <Design /> },
+    { value: 'chat_interface', label: 'ส่วนติดต่อผู้ใช้แชท', icon: <EmojiEmotions /> },
     { value: 'response_speed', label: 'ความเร็วในการตอบสนอง', icon: <Speed /> },
     { value: 'accuracy', label: 'ความแม่นยำของข้อมูล', icon: <ContentPaste /> },
     { value: 'security', label: 'ความปลอดภัย', icon: <Security /> },
@@ -223,7 +219,7 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
                   { field: 'responseSpeed', label: 'ความเร็วในการตอบสนอง', icon: <Speed /> },
                   { field: 'accuracy', label: 'ความแม่นยำของข้อมูล', icon: <ContentPaste /> },
                   { field: 'helpfulness', label: 'ประโยชน์ที่ได้รับ', icon: <Support /> },
-                  { field: 'userInterface', label: 'การออกแบบส่วนติดต่อผู้ใช้', icon: <Design /> }
+                  { field: 'userInterface', label: 'การออกแบบส่วนติดต่อผู้ใช้', icon: <EmojiEmotions /> }
                 ].map(({ field, label, icon }) => (
                   <Box key={field} className="flex items-center justify-between">
                     <Box className="flex items-center">
