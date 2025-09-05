@@ -12,6 +12,7 @@ rag_app_full_appclition_with_chatgpt/data
 data
 chatbot_create_collection/qdrant_data
 qdrant_data
+postgresql_data
 chatbot_create_collection/pdfs
 chatbot_pdf_management_api/pdfs/
 pdf_Data

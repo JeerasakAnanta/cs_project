@@ -55,7 +55,10 @@ app.add_middleware(
 )
 
 # Root endpoint
-app.get("/")(lambda: {"message": "LannaFinChat API is running..."})
+@app.get("/")
+def read_root():
+    """Root endpoint"""
+    return {"message": "LannaFinChat API is running..."}
 
 # Include the router in the main FastAPI app
 # Authentication routers    
@@ -78,6 +81,4 @@ async def startup_event():
     """Log application startup with system time"""
     from app.utils.timezone import now, format_datetime
     logging.info(f"LannaFinChat API started at {format_datetime(now())}")
-
-
-
+    
