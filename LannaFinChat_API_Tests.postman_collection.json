@@ -1,0 +1,1007 @@
+{
+	"info": {
+		"_postman_id": "lannafinchat-api-tests",
+		"name": "LannaFinChat API Tests",
+		"description": "การทดสอบ API สำหรับระบบ LannaFinChat - ครอบคลุมทุก endpoints หลัก",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Authentication",
+			"item": [
+				{
+					"name": "1.1 Root Endpoint",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.2 Login Status Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.3 Register New User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser\",\n    \"email\": \"test@example.com\",\n    \"password\": \"testpassword123\",\n    \"full_name\": \"Test User\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.4 Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.access_token) {",
+									"        pm.environment.set('access_token', response.access_token);",
+									"    }",
+									"    if (response.refresh_token) {",
+									"        pm.environment.set('refresh_token', response.refresh_token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "testuser",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "testpassword123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.5 Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.6 Logout User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Chat System",
+			"item": [
+				{
+					"name": "2.1 Create New Conversation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Test Conversation\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/chat/conversations/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"conversations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.2 Get All Conversations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/chat/conversations/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"conversations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.3 Get Specific Conversation",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/chat/conversations/{{conversation_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"conversations",
+								"{{conversation_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.4 Update Conversation Title",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated Conversation Title\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/chat/conversations/{{conversation_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"conversations",
+								"{{conversation_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.5 Get Messages in Conversation",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/chat/conversations/{{conversation_id}}/messages/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"conversations",
+								"{{conversation_id}}",
+								"messages",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.6 Send Message to Conversation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sender\": \"user\",\n    \"content\": \"สวัสดีครับ ผมต้องการทราบข้อมูลเกี่ยวกับการเงิน\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/chat/conversations/{{conversation_id}}/messages/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"conversations",
+								"{{conversation_id}}",
+								"messages",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.7 Delete Conversation",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/chat/conversations/{{conversation_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"conversations",
+								"{{conversation_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Anonymous Chat",
+			"item": [
+				{
+					"name": "3.1 Create Anonymous Conversation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Anonymous Chat\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/chat/anonymous/conversations/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"anonymous",
+								"conversations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.2 Send Anonymous Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sender\": \"user\",\n    \"content\": \"สวัสดีครับ ผมเป็นผู้ใช้ที่ไม่ต้องการลงทะเบียน\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/chat/anonymous/conversations/{{anonymous_conversation_id}}/messages/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"anonymous",
+								"conversations",
+								"{{anonymous_conversation_id}}",
+								"messages",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Guest Chat",
+			"item": [
+				{
+					"name": "4.1 Create Guest Conversation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Guest Chat\",\n    \"guest_name\": \"Guest User\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/chat/guest/conversations/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"guest",
+								"conversations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.2 Send Guest Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sender\": \"user\",\n    \"content\": \"สวัสดีครับ ผมเป็นผู้ใช้ guest\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/chat/guest/conversations/{{guest_conversation_id}}/messages/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"guest",
+								"conversations",
+								"{{guest_conversation_id}}",
+								"messages",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. PDF Management",
+			"item": [
+				{
+					"name": "5.1 List All PDFs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/pdfs/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"pdfs",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.2 Upload PDF File",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/pdfs/upload/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"pdfs",
+								"upload",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.3 Delete PDF File",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/pdfs/{{pdf_filename}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"pdfs",
+								"{{pdf_filename}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Feedback System",
+			"item": [
+				{
+					"name": "6.1 Submit Message Feedback",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message_id\": 1,\n    \"rating\": 5,\n    \"comment\": \"คำตอบดีมากครับ\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/chat/feedback/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"feedback",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6.2 Get Feedback Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/chat/feedback/stats/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"feedback",
+								"stats",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "7. Admin System",
+			"item": [
+				{
+					"name": "7.1 Get Admin Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/stats/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"stats",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.2 Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/users/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.3 Get All Conversations (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/conversations/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"conversations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.4 Get System Logs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/logs/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"logs",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "8. Vector Management",
+			"item": [
+				{
+					"name": "8.1 List Vector Collections",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/vector/collections/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vector",
+								"collections",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "8.2 Create Vector Collection",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"collection_name\": \"test_collection\",\n    \"vector_size\": 1536\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/vector/collections/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vector",
+								"collections",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "8.3 Search Vector Documents",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": \"การเงิน\",\n    \"collection_name\": \"test_collection\",\n    \"limit\": 5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/vector/search",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vector",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "8.4 Delete Vector Collection",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/vector/collections/{{collection_name}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vector",
+								"collections",
+								"{{collection_name}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "9. Error Testing",
+			"item": [
+				{
+					"name": "9.1 Test Invalid Authentication",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer invalid_token"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/chat/conversations/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"conversations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9.2 Test Missing Authentication",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/chat/conversations/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"conversations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9.3 Test Invalid Endpoint",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/invalid/endpoint",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invalid",
+								"endpoint"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9.4 Test Invalid JSON Body",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"invalid_field\": \"test\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/chat/conversations/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"chat",
+								"conversations",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
