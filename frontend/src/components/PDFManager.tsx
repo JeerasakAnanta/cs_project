@@ -42,7 +42,7 @@ const PDFManager: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [isIndexing, setIsIndexing] = useState<string | null>(null);
-  const [indexingProgress, setIndexingProgress] = useState<{[key: string]: number}>({});
+  const [indexingStatus, setIndexingStatus] = useState<{[key: string]: 'indexing' | 'success' | 'error' | undefined}>({});
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -164,7 +164,7 @@ const PDFManager: React.FC = () => {
 
   const handleIndex = async (filename: string) => {
     setIsIndexing(filename);
-    setIndexingProgress(prev => ({ ...prev, [filename]: 0 }));
+    setIndexingStatus(prev => ({ ...prev, [filename]: 'indexing' }));
     setError(null);
 
     try {
@@ -177,43 +177,68 @@ const PDFManager: React.FC = () => {
         const result = await response.json();
         setSuccess(result.message || `เริ่มต้นการ indexing ไฟล์ ${filename}`);
         
-        // เริ่มการจำลอง progress
-        simulateProgress(filename);
+        // รอให้การ indexing เสร็จสิ้น
+        waitForIndexingComplete(filename);
       } else {
         const errorData = await response.json();
         setError(errorData.detail || 'เกิดข้อผิดพลาดในการ indexing');
         setIsIndexing(null);
-        setIndexingProgress(prev => ({ ...prev, [filename]: 0 }));
+        setIndexingStatus(prev => ({ ...prev, [filename]: 'error' }));
       }
     } catch (err) {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
       setIsIndexing(null);
-      setIndexingProgress(prev => ({ ...prev, [filename]: 0 }));
+      setIndexingStatus(prev => ({ ...prev, [filename]: 'error' }));
     }
   };
 
-  const simulateProgress = (filename: string) => {
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 15; // เพิ่มแบบสุ่ม
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(interval);
-        // ตรวจสอบสถานะจริงหลังจากเสร็จสิ้น
-        setTimeout(() => {
-          setIsIndexing(null);
-          setIndexingProgress(prev => ({ ...prev, [filename]: 100 }));
-          fetchFiles(); // อัปเดตสถานะไฟล์
-          fetchStats();
-        }, 1000);
+  const waitForIndexingComplete = (filename: string) => {
+    const checkInterval = setInterval(async () => {
+      try {
+        const response = await fetch(`${BACKEND_API}/api/pdfs/`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        
+        if (response.ok) {
+          const files = await response.json();
+          const file = files.find((f: PDFFile) => f.filename === filename);
+          
+          if (file && file.is_indexed) {
+            // การ indexing เสร็จสิ้น
+            clearInterval(checkInterval);
+            setIsIndexing(null);
+            setIndexingStatus(prev => ({ ...prev, [filename]: 'success' }));
+            setSuccess(`Successfully indexed ${filename}`);
+            
+            // อัปเดตข้อมูลไฟล์และสถิติ
+            fetchFiles();
+            fetchStats();
+            
+            // รีเซ็ตสถานะหลังจาก 3 วินาที
+            setTimeout(() => {
+              setIndexingStatus(prev => ({ ...prev, [filename]: undefined }));
+            }, 3000);
+          }
+        }
+      } catch (err) {
+        console.error('Error checking indexing status:', err);
       }
-      setIndexingProgress(prev => ({ ...prev, [filename]: Math.min(progress, 100) }));
-    }, 500);
+    }, 2000); // ตรวจสอบทุก 2 วินาที
+    
+    // หยุดการตรวจสอบหลังจาก 5 นาที
+    setTimeout(() => {
+      clearInterval(checkInterval);
+      if (isIndexing === filename) {
+        setIsIndexing(null);
+        setIndexingStatus(prev => ({ ...prev, [filename]: 'error' }));
+        setError(`การ indexing ไฟล์ ${filename} ใช้เวลานานเกินไป`);
+      }
+    }, 300000); // 5 นาที
   };
 
   const handleReindex = async (filename: string) => {
     setIsIndexing(filename);
-    setIndexingProgress(prev => ({ ...prev, [filename]: 0 }));
+    setIndexingStatus(prev => ({ ...prev, [filename]: 'indexing' }));
     setError(null);
 
     try {
@@ -226,18 +251,18 @@ const PDFManager: React.FC = () => {
         const result = await response.json();
         setSuccess(result.message || `เริ่มต้นการ re-indexing ไฟล์ ${filename}`);
         
-        // เริ่มการจำลอง progress
-        simulateProgress(filename);
+        // รอให้การ re-indexing เสร็จสิ้น
+        waitForIndexingComplete(filename);
       } else {
         const errorData = await response.json();
         setError(errorData.detail || 'เกิดข้อผิดพลาดในการ re-indexing');
         setIsIndexing(null);
-        setIndexingProgress(prev => ({ ...prev, [filename]: 0 }));
+        setIndexingStatus(prev => ({ ...prev, [filename]: 'error' }));
       }
     } catch (err) {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
       setIsIndexing(null);
-      setIndexingProgress(prev => ({ ...prev, [filename]: 0 }));
+      setIndexingStatus(prev => ({ ...prev, [filename]: 'error' }));
     }
   };
 
@@ -471,20 +496,19 @@ const PDFManager: React.FC = () => {
                     <td className="py-3 px-4">
                       <div className="flex items-center space-x-2">
                         {isIndexing === file.filename ? (
-                          <div className="flex flex-col space-y-2 w-full">
-                            <div className="flex items-center space-x-2">
-                              <Clock className="w-4 h-4 text-blue-500 animate-spin" />
-                              <span className="text-blue-500">กำลัง Indexing...</span>
-                            </div>
-                            <div className="w-full bg-neutral-700 rounded-full h-2">
-                              <div 
-                                className="bg-blue-500 h-2 rounded-full transition-all duration-300 ease-out"
-                                style={{ width: `${indexingProgress[file.filename] || 0}%` }}
-                              ></div>
-                            </div>
-                            <span className="text-xs text-neutral-400">
-                              {Math.round(indexingProgress[file.filename] || 0)}%
-                            </span>
+                          <div className="flex items-center space-x-2">
+                            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                            <span className="text-blue-500">กำลัง Indexing...</span>
+                          </div>
+                        ) : indexingStatus[file.filename] === 'success' ? (
+                          <div className="flex items-center space-x-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            <span className="text-green-500">Successfully indexed</span>
+                          </div>
+                        ) : indexingStatus[file.filename] === 'error' ? (
+                          <div className="flex items-center space-x-2">
+                            <XCircle className="w-4 h-4 text-red-500" />
+                            <span className="text-red-500">Indexing failed</span>
                           </div>
                         ) : file.is_indexed ? (
                           <>
@@ -506,7 +530,7 @@ const PDFManager: React.FC = () => {
                       <div className="flex items-center space-x-2">
                         {isIndexing === file.filename ? (
                           <div className="flex items-center space-x-2 px-3 py-1 bg-blue-600 text-white rounded text-sm">
-                            <Clock className="w-3 h-3 animate-spin" />
+                            <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                             <span>กำลังดำเนินการ...</span>
                           </div>
                         ) : !file.is_indexed ? (
