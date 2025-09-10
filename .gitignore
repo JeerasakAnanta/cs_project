@@ -52,10 +52,11 @@ dist
 
 # ===============================================================
 #              Jupyter Notebook  for reference 
-
 # ===============================================================
 
 notebook/*
 *.ipynb
 .env.backup
 .env.production.backup
+
+./postgres_data/
