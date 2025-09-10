@@ -3,12 +3,16 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 import uuid
+import logging
 
 from app.utils.database import get_db
 from app.rag_system.rag_system import chatbot as rag_chatbot
 from . import schemas
 from . import guest_crud
 from app.database.models import AdminConversation
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/chat/guest",
@@ -98,6 +102,8 @@ async def create_guest_conversation(
 ):
     """Create a new guest conversation with machine identifier"""
     try:
+        logger.info(f"Creating guest conversation: title={conversation.title}, machine_id={x_machine_id}")
+        
         # Use provided machine_id or generate new one
         machine_id = x_machine_id or conversation.machine_id or generate_machine_id()
         
@@ -107,8 +113,12 @@ async def create_guest_conversation(
             machine_id=machine_id
         )
         
-        return schemas.GuestConversationResponse.from_orm(db_conversation)
+        logger.info(f"Successfully created conversation: {db_conversation.id}")
+        
+        # Use conversation_to_response instead of from_orm to ensure proper formatting
+        return conversation_to_response(db_conversation)
     except Exception as e:
+        logger.error(f"Error creating conversation: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Error creating conversation: {str(e)}")
 
 
@@ -126,7 +136,7 @@ def conversation_to_response(conv):
                 "sender": m.sender if m.sender else "unknown",
                 "timestamp": m.timestamp,
             }
-            for m in conv.messages
+            for m in getattr(conv, "messages", [])
         ],
     }
 
@@ -136,9 +146,23 @@ async def get_guest_conversations(
     x_machine_id: Optional[str] = Header(None)
 ):
     try:
+        logger.info(f"Fetching guest conversations for machine_id: {x_machine_id}")
+        
         conversations = guest_crud.get_guest_conversations(db, machine_id=x_machine_id)
-        return [conversation_to_response(conv) for conv in conversations]
+        
+        logger.info(f"Found {len(conversations)} conversations")
+        
+        # Load messages for each conversation to ensure they're available
+        for conv in conversations:
+            if not hasattr(conv, 'messages') or conv.messages is None:
+                conv.messages = guest_crud.get_guest_messages(db, conv.id)
+        
+        result = [conversation_to_response(conv) for conv in conversations]
+        logger.info(f"Successfully processed {len(result)} conversations")
+        
+        return result
     except Exception as e:
+        logger.error(f"Error fetching conversations: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Error fetching conversations: {str(e)}")
 
 @router.get("/conversations/{conversation_id}", response_model=schemas.GuestConversationResponse)
@@ -147,12 +171,22 @@ async def get_guest_conversation(
     db: Session = Depends(get_db),
     x_machine_id: Optional[str] = Header(None)
 ):
-    conversation = guest_crud.get_guest_conversation(db, conversation_id)
-    if not conversation:
-        raise HTTPException(status_code=404, detail="Conversation not found")
-    if x_machine_id and conversation.machine_id != x_machine_id:
-        raise HTTPException(status_code=403, detail="Access denied to this conversation")
-    return conversation_to_response(conversation)
+    try:
+        conversation = guest_crud.get_guest_conversation(db, conversation_id)
+        if not conversation:
+            raise HTTPException(status_code=404, detail="Conversation not found")
+        if x_machine_id and conversation.machine_id != x_machine_id:
+            raise HTTPException(status_code=403, detail="Access denied to this conversation")
+        
+        # Load messages if not already loaded
+        if not hasattr(conversation, 'messages') or conversation.messages is None:
+            conversation.messages = guest_crud.get_guest_messages(db, conversation_id)
+            
+        return conversation_to_response(conversation)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching conversation: {str(e)}")
 
 
 @router.post("/conversations/{conversation_id}/messages")

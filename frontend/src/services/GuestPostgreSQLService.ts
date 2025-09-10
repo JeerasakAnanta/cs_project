@@ -100,33 +100,47 @@ class GuestPostgreSQLService {
   }
 
   async createConversation(title: string): Promise<GuestConversation> {
-    const response = await fetch(`${BACKEND_API}/chat/guest/conversations`, {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify({
-        title,
-        machine_id: this.machineId
-      }),
-    });
+    try {
+      const response = await fetch(`${BACKEND_API}/chat/guest/conversations`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({
+          title,
+          machine_id: this.machineId
+        }),
+      });
 
-    if (!response.ok) {
-      throw new Error(`Failed to create conversation: ${response.statusText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Create conversation failed: ${response.status} - ${errorText}`);
+        throw new Error(`Failed to create conversation: ${response.status} ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error in createConversation:', error);
+      throw error;
     }
-
-    return await response.json();
   }
 
   async getConversations(): Promise<GuestConversation[]> {
-    const response = await fetch(`${BACKEND_API}/chat/guest/conversations`, {
-      method: 'GET',
-      headers: this.getHeaders(),
-    });
+    try {
+      const response = await fetch(`${BACKEND_API}/chat/guest/conversations`, {
+        method: 'GET',
+        headers: this.getHeaders(),
+      });
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch conversations: ${response.statusText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Get conversations failed: ${response.status} - ${errorText}`);
+        throw new Error(`Failed to fetch conversations: ${response.status} ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error in getConversations:', error);
+      throw error;
     }
-
-    return await response.json();
   }
 
   async getConversation(id: string): Promise<GuestConversation | null> {

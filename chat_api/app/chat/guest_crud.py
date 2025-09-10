@@ -25,20 +25,27 @@ def create_guest_conversation(db: Session, title: str = "Guest Conversation", ma
 
 def get_guest_conversation(db: Session, conversation_id: str) -> Optional[GuestConversation]:
     """Get a guest conversation by ID"""
+    from sqlalchemy.orm import joinedload
+    
     return db.query(GuestConversation).filter(
         and_(
             GuestConversation.id == conversation_id,
             GuestConversation.is_deleted == False
         )
-    ).first()
+    ).options(joinedload(GuestConversation.messages)).first()
 
 
 def get_guest_conversations(db: Session, machine_id: str = None) -> List[GuestConversation]:
     """Get all guest conversations for a specific machine"""
+    from sqlalchemy.orm import joinedload
+    
     query = db.query(GuestConversation).filter(GuestConversation.is_deleted == False)
     
     if machine_id:
         query = query.filter(GuestConversation.machine_id == machine_id)
+    
+    # Load messages relationship to avoid N+1 queries
+    query = query.options(joinedload(GuestConversation.messages))
     
     return query.order_by(GuestConversation.updated_at.desc()).all()
 
