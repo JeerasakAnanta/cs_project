@@ -57,3 +57,5 @@ dist
 
 notebook/*
 *.ipynb
+.env.backup
+.env.production.backup

@@ -3,6 +3,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Custom Properties for theming */
+:root {
+  --chat-bg: #0f0f23;
+  --chat-sidebar: #1a1a2e;
+  --chat-message-user: #3b82f6;
+  --chat-message-bot: #1f2937;
+  --chat-input: #374151;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --border-color: #374151;
+}
+
+.light {
+  --chat-bg: #fafbfc;
+  --chat-sidebar: #ffffff;
+  --chat-message-user: #3b82f6;
+  --chat-message-bot: #ffffff;
+  --chat-input: #f8fafc;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+}
+
 /* Base styles */
 @layer base {
   html {
@@ -13,6 +36,7 @@
     @apply bg-chat-bg text-white font-thai;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    color: var(--text-primary);
   }
 
   /* Custom scrollbar */
@@ -44,11 +68,11 @@
   }
 
   .input-field {
-    @apply w-full bg-neutral-700 border border-neutral-600 rounded-lg px-4 py-3 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+    @apply w-full bg-neutral-700 dark:bg-neutral-700 bg-white border border-neutral-600 dark:border-neutral-600 border-neutral-300 rounded-lg px-4 py-3 text-white dark:text-white text-neutral-900 placeholder-neutral-400 dark:placeholder-neutral-400 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
   }
 
   .card {
-    @apply bg-neutral-800 rounded-xl border border-neutral-700 shadow-lg backdrop-blur-sm;
+    @apply bg-neutral-800 dark:bg-neutral-800 bg-white rounded-xl border border-neutral-700 dark:border-neutral-700 border-neutral-200 shadow-lg backdrop-blur-sm;
   }
 
   .glass-effect {

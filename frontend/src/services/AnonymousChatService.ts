@@ -1,4 +1,4 @@
-const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
+import { BACKEND_API } from '../config';
 
 export interface AnonymousMessage {
   content: string;

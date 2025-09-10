@@ -43,6 +43,8 @@ else:
     origins = [
         "http://localhost:8000",
         "http://localhost:3000",
+        "https://chat.jeerasakananta.dev",
+        "https://apichat.jeerasakananta.dev",
     ]
 
 # For development, always allow localhost:8000

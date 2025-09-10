@@ -1,6 +1,44 @@
 // Backend API configuration
-export const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
-export const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC || 'http://localhost:8001';
+const getBackendUrl = () => {
+  // Check if we're in production by looking at the current URL
+  const isProduction = window.location.hostname !== 'localhost' && 
+                      window.location.protocol === 'https:';
+  
+  // If environment variable is set, use it
+  if (import.meta.env.VITE_BACKEND_CHATBOT_API) {
+    return import.meta.env.VITE_BACKEND_CHATBOT_API;
+  }
+  
+  // In production with Cloudflare Tunnel, use HTTPS for backend
+  if (isProduction) {
+    return 'https://10.50.5.31:8001';
+  }
+  
+  // In development, use localhost
+  return 'http://localhost:8001';
+};
+
+const getDocsUrl = () => {
+  // Check if we're in production by looking at the current URL
+  const isProduction = window.location.hostname !== 'localhost' && 
+                      window.location.protocol === 'https:';
+  
+  // If environment variable is set, use it
+  if (import.meta.env.VITE_BACKEND_DOCS_STATIC) {
+    return import.meta.env.VITE_BACKEND_DOCS_STATIC;
+  }
+  
+  // In production with Cloudflare Tunnel, use HTTPS for backend
+  if (isProduction) {
+    return 'https://10.50.5.31:8001';
+  }
+  
+  // In development, use localhost
+  return 'http://localhost:8001';
+};
+
+export const BACKEND_API = getBackendUrl();
+export const DOCS_STATIC = getDocsUrl();
 
 // Guest mode configuration
 export const GUEST_MODE_CONFIG = {
