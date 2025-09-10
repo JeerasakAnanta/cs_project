@@ -247,7 +247,7 @@ def process_pdf_with_metadata(file_path: str, filename: str):
         logger.info(f"Converted {filename} to markdown")
         
         # Split the text into chunks
-        text_splitter = MarkdownTextSplitter(chunk_size=500, chunk_overlap=200)
+        text_splitter = MarkdownTextSplitter(chunk_size=300, chunk_overlap=30)
         chunks = text_splitter.create_documents([markdown_text])
         
         # Add metadata to each chunk
