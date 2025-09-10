@@ -23,6 +23,8 @@ interface PDFFile {
   modified_at: string;
   is_indexed: boolean;
   indexed_at?: string;
+  indexing_status?: 'pending' | 'indexing' | 'completed' | 'failed';
+  indexing_progress?: number;
 }
 
 interface PDFStats {
@@ -40,16 +42,45 @@ const PDFManager: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [isIndexing, setIsIndexing] = useState<string | null>(null);
+  const [indexingProgress, setIndexingProgress] = useState<{[key: string]: number}>({});
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const authToken = localStorage.getItem('authToken');
 
+  // Auto-hide notifications
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(null), 7000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   useEffect(() => {
     fetchFiles();
     fetchStats();
-  }, []);
+    
+    // เริ่ม polling สำหรับสถานะการ indexing
+    const interval = setInterval(() => {
+      if (isIndexing) {
+        fetchFiles(); // อัปเดตสถานะไฟล์
+      }
+    }, 2000); // อัปเดตทุก 2 วินาที
+    
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isIndexing]);
 
   const fetchFiles = async () => {
     try {
@@ -133,6 +164,7 @@ const PDFManager: React.FC = () => {
 
   const handleIndex = async (filename: string) => {
     setIsIndexing(filename);
+    setIndexingProgress(prev => ({ ...prev, [filename]: 0 }));
     setError(null);
 
     try {
@@ -142,25 +174,46 @@ const PDFManager: React.FC = () => {
       });
 
       if (response.ok) {
-        setSuccess(`เริ่มต้นการ indexing ไฟล์ ${filename}`);
-        // Refresh files after a delay to check indexing status
-        setTimeout(() => {
-          fetchFiles();
-          fetchStats();
-        }, 2000);
+        const result = await response.json();
+        setSuccess(result.message || `เริ่มต้นการ indexing ไฟล์ ${filename}`);
+        
+        // เริ่มการจำลอง progress
+        simulateProgress(filename);
       } else {
         const errorData = await response.json();
         setError(errorData.detail || 'เกิดข้อผิดพลาดในการ indexing');
+        setIsIndexing(null);
+        setIndexingProgress(prev => ({ ...prev, [filename]: 0 }));
       }
     } catch (err) {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
-    } finally {
       setIsIndexing(null);
+      setIndexingProgress(prev => ({ ...prev, [filename]: 0 }));
     }
+  };
+
+  const simulateProgress = (filename: string) => {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 15; // เพิ่มแบบสุ่ม
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        // ตรวจสอบสถานะจริงหลังจากเสร็จสิ้น
+        setTimeout(() => {
+          setIsIndexing(null);
+          setIndexingProgress(prev => ({ ...prev, [filename]: 100 }));
+          fetchFiles(); // อัปเดตสถานะไฟล์
+          fetchStats();
+        }, 1000);
+      }
+      setIndexingProgress(prev => ({ ...prev, [filename]: Math.min(progress, 100) }));
+    }, 500);
   };
 
   const handleReindex = async (filename: string) => {
     setIsIndexing(filename);
+    setIndexingProgress(prev => ({ ...prev, [filename]: 0 }));
     setError(null);
 
     try {
@@ -170,19 +223,21 @@ const PDFManager: React.FC = () => {
       });
 
       if (response.ok) {
-        setSuccess(`เริ่มต้นการ re-indexing ไฟล์ ${filename}`);
-        setTimeout(() => {
-          fetchFiles();
-          fetchStats();
-        }, 2000);
+        const result = await response.json();
+        setSuccess(result.message || `เริ่มต้นการ re-indexing ไฟล์ ${filename}`);
+        
+        // เริ่มการจำลอง progress
+        simulateProgress(filename);
       } else {
         const errorData = await response.json();
         setError(errorData.detail || 'เกิดข้อผิดพลาดในการ re-indexing');
+        setIsIndexing(null);
+        setIndexingProgress(prev => ({ ...prev, [filename]: 0 }));
       }
     } catch (err) {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
-    } finally {
       setIsIndexing(null);
+      setIndexingProgress(prev => ({ ...prev, [filename]: 0 }));
     }
   };
 
@@ -232,6 +287,33 @@ const PDFManager: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
+      {/* Notifications */}
+      {error && (
+        <div className="fixed top-4 right-4 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 z-50">
+          <AlertCircle className="w-5 h-5" />
+          <span>{error}</span>
+          <button 
+            onClick={() => setError(null)}
+            className="ml-2 text-red-200 hover:text-white"
+          >
+            ×
+          </button>
+        </div>
+      )}
+      
+      {success && (
+        <div className="fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 z-50">
+          <CheckCircle className="w-5 h-5" />
+          <span>{success}</span>
+          <button 
+            onClick={() => setSuccess(null)}
+            className="ml-2 text-green-200 hover:text-white"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -388,7 +470,23 @@ const PDFManager: React.FC = () => {
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center space-x-2">
-                        {file.is_indexed ? (
+                        {isIndexing === file.filename ? (
+                          <div className="flex flex-col space-y-2 w-full">
+                            <div className="flex items-center space-x-2">
+                              <Clock className="w-4 h-4 text-blue-500 animate-spin" />
+                              <span className="text-blue-500">กำลัง Indexing...</span>
+                            </div>
+                            <div className="w-full bg-neutral-700 rounded-full h-2">
+                              <div 
+                                className="bg-blue-500 h-2 rounded-full transition-all duration-300 ease-out"
+                                style={{ width: `${indexingProgress[file.filename] || 0}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-xs text-neutral-400">
+                              {Math.round(indexingProgress[file.filename] || 0)}%
+                            </span>
+                          </div>
+                        ) : file.is_indexed ? (
                           <>
                             <CheckCircle className="w-4 h-4 text-green-500" />
                             <span className="text-green-500">Indexed</span>
@@ -406,36 +504,32 @@ const PDFManager: React.FC = () => {
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center space-x-2">
-                        {!file.is_indexed ? (
+                        {isIndexing === file.filename ? (
+                          <div className="flex items-center space-x-2 px-3 py-1 bg-blue-600 text-white rounded text-sm">
+                            <Clock className="w-3 h-3 animate-spin" />
+                            <span>กำลังดำเนินการ...</span>
+                          </div>
+                        ) : !file.is_indexed ? (
                           <button
                             onClick={() => handleIndex(file.filename)}
-                            disabled={isIndexing === file.filename}
-                            className="flex items-center space-x-1 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm disabled:opacity-50"
+                            className="flex items-center space-x-1 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm transition-colors"
                           >
-                            {isIndexing === file.filename ? (
-                              <LoadingSpinner />
-                            ) : (
-                              <Clock className="w-3 h-3" />
-                            )}
+                            <Clock className="w-3 h-3" />
                             <span>Index</span>
                           </button>
                         ) : (
                           <button
                             onClick={() => handleReindex(file.filename)}
-                            disabled={isIndexing === file.filename}
-                            className="flex items-center space-x-1 px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded text-sm disabled:opacity-50"
+                            className="flex items-center space-x-1 px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded text-sm transition-colors"
                           >
-                            {isIndexing === file.filename ? (
-                              <LoadingSpinner />
-                            ) : (
-                              <RefreshCw className="w-3 h-3" />
-                            )}
+                            <RefreshCw className="w-3 h-3" />
                             <span>Re-index</span>
                           </button>
                         )}
                         <button
                           onClick={() => handleDelete(file.filename)}
-                          className="flex items-center space-x-1 px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm"
+                          disabled={isIndexing === file.filename}
+                          className="flex items-center space-x-1 px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm disabled:opacity-50 transition-colors"
                         >
                           <Trash2 className="w-3 h-3" />
                           <span>ลบ</span>
