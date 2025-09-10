@@ -2,7 +2,6 @@ import os
 import glob
 import logging as logger
 
-
 # langchain
 from langchain_openai import OpenAIEmbeddings
 from langchain.text_splitter import MarkdownTextSplitter

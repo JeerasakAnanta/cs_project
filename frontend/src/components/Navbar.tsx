@@ -4,7 +4,7 @@ import { LogOut, LogIn, User, Menu, X, Trash2, Shield, MessageSquare, MessageCir
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 
-const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
+const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
 
 
 const Navbar: React.FC<{

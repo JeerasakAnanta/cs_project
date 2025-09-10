@@ -21,8 +21,8 @@ import GuestRoute from './components/GuestRoute';
 // Services
 import { guestPostgreSQLService, GuestConversation } from './services/GuestPostgreSQLService';
 
-const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
-const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC;
+const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
+const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC || 'http://localhost:8001';
 
 interface Message {
   id?: number | string;

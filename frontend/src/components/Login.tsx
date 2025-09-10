@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Lock, User, Sparkles } from 'lucide-react';
 
-const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
+const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');

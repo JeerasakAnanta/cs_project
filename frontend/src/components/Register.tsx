@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, User, Mail, Sparkles, CheckCircle } from 'lucide-react';
 
-const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
+const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState('');

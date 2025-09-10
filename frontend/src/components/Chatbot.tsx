@@ -5,7 +5,7 @@ import CustomAlert from './CustomAlert';
 import TypingIndicator from './TypingIndicator';
 import { marked } from 'marked';
 
-const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
+const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
 
 interface Message {
   id?: number | string;

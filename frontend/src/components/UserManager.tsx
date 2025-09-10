@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
 
-const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API;
+const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
 
 interface User {
   id: number;
