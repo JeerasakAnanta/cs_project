@@ -13,9 +13,6 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Create production environment file
-RUN echo "VITE_BACKEND_CHATBOT_API=http://10.50.5.31:8001" > .env.production && \
-    echo "VITE_BACKEND_DOCS_STATIC=http://10.50.5.31:8001" >> .env.production
 
 # Build the application
 RUN npm run build
