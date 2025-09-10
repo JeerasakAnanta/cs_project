@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { User, Bot, Send, Sparkles, ThumbsUp, ThumbsDown, MessageCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import CustomAlert from './CustomAlert';
 import TypingIndicator from './TypingIndicator';
 import { marked } from 'marked';
@@ -53,6 +54,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
   const [currentConversationTitle, setCurrentConversationTitle] = useState<string>('');
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const { isGuestMode } = useAuth();
+  const { theme } = useTheme();
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
 
@@ -279,7 +281,11 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
       {/* Conversation Header */}
       {currentConversationId && messages.length > 0 && (
-        <div className="border-b border-neutral-700/50 dark:border-neutral-700/50 border-neutral-200/30 bg-neutral-900/50 dark:bg-neutral-900/50 bg-gray-50/30 backdrop-blur-sm">
+        <div className={`border-b backdrop-blur-sm ${
+          theme === 'light' 
+            ? 'border-gray-200 bg-gray-50/30' 
+            : 'border-neutral-700/50 bg-neutral-900/50'
+        }`}>
           <div className="max-w-5xl mx-auto px-6 py-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -287,13 +293,19 @@ const Chatbot: React.FC<ChatbotProps> = ({
                   <MessageCircle className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-white dark:text-white text-gray-900">
+                  <h2 className={`text-lg font-semibold ${
+                    theme === 'light' ? 'text-gray-900' : 'text-white'
+                  }`}>
                     {currentConversationTitle || 'การสนทนาใหม่'}
                   </h2>
-                  <p className="text-sm text-neutral-400 dark:text-neutral-400 text-gray-600">การสนทนาปัจจุบัน</p>
+                  <p className={`text-sm ${
+                    theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
+                  }`}>การสนทนาปัจจุบัน</p>
                 </div>
               </div>
-              <div className="text-sm text-neutral-500 dark:text-neutral-500 text-gray-500">
+              <div className={`text-sm ${
+                theme === 'light' ? 'text-gray-500' : 'text-neutral-500'
+              }`}>
                 {messages.length} ข้อความ
               </div>
             </div>
@@ -311,12 +323,20 @@ const Chatbot: React.FC<ChatbotProps> = ({
           {/* Welcome message when no conversation */}
           {messages.length === 0 ? (
             <div className="text-center py-12">
-              <div className="mb-8">
-                <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
+              <div className="mb-8 p-8 rounded-3xl shadow-2xl bg-white/80 backdrop-blur-sm border border-gray-200/50">
+                <div className={`w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl ${
+                  theme === 'light' 
+                    ? 'bg-gradient-to-br from-blue-500 via-purple-600 to-blue-700' 
+                    : 'bg-gradient-to-br from-primary-500 to-purple-600'
+                }`}>
                   <Sparkles className="w-10 h-10 text-white" />
                 </div>
-                <h2 className="text-3xl font-bold gradient-text mb-4"> LannaFinChat</h2>
-                <p className="text-neutral-400 dark:text-neutral-400 text-gray-600 text-lg max-w-2xl mx-auto">
+                <h2 className={`text-3xl font-bold mb-4 ${
+                  theme === 'light' ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent drop-shadow-sm' : 'gradient-text'
+                }`}> LannaFinChat</h2>
+                <p className={`text-lg max-w-2xl mx-auto ${
+                  theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
+                }`}>
                   AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน
                   เริ่มต้นการสนทนาโดยการถามคำถามหรือเลือกจากตัวอย่างด้านล่าง
                 </p>
@@ -332,13 +352,25 @@ const Chatbot: React.FC<ChatbotProps> = ({
                   <button
                     key={index}
                     onClick={() => handleExampleQuestionClick(question)}
-                    className="group p-6 text-left bg-gradient-to-br from-slate-900/60 to-purple-900/50 dark:from-slate-900/60 dark:to-purple-900/50 from-white/80 to-blue-50/80 backdrop-blur-xl border border-purple-500/30 dark:border-purple-500/30 border-blue-200/50 rounded-2xl hover:from-purple-800/70 hover:to-pink-800/60 dark:hover:from-purple-800/70 dark:hover:to-pink-800/60 hover:from-blue-100/90 hover:to-indigo-100/90 hover:border-purple-400/50 dark:hover:border-purple-400/50 hover:border-blue-300/70 transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-purple-500/10 dark:hover:shadow-purple-500/10 hover:shadow-blue-500/20"
+                    className={`group p-6 text-left backdrop-blur-xl rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl ${
+                      theme === 'light'
+                        ? 'bg-white/90 border border-blue-200/50 hover:bg-blue-50/90 hover:border-blue-300/70 hover:shadow-blue-500/30 shadow-lg'
+                        : 'bg-gradient-to-br from-slate-900/60 to-purple-900/50 border border-purple-500/30 hover:from-purple-800/70 hover:to-pink-800/60 hover:border-purple-400/50 hover:shadow-purple-500/20 shadow-lg'
+                    }`}
                   >
                     <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 rounded-lg bg-neutral-700 dark:bg-neutral-700 bg-blue-100 flex items-center justify-center group-hover:bg-neutral-600 dark:group-hover:bg-neutral-600 group-hover:bg-blue-200 transition-all duration-300">
-                        <Sparkles className="w-4 h-4 text-purple-300 dark:text-purple-300 text-blue-600" />
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                        theme === 'light'
+                          ? 'bg-blue-100 group-hover:bg-blue-200'
+                          : 'bg-neutral-700 group-hover:bg-neutral-600'
+                      }`}>
+                        <Sparkles className={`w-4 h-4 ${
+                          theme === 'light' ? 'text-blue-600' : 'text-purple-300'
+                        }`} />
                       </div>
-                      <div className="font-medium text-white dark:text-white text-gray-900 group-hover:text-white dark:group-hover:text-white group-hover:text-gray-900 transition-colors duration-300 leading-relaxed">
+                      <div className={`font-medium transition-colors duration-300 leading-relaxed ${
+                        theme === 'light' ? 'text-gray-900 group-hover:text-gray-900' : 'text-white group-hover:text-white'
+                      }`}>
                         {question}
                       </div>
                     </div>
@@ -363,24 +395,26 @@ const Chatbot: React.FC<ChatbotProps> = ({
                     </div>
 
                     {/* Message content */}
-                    <div className={`p-6 rounded-3xl max-w-3xl shadow-xl ${msg.sender === 'user'
+                    <div className={`p-6 rounded-3xl max-w-3xl shadow-2xl ${msg.sender === 'user'
                       ? 'bg-blue-600 text-white shadow-lg'
-                      : 'bg-neutral-800/80 dark:bg-neutral-800/80 bg-gray-100/80 backdrop-blur-xl border border-neutral-600 dark:border-neutral-600 border-gray-300 text-white dark:text-white text-gray-900'
+                      : theme === 'light'
+                        ? 'bg-white backdrop-blur-xl border border-gray-200 text-black shadow-lg'
+                        : 'bg-neutral-800/80 backdrop-blur-xl border border-neutral-600 text-white shadow-lg'
                       }`}>
-                      {msg.sender === 'bot' && (
-                        <div className="flex items-center gap-2 mb-3 text-xs text-neutral-400 dark:text-neutral-400 text-gray-600">
-                          <Sparkles className="w-3 h-3" />
-                          <span>Markdown รองรับ</span>
-                        </div>
-                      )}
                       <div 
-                        className="prose prose-invert max-w-none prose-p:text-white dark:prose-p:text-white prose-p:text-gray-900 prose-strong:text-white dark:prose-strong:text-white prose-strong:text-gray-900 prose-a:text-blue-300 dark:prose-a:text-blue-300 prose-a:text-blue-600 prose-headings:text-white dark:prose-headings:text-white prose-headings:text-gray-900 prose-code:text-primary-300 dark:prose-code:text-primary-300 prose-code:text-blue-600 prose-pre:bg-neutral-800 dark:prose-pre:bg-neutral-800 prose-pre:bg-gray-100 prose-pre:border prose-pre:border-neutral-700 dark:prose-pre:border-neutral-700 prose-pre:border-gray-300 prose-blockquote:border-l-primary-500 dark:prose-blockquote:border-l-primary-500 prose-blockquote:border-l-blue-500 prose-blockquote:text-neutral-300 dark:prose-blockquote:text-neutral-300 prose-blockquote:text-gray-700 prose-ul:text-white dark:prose-ul:text-white prose-ul:text-gray-900 prose-ol:text-white dark:prose-ol:text-white prose-ol:text-gray-900 prose-li:text-white dark:prose-li:text-white prose-li:text-gray-900" 
+                        className={`prose max-w-none ${
+                          theme === 'light'
+                            ? 'prose-p:text-black prose-p:font-medium prose-strong:text-black prose-strong:font-bold prose-em:text-black prose-em:font-medium prose-a:text-blue-700 prose-a:font-medium prose-headings:text-black prose-headings:font-bold prose-h1:text-black prose-h1:font-bold prose-h2:text-black prose-h2:font-bold prose-h3:text-black prose-h3:font-bold prose-h4:text-black prose-h4:font-bold prose-h5:text-black prose-h5:font-bold prose-h6:text-black prose-h6:font-bold prose-code:text-blue-700 prose-code:font-semibold prose-pre:bg-gray-50 prose-pre:text-black prose-pre:font-medium prose-pre:border-gray-200 prose-blockquote:border-l-blue-600 prose-blockquote:text-gray-800 prose-blockquote:font-medium prose-ul:text-black prose-ul:font-medium prose-ol:text-black prose-ol:font-medium prose-li:text-black prose-li:font-medium prose-table:text-black prose-table:font-medium prose-th:text-black prose-th:font-bold prose-td:text-black prose-td:font-medium prose-img:border-gray-200'
+                            : 'prose-invert prose-p:text-white prose-p:font-medium prose-strong:text-white prose-strong:font-bold prose-em:text-white prose-em:font-medium prose-a:text-blue-300 prose-a:font-medium prose-headings:text-white prose-headings:font-bold prose-h1:text-white prose-h1:font-bold prose-h2:text-white prose-h2:font-bold prose-h3:text-white prose-h3:font-bold prose-h4:text-white prose-h4:font-bold prose-h5:text-white prose-h5:font-bold prose-h6:text-white prose-h6:font-bold prose-code:text-primary-300 prose-code:font-semibold prose-pre:bg-neutral-800 prose-pre:text-white prose-pre:font-medium prose-pre:border-neutral-700 prose-blockquote:border-l-primary-500 prose-blockquote:text-neutral-300 prose-blockquote:font-medium prose-ul:text-white prose-ul:font-medium prose-ol:text-white prose-ol:font-medium prose-li:text-white prose-li:font-medium prose-table:text-white prose-table:font-medium prose-th:text-white prose-th:font-bold prose-td:text-white prose-td:font-medium prose-img:border-neutral-700'
+                        }`} 
                         dangerouslySetInnerHTML={{ __html: msg.sender === 'bot' ? renderMarkdown(msg.text) : msg.text }} 
                       />
 
                       {/* Feedback buttons for bot messages - only for authenticated users */}
                       {msg.sender === 'bot' && msg.id && typeof msg.id === 'number' && !isGuestMode() && (
-                        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-neutral-600/50 dark:border-neutral-600/50 border-gray-300/50">
+                        <div className={`flex items-center gap-2 mt-4 pt-4 border-t ${
+                          theme === 'light' ? 'border-gray-300/50' : 'border-neutral-600/50'
+                        }`}>
                           <button
                             onClick={() => handleFeedback(msg.id as number, 'like')}
                             className="flex items-center gap-2 px-3 py-1.5 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 hover:border-green-500/50 rounded-lg text-green-400 hover:text-green-300 transition-all duration-200 text-sm"
@@ -410,10 +444,18 @@ const Chatbot: React.FC<ChatbotProps> = ({
       {isLoading && (
         <div className="px-6 py-4">
           <div className="flex items-center space-x-2 max-w-4xl mx-auto">
-            <div className="w-12 h-12 rounded-2xl bg-neutral-700 dark:bg-neutral-700 bg-gray-200 shadow-lg flex items-center justify-center">
-              <Bot className="w-6 h-6 text-white dark:text-white text-gray-700" />
+            <div className={`w-12 h-12 rounded-2xl shadow-lg flex items-center justify-center ${
+              theme === 'light' ? 'bg-gray-200' : 'bg-neutral-700'
+            }`}>
+              <Bot className={`w-6 h-6 ${
+                theme === 'light' ? 'text-gray-700' : 'text-white'
+              }`} />
             </div>
-            <div className="p-4 rounded-3xl bg-neutral-800/80 dark:bg-neutral-800/80 bg-gray-100/80 backdrop-blur-xl border border-neutral-600 dark:border-neutral-600 border-gray-300">
+            <div className={`p-4 rounded-3xl backdrop-blur-xl border ${
+              theme === 'light' 
+                ? 'bg-gray-100/80 border-gray-300' 
+                : 'bg-neutral-800/80 border-neutral-600'
+            }`}>
               <TypingIndicator variant="dots" size="medium" />
             </div>
           </div>
@@ -421,9 +463,17 @@ const Chatbot: React.FC<ChatbotProps> = ({
       )}
 
       {/* Input area at bottom - sticky positioning */}
-      <div className="sticky bottom-0 p-3 border-t border-neutral-700/50 dark:border-neutral-700/50 border-neutral-200/30 bg-neutral-900/95 dark:bg-neutral-900/95 bg-white/95 backdrop-blur-xl shadow-2xl z-10">
+      <div className={`sticky bottom-0 p-3 border-t backdrop-blur-xl shadow-2xl z-10 ${
+        theme === 'light' 
+          ? 'border-gray-200 bg-white/95' 
+          : 'border-neutral-700/50 bg-neutral-900/95'
+      }`}>
         <div className="max-w-5xl mx-auto">
-          <div className="relative bg-gradient-to-br from-slate-900/80 to-purple-900/70 dark:from-slate-900/80 dark:to-purple-900/70 from-white/90 to-blue-50/90 backdrop-blur-xl border border-purple-500/30 dark:border-purple-500/30 border-blue-200/50 rounded-3xl shadow-2xl shadow-purple-500/10 dark:shadow-purple-500/10 shadow-blue-500/20">
+          <div className={`relative backdrop-blur-xl rounded-3xl shadow-2xl ${
+            theme === 'light'
+              ? 'bg-white/90 border border-blue-200/50 shadow-blue-500/30'
+              : 'bg-gradient-to-br from-slate-900/80 to-purple-900/70 border border-purple-500/30 shadow-purple-500/20'
+          }`}>
             <textarea
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
@@ -434,19 +484,29 @@ const Chatbot: React.FC<ChatbotProps> = ({
                 }
               }}
               placeholder="ส่งข้อความถึง LannaFinChat..."
-              className="w-full bg-transparent p-4 pr-16 text-white dark:text-white text-gray-900 focus:outline-none resize-none rounded-2xl text-base font-medium placeholder-white/70 dark:placeholder-white/70 placeholder-gray-500/70"
+              className={`w-full bg-transparent p-4 pr-16 focus:outline-none resize-none rounded-2xl text-base font-medium ${
+                theme === 'light'
+                  ? 'text-gray-900 placeholder-gray-500/70'
+                  : 'text-white placeholder-white/70'
+              }`}
               rows={1}
               style={{ minHeight: '48px', maxHeight: '120px' }}
             />
             <button
               onClick={handleSendMessage}
               disabled={!userInput.trim() || isLoading}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-neutral-700 dark:bg-neutral-700 bg-blue-500 hover:bg-neutral-600 dark:hover:bg-neutral-600 hover:bg-blue-600 disabled:bg-neutral-800 dark:disabled:bg-neutral-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 focus:ring-4 focus:ring-neutral-500/25 dark:focus:ring-neutral-500/25 focus:ring-blue-400/25 shadow-lg"
+              className={`absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl transition-all duration-300 transform hover:scale-110 focus:ring-4 shadow-lg ${
+                theme === 'light'
+                  ? 'bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 focus:ring-blue-400/25'
+                  : 'bg-neutral-700 hover:bg-neutral-600 disabled:bg-neutral-800 focus:ring-neutral-500/25'
+              } disabled:cursor-not-allowed`}
             >
-              <Send className="w-4 h-4 text-white dark:text-white text-white" />
+              <Send className="w-4 h-4 text-white" />
             </button>
           </div>
-          <p className="text-xs text-center text-white/80 dark:text-white/80 text-gray-600/80 mt-3 flex items-center justify-center gap-2 font-medium">
+          <p className={`text-xs text-center mt-3 flex items-center justify-center gap-2 font-medium ${
+            theme === 'light' ? 'text-gray-600/80' : 'text-white/80'
+          }`}>
             <Sparkles className="w-3 h-3" />
             คำตอบสร้างโดย GenAI เพื่อใช้ในการค้นหาข้อมูลเท่านั้น โปรดตรวจสอบข้อมูลก่อนนำไปใช้งาน
           </p>

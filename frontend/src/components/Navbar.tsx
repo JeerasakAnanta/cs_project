@@ -68,29 +68,29 @@ const Navbar: React.FC<{
       {/* Mobile menu button */}
       <button
         onClick={toggleSidebar}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-neutral-800/80 backdrop-blur-sm rounded-lg border border-neutral-700/50 text-white hover:bg-neutral-700/80 transition-all duration-200 focus-ring"
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-100 transition-all duration-200 focus-ring shadow-lg"
       >
         {isOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
       {/* Sidebar */}
       <div
-        className={`bg-chat-sidebar w-80 h-full flex flex-col transition-all duration-300 ease-in-out border-r border-neutral-700/50 dark:border-neutral-700/50 border-neutral-200/30 ${isOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`bg-white w-80 h-full flex flex-col transition-all duration-300 ease-in-out border-r border-gray-200 ${isOpen ? 'translate-x-0' : '-translate-x-full'
           } md:translate-x-0 md:relative fixed z-40 shadow-2xl`}
       >
         {/* Header */}
-        <div className="p-6 border-b border-neutral-700/50 dark:border-neutral-700/50 border-neutral-200/30">
+        <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-center">
-            <h1 className="text-xl font-bold gradient-text">LannaFinChat</h1>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent drop-shadow-sm">LannaFinChat</h1>
           </div>
-          <p className="text-center text-neutral-400 dark:text-neutral-400 text-neutral-500 text-xs mt-2">AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่าย</p>
+          <p className="text-center text-gray-600 text-xs mt-2">AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่าย</p>
         </div>
 
         {/* New conversation button */}
         <div className="p-4">
           <button
             onClick={onNewConversation}
-            className="w-full flex items-center justify-center py-3 px-4 bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 rounded-xl text-white font-medium transition-all duration-200 transform hover:scale-105 focus-ring shadow-lg"
+            className="w-full flex items-center justify-center py-3 px-4 bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 rounded-xl text-white font-medium transition-all duration-200 transform hover:scale-105 focus-ring shadow-xl hover:shadow-2xl"
           >
             <MessageCirclePlus size={18} className="mr-2" />
             แชทใหม่
@@ -101,28 +101,28 @@ const Navbar: React.FC<{
         <div className="flex-1 overflow-y-auto px-4">
           {conversations.length > 0 ? (
             <>
-              <p className="text-xs text-neutral-400 dark:text-neutral-400 text-neutral-500 px-2 mb-3 font-medium">การสนทนาล่าสุด</p>
+              <p className="text-xs text-gray-600 px-2 mb-3 font-medium">การสนทนาล่าสุด</p>
               <div className="space-y-1">
                 {conversations.map((conv) => (
                   <div
                     key={conv.id}
                     onClick={() => onSelectConversation(conv.id)}
                     className={`group relative p-3 rounded-lg cursor-pointer transition-all duration-200 ${currentConversationId === conv.id
-                      ? 'bg-gradient-to-r from-primary-600/20 to-purple-600/20 border border-primary-500/30'
-                      : 'hover:bg-neutral-700/50 dark:hover:bg-neutral-700/50 hover:bg-neutral-100/50 border border-transparent'
+                      ? 'bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-300'
+                      : 'hover:bg-gray-100 border border-transparent'
                       }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center min-w-0 flex-1">
-                        <MessageSquare size={16} className="text-neutral-400 dark:text-neutral-400 text-neutral-500 mr-2 flex-shrink-0" />
-                        <span className="text-sm text-neutral-200 dark:text-neutral-200 text-neutral-700 truncate font-medium">
+                        <MessageSquare size={16} className="text-gray-500 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700 truncate font-medium">
                           {conv.title}
                         </span>
                       </div>
                       <button
                         data-id={conv.id}
                         onClick={handleDeleteConversation}
-                        className="opacity-0 group-hover:opacity-100 text-neutral-400 dark:text-neutral-400 text-neutral-500 hover:text-red-400 dark:hover:text-red-400 transition-all duration-200 p-1 rounded hover:bg-red-500/10"
+                        className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-500 transition-all duration-200 p-1 rounded hover:bg-red-50"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -133,26 +133,26 @@ const Navbar: React.FC<{
             </>
           ) : (
             <div className="text-center py-8">
-              <MessageSquare size={48} className="text-neutral-600 dark:text-neutral-600 text-neutral-400 mx-auto mb-3" />
-              <p className="text-neutral-500 dark:text-neutral-500 text-neutral-600 text-sm">ยังไม่มีการสนทนา</p>
-              <p className="text-neutral-600 dark:text-neutral-600 text-neutral-500 text-xs mt-1">เริ่มการสนทนาใหม่เพื่อเริ่มต้น</p>
+              <MessageSquare size={48} className="text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-600 text-sm">ยังไม่มีการสนทนา</p>
+              <p className="text-gray-500 text-xs mt-1">เริ่มการสนทนาใหม่เพื่อเริ่มต้น</p>
             </div>
           )}
         </div>
 
         {/* User section */}
-        <div className="border-t border-neutral-700/50 dark:border-neutral-700/50 border-neutral-200/30 p-4">
+        <div className="border-t border-gray-200 p-4">
           <div className="space-y-2">
             {/* User profile */}
-            <div className="flex items-center p-3 rounded-lg bg-neutral-800/50 dark:bg-neutral-800/50 bg-neutral-50/50 border border-neutral-700/30 dark:border-neutral-700/30 border-neutral-300/30">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+            <div className="flex items-center p-3 rounded-lg bg-gray-50 border border-gray-200">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
                 <User size={16} className="text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-neutral-200 dark:text-neutral-200 text-neutral-700 truncate">
+                <p className="text-sm font-medium text-gray-700 truncate">
                   {currentUser?.username || (isGuestMode() ? 'ผู้เยี่ยมชม' : 'ผู้ใช้')}
                 </p>
-                <p className="text-xs text-neutral-400 dark:text-neutral-400 text-neutral-500">
+                <p className="text-xs text-gray-500">
                   {currentUser?.role === 'admin' ? 'ผู้ดูแลระบบ' : (isGuestMode() ? 'โหมดผู้เยี่ยมชม' : 'ผู้ใช้ทั่วไป')}
                 </p>
               </div>
@@ -167,10 +167,10 @@ const Navbar: React.FC<{
                 )}
                 <button
                   onClick={toggleTheme}
-                  className="p-2 rounded-lg bg-neutral-800/50 dark:bg-neutral-800/50 bg-neutral-100/50 hover:bg-neutral-700/50 dark:hover:bg-neutral-700/50 hover:bg-neutral-200/50 border border-neutral-700/30 dark:border-neutral-700/30 border-neutral-300/30 text-neutral-300 dark:text-neutral-300 text-neutral-600 hover:text-yellow-400 dark:hover:text-yellow-400 transition-all duration-200 focus-ring"
-                  title={theme === 'light' ? 'เปลี่ยนเป็นโหมดมืด' : 'เปลี่ยนเป็นโหมดสว่าง'}
+                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-600 hover:text-blue-600 transition-all duration-200 focus-ring"
+                  title="ธีมสว่าง (ใช้งานอยู่)"
                 >
-                  {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+                  <Sun size={16} />
                 </button>
               </div>
             </div>
@@ -179,7 +179,7 @@ const Navbar: React.FC<{
             {isGuestMode() ? (
               <Link
                 to="/login"
-                className="w-full flex items-center p-3 rounded-lg hover:bg-blue-500/10 border border-transparent hover:border-blue-500/30 text-left text-neutral-300 dark:text-neutral-300 text-neutral-600 hover:text-blue-400 dark:hover:text-blue-400 transition-all duration-200 focus-ring"
+                className="w-full flex items-center p-3 rounded-lg hover:bg-blue-50 border border-transparent hover:border-blue-200 text-left text-gray-600 hover:text-blue-600 transition-all duration-200 focus-ring"
               >
                 <LogIn size={16} className="mr-3" />
                 <span className="text-sm font-medium">เข้าสู่ระบบ</span>
@@ -187,7 +187,7 @@ const Navbar: React.FC<{
             ) : (
               <button
                 onClick={logout}
-                className="w-full flex items-center p-3 rounded-lg hover:bg-red-500/10 border border-transparent hover:border-red-500/30 text-left text-neutral-300 dark:text-neutral-300 text-neutral-600 hover:text-red-400 dark:hover:text-red-400 transition-all duration-200 focus-ring"
+                className="w-full flex items-center p-3 rounded-lg hover:bg-red-50 border border-transparent hover:border-red-200 text-left text-gray-600 hover:text-red-600 transition-all duration-200 focus-ring"
               >
                 <LogOut size={16} className="mr-3" />
                 <span className="text-sm font-medium">ออกจากระบบ</span>

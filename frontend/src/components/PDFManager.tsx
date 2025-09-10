@@ -12,6 +12,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
+import { useTheme } from '../contexts/ThemeContext';
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
 
@@ -46,6 +47,7 @@ const PDFManager: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { theme } = useTheme();
 
   const authToken = localStorage.getItem('authToken');
 
@@ -342,10 +344,10 @@ const PDFManager: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold gradient-text">จัดการไฟล์ PDF</h1>
-          <p className="text-neutral-400 mt-2">อัปโหลด จัดการ และ indexing ไฟล์ PDF สำหรับ RAG</p>
+          <h1 className="text-3xl font-bold text-gray-900">จัดการไฟล์ PDF</h1>
+          <p className="text-gray-600 mt-2">อัปโหลด จัดการ และ indexing ไฟล์ PDF สำหรับ RAG</p>
         </div>
-        <div className="flex items-center space-x-2 text-sm text-neutral-400">
+        <div className="flex items-center space-x-2 text-sm text-gray-600">
           <BarChart3 className="w-4 h-4" />
           <span>ระบบจัดการเอกสาร</span>
         </div>
@@ -354,38 +356,38 @@ const PDFManager: React.FC = () => {
       {/* Statistics */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="card p-4">
+          <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-neutral-400">ไฟล์ทั้งหมด</p>
-                <p className="text-2xl font-bold text-white">{stats.total_files}</p>
+                <p className="text-sm text-gray-600">ไฟล์ทั้งหมด</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total_files}</p>
               </div>
               <FileText className="w-8 h-8 text-blue-500" />
             </div>
           </div>
-          <div className="card p-4">
+          <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-neutral-400">ไฟล์ที่ Index แล้ว</p>
-                <p className="text-2xl font-bold text-green-500">{stats.indexed_files}</p>
+                <p className="text-sm text-gray-600">ไฟล์ที่ Index แล้ว</p>
+                <p className="text-2xl font-bold text-green-600">{stats.indexed_files}</p>
               </div>
               <CheckCircle className="w-8 h-8 text-green-500" />
             </div>
           </div>
-          <div className="card p-4">
+          <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-neutral-400">ขนาดรวม</p>
-                <p className="text-2xl font-bold text-white">{stats.total_size_mb} MB</p>
+                <p className="text-sm text-gray-600">ขนาดรวม</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total_size_mb} MB</p>
               </div>
               <Download className="w-8 h-8 text-purple-500" />
             </div>
           </div>
-          <div className="card p-4">
+          <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-neutral-400">Vectors ใน Qdrant</p>
-                <p className="text-2xl font-bold text-orange-500">{stats.total_vectors_in_qdrant}</p>
+                <p className="text-sm text-gray-600">Vectors ใน Qdrant</p>
+                <p className="text-2xl font-bold text-orange-600">{stats.total_vectors_in_qdrant}</p>
               </div>
               <BarChart3 className="w-8 h-8 text-orange-500" />
             </div>
@@ -394,8 +396,8 @@ const PDFManager: React.FC = () => {
       )}
 
       {/* Upload Section */}
-      <div className="card p-6">
-        <h2 className="text-xl font-semibold text-white mb-4">อัปโหลดไฟล์ PDF</h2>
+      <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">อัปโหลดไฟล์ PDF</h2>
         
         <div className="space-y-4">
           <div className="flex items-center space-x-4">
@@ -408,13 +410,13 @@ const PDFManager: React.FC = () => {
             />
             <label
               htmlFor="file-upload"
-              className="flex items-center space-x-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg cursor-pointer transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition-colors"
             >
               <Upload className="w-4 h-4" />
               <span>เลือกไฟล์ PDF</span>
             </label>
             {selectedFile && (
-              <span className="text-neutral-300">{selectedFile.name}</span>
+              <span className="text-gray-600">{selectedFile.name}</span>
             )}
           </div>
 
@@ -422,7 +424,7 @@ const PDFManager: React.FC = () => {
             <button
               onClick={handleUpload}
               disabled={isUploading}
-              className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isUploading ? (
                 <div className="flex items-center space-x-2">

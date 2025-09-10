@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { adminStatisticsService, SystemStats, UserStats, ConversationStats } from '../../services/adminStatisticsService';
 import StatisticsCharts from './StatisticsCharts';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const SystemStatistics: React.FC = () => {
   const [systemStats, setSystemStats] = useState<SystemStats | null>(null);
@@ -28,6 +29,7 @@ const SystemStatistics: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+  const { theme } = useTheme();
   const [showCharts, setShowCharts] = useState(false);
 
   const fetchSystemStats = async () => {
@@ -102,7 +104,9 @@ const SystemStatistics: React.FC = () => {
 
   if (!systemStats || !userStats || !conversationStats) {
     return (
-      <div className="text-center text-neutral-400">
+      <div className={`text-center ${
+        theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
+      }`}>
         ไม่พบข้อมูลสถิติ
       </div>
     );
@@ -113,8 +117,12 @@ const SystemStatistics: React.FC = () => {
       {/* Header with Refresh and Charts Toggle */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-white">สถิติระบบทั้งหมด</h3>
-          <p className="text-neutral-400 text-sm">
+          <h3 className={`text-lg font-semibold ${
+            theme === 'light' ? 'text-gray-900' : 'text-white'
+          }`}>สถิติระบบทั้งหมด</h3>
+          <p className={`text-sm ${
+            theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
+          }`}>
             อัปเดตล่าสุด: {formatDate(systemStats.system.last_updated)}
           </p>
         </div>
@@ -123,8 +131,12 @@ const SystemStatistics: React.FC = () => {
             onClick={() => setShowCharts(!showCharts)}
             className={`flex items-center px-4 py-2 rounded-lg transition-colors ${
               showCharts 
-                ? 'bg-primary-600 text-white' 
-                : 'bg-neutral-700 text-neutral-300 hover:bg-neutral-600'
+                ? theme === 'light'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-primary-600 text-white'
+                : theme === 'light'
+                  ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  : 'bg-neutral-700 text-neutral-300 hover:bg-neutral-600'
             }`}
           >
             {showCharts ? <Eye className="w-4 h-4 mr-2" /> : <BarChart className="w-4 h-4 mr-2" />}
@@ -132,7 +144,11 @@ const SystemStatistics: React.FC = () => {
           </button>
           <button
             onClick={handleRefresh}
-            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            className={`flex items-center px-4 py-2 rounded-lg transition-colors ${
+              theme === 'light'
+                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                : 'bg-primary-600 hover:bg-primary-700 text-white'
+            }`}
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             รีเฟรช
@@ -142,38 +158,64 @@ const SystemStatistics: React.FC = () => {
 
       {/* Charts Section */}
       {showCharts && (
-        <StatisticsCharts
-          dailyStats={conversationStats.daily_stats_last_7_days}
-          roleDistribution={systemStats.users.role_distribution}
-          totalUsers={systemStats.users.total}
-          totalConversations={systemStats.conversations.total_all}
-          totalMessages={systemStats.messages.total_all}
-          satisfactionRate={systemStats.feedbacks.satisfaction_rate}
-        />
+        <div className={`card p-6 ${
+          theme === 'light' 
+            ? 'bg-white border-gray-200' 
+            : 'bg-neutral-800 border-neutral-700'
+        }`}>
+          <StatisticsCharts
+            dailyStats={conversationStats.daily_stats_last_7_days}
+            roleDistribution={systemStats.users.role_distribution}
+            totalUsers={systemStats.users.total}
+            totalConversations={systemStats.conversations.total_all}
+            totalMessages={systemStats.messages.total_all}
+            satisfactionRate={systemStats.feedbacks.satisfaction_rate}
+          />
+        </div>
       )}
 
       {/* Main Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Users Card */}
-        <div className="bg-gradient-to-br from-blue-600/20 to-blue-800/20 border border-blue-500/30 rounded-xl p-6">
+        <div className={`bg-gradient-to-br from-blue-600/20 to-blue-800/20 border border-blue-500/30 rounded-xl p-6 ${
+          theme === 'light' 
+            ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200' 
+            : ''
+        }`}>
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-              <Users className="w-6 h-6 text-blue-400" />
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+              theme === 'light' 
+                ? 'bg-blue-100' 
+                : 'bg-blue-500/20'
+            }`}>
+              <Users className={`w-6 h-6 ${
+                theme === 'light' ? 'text-blue-600' : 'text-blue-400'
+              }`} />
             </div>
-            <TrendingUp className="w-5 h-5 text-blue-400" />
+            <TrendingUp className={`w-5 h-5 ${
+              theme === 'light' ? 'text-blue-600' : 'text-blue-400'
+            }`} />
           </div>
-          <h3 className="text-2xl font-bold text-white mb-2">
+          <h3 className={`text-2xl font-bold mb-2 ${
+            theme === 'light' ? 'text-gray-900' : 'text-white'
+          }`}>
             {formatNumber(systemStats.users.total)}
           </h3>
-          <p className="text-blue-300 text-sm mb-3">ผู้ใช้ทั้งหมด</p>
+          <p className={`text-sm mb-3 ${
+            theme === 'light' ? 'text-blue-700' : 'text-blue-300'
+          }`}>ผู้ใช้ทั้งหมด</p>
           <div className="space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-blue-200">Active</span>
-              <span className="text-white font-medium">{formatNumber(systemStats.users.active)}</span>
+              <span className={theme === 'light' ? 'text-blue-600' : 'text-blue-200'}>Active</span>
+              <span className={`font-medium ${
+                theme === 'light' ? 'text-gray-900' : 'text-white'
+              }`}>{formatNumber(systemStats.users.active)}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-blue-200">Inactive</span>
-              <span className="text-white font-medium">{formatNumber(systemStats.users.inactive)}</span>
+              <span className={theme === 'light' ? 'text-blue-600' : 'text-blue-200'}>Inactive</span>
+              <span className={`font-medium ${
+                theme === 'light' ? 'text-gray-900' : 'text-white'
+              }`}>{formatNumber(systemStats.users.inactive)}</span>
             </div>
           </div>
         </div>

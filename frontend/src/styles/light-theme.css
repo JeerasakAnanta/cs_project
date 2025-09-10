@@ -1,0 +1,180 @@
+/* ธีมสว่าง - โทนสีสว่างและสบายตา */
+:root {
+  /* สีพื้นหลัง */
+  --chat-bg: #b9babb;
+  --chat-sidebar: #ffffff;
+  --card-bg: #ffffff;
+  --hover-bg: #f8fafc;
+
+  /* สีข้อความ */
+  --text-primary: #000000;
+  --text-secondary: #000000;
+  --text-muted: #000000;
+
+  /* สีขอบ */
+  --border-color: #000000;
+  --border-light: #000000;
+
+  /* สีข้อความ */
+  --chat-message-user: #3b82f6;
+  --chat-message-bot: #000000;
+  --chat-input: #000000;
+
+  /* สี accent */
+  --accent-color: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-light: #dbeafe;
+
+  /* สีสถานะ */
+  --success-color: #10b981;
+  --success-light: #d1fae5;
+  --error-color: #ef4444;
+  --error-light: #fee2e2;
+  --warning-color: #f59e0b;
+  --warning-light: #fef3c7;
+
+  /* สี gradient */
+  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  --gradient-secondary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* ธีมสีมืด - เก็บไว้ตามเดิม (ไม่แก้ไข) */
+.dark {
+  --chat-bg: #0f0f23;
+  --chat-sidebar: #1a1a2e;
+  --card-bg: #1f2937;
+  --hover-bg: #374151;
+
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+
+  --border-color: #374151;
+  --border-light: #4b5563;
+
+  --chat-message-user: #3b82f6;
+  --chat-message-bot: #1f2937;
+  --chat-input: #374151;
+
+  --accent-color: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-light: #1e3a8a;
+
+  --success-color: #10b981;
+  --success-light: #064e3b;
+  --error-color: #ef4444;
+  --error-light: #7f1d1d;
+  --warning-color: #f59e0b;
+  --warning-light: #78350f;
+
+  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  --gradient-secondary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+}
+
+/* Utility classes สำหรับธีมสว่าง */
+.light-theme {
+  background-color: var(--chat-bg);
+  color: var(--text-primary);
+}
+
+.light-theme .card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.light-theme .card:hover {
+  background-color: var(--hover-bg);
+  box-shadow: var(--shadow-md);
+}
+
+.light-theme .btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.light-theme .btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.light-theme .text-primary {
+  color: var(--text-primary);
+}
+
+.light-theme .text-secondary {
+  color: var(--text-secondary);
+}
+
+.light-theme .text-muted {
+  color: var(--text-muted);
+}
+
+.light-theme .border {
+  border-color: var(--border-color);
+}
+
+.light-theme .border-light {
+  border-color: var(--border-light);
+}
+
+/* Admin Panel specific styles */
+.admin-panel.light-theme {
+  background-color: var(--chat-bg);
+}
+
+.admin-panel.light-theme .sidebar {
+  background-color: var(--chat-sidebar);
+  border-right: 1px solid var(--border-color);
+}
+
+.admin-panel.light-theme .content {
+  background-color: var(--chat-bg);
+}
+
+/* Chat specific styles */
+.chat-container.light-theme {
+  background-color: var(--chat-bg);
+}
+
+.chat-container.light-theme .chat-sidebar {
+  background-color: var(--chat-sidebar);
+  border-right: 1px solid var(--border-color);
+}
+
+.chat-container.light-theme .chat-messages {
+  background-color: var(--chat-bg);
+}
+
+.chat-container.light-theme .chat-input {
+  background-color: var(--chat-input);
+  border: 1px solid var(--border-color);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .light-theme .card {
+    margin: 0.5rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .light-theme .btn-primary {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+}

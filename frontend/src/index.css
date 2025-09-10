@@ -3,27 +3,22 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS Custom Properties for theming */
+/* CSS Custom Properties for light theme only */
 :root {
-  --chat-bg: #0f0f23;
-  --chat-sidebar: #1a1a2e;
-  --chat-message-user: #3b82f6;
-  --chat-message-bot: #1f2937;
-  --chat-input: #374151;
-  --text-primary: #ffffff;
-  --text-secondary: #9ca3af;
-  --border-color: #374151;
-}
-
-.light {
-  --chat-bg: #fafbfc;
+  --chat-bg: #f8fafc;
   --chat-sidebar: #ffffff;
   --chat-message-user: #3b82f6;
   --chat-message-bot: #ffffff;
-  --chat-input: #f8fafc;
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
+  --chat-input: #f1f5f9;
+  --text-primary: #000000;
+  --text-secondary: #374151;
   --border-color: #e2e8f0;
+  --card-bg: #ffffff;
+  --hover-bg: #f8fafc;
+  --accent-color: #3b82f6;
+  --success-color: #10b981;
+  --error-color: #ef4444;
+  --warning-color: #f59e0b;
 }
 
 /* Base styles */
@@ -33,7 +28,7 @@
   }
   
   body {
-    @apply bg-chat-bg text-white font-thai;
+    @apply bg-gray-50 text-gray-900 font-thai;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: var(--text-primary);
@@ -45,38 +40,38 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-neutral-800;
+    @apply bg-gray-100;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-neutral-600 rounded-full;
+    @apply bg-gray-300 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-neutral-500;
+    @apply bg-gray-400;
   }
 }
 
 /* Component styles */
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-neutral-900;
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white;
   }
 
   .btn-secondary {
-    @apply bg-neutral-700 hover:bg-neutral-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-neutral-900;
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-white border border-gray-300;
   }
 
   .input-field {
-    @apply w-full bg-neutral-700 dark:bg-neutral-700 bg-white border border-neutral-600 dark:border-neutral-600 border-neutral-300 rounded-lg px-4 py-3 text-white dark:text-white text-neutral-900 placeholder-neutral-400 dark:placeholder-neutral-400 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+    @apply w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
   }
 
   .card {
-    @apply bg-neutral-800 dark:bg-neutral-800 bg-white rounded-xl border border-neutral-700 dark:border-neutral-700 border-neutral-200 shadow-lg backdrop-blur-sm;
+    @apply bg-white rounded-xl border border-gray-200 shadow-lg backdrop-blur-sm;
   }
 
   .glass-effect {
-    @apply bg-white/10 backdrop-blur-md border border-white/20;
+    @apply bg-white/80 backdrop-blur-md border border-gray-200/50;
   }
 }
 
@@ -184,7 +179,7 @@
 .prose h4,
 .prose h5,
 .prose h6 {
-  color: #ffffff;
+  color: #1f2937;
   font-weight: 600;
   margin-top: 1.5em;
   margin-bottom: 0.75em;
@@ -199,7 +194,7 @@
 
 .prose h2 {
   font-size: 1.5rem;
-  border-bottom: 1px solid #4b5563;
+  border-bottom: 1px solid #d1d5db;
   padding-bottom: 0.25rem;
 }
 
@@ -213,23 +208,23 @@
 
 .prose p {
   margin-bottom: 1rem;
-  color: #e5e7eb;
+  color: #374151;
 }
 
 .prose strong {
-  color: #a8b3cf;
+  color: #1f2937;
   font-weight: 600;
 }
 
 .prose em {
-  color: #92a0bf;
+  color: #4b5563;
   font-style: italic;
 }
 
 .prose code {
-  @apply bg-neutral-700 text-primary-300 px-2 py-1 rounded text-sm font-mono;
-  background-color: #374151;
-  color: #60a5fa;
+  @apply bg-gray-100 text-blue-600 px-2 py-1 rounded text-sm font-mono;
+  background-color: #f3f4f6;
+  color: #2563eb;
   padding: 0.25rem 0.5rem;
   border-radius: 0.375rem;
   font-size: 0.875rem;
@@ -237,9 +232,9 @@
 }
 
 .prose pre {
-  @apply bg-neutral-800 border border-neutral-700 rounded-lg p-4 overflow-x-auto;
+  @apply bg-gray-900 border border-gray-300 rounded-lg p-4 overflow-x-auto;
   background-color: #1f2937;
-  border: 1px solid #4b5563;
+  border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   padding: 1rem;
   overflow-x: auto;
@@ -257,9 +252,9 @@
   border-left: 4px solid #3b82f6;
   padding-left: 1rem;
   margin: 1.5rem 0;
-  color: #9ca3af;
+  color: #6b7280;
   font-style: italic;
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: rgba(59, 130, 246, 0.05);
   padding: 1rem;
   border-radius: 0.5rem;
 }
@@ -272,7 +267,7 @@
 
 .prose li {
   margin: 0.5rem 0;
-  color: #e5e7eb;
+  color: #374151;
 }
 
 .prose ul li {
@@ -291,15 +286,15 @@
 }
 
 .prose a {
-  color: #60a5fa;
+  color: #2563eb;
   text-decoration: underline;
-  text-decoration-color: rgba(96, 165, 250, 0.3);
+  text-decoration-color: rgba(37, 99, 235, 0.3);
   transition: all 0.2s ease;
 }
 
 .prose a:hover {
-  color: #93c5fd;
-  text-decoration-color: rgba(147, 197, 253, 0.5);
+  color: #1d4ed8;
+  text-decoration-color: rgba(29, 78, 216, 0.5);
 }
 
 .prose table {
@@ -313,41 +308,41 @@
 
 .prose th,
 .prose td {
-  @apply border border-neutral-600 px-4 py-3 text-left;
-  border: 1px solid #4b5563;
+  @apply border border-gray-300 px-4 py-3 text-left;
+  border: 1px solid #d1d5db;
   padding: 0.75rem 1rem;
   text-align: left;
 }
 
 .prose thead {
-  background: linear-gradient(135deg, #374151, #4b5563);
+  background: linear-gradient(135deg, #f9fafb, #f3f4f6);
 }
 
 .prose thead th {
-  @apply font-semibold text-white;
+  @apply font-semibold text-gray-900;
   font-weight: 600;
-  color: #ffffff;
+  color: #111827;
 }
 
 .prose tbody tr:nth-child(odd) {
-  @apply bg-neutral-800;
-  background-color: #1f2937;
+  @apply bg-gray-50;
+  background-color: #f9fafb;
 }
 
 .prose tbody tr:nth-child(even) {
-  @apply bg-neutral-700;
-  background-color: #374151;
+  @apply bg-white;
+  background-color: #ffffff;
 }
 
 .prose tbody tr:hover {
-  @apply bg-neutral-600 transition-colors duration-200;
-  background-color: #4b5563;
+  @apply bg-gray-100 transition-colors duration-200;
+  background-color: #f3f4f6;
   transition: background-color 0.2s ease;
 }
 
 .prose hr {
   border: none;
-  border-top: 1px solid #4b5563;
+  border-top: 1px solid #d1d5db;
   margin: 2rem 0;
 }
 
@@ -360,31 +355,31 @@
 
 /* Special styling for bot messages */
 .prose .highlight {
-  background-color: rgba(59, 130, 246, 0.2);
+  background-color: rgba(59, 130, 246, 0.1);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   border-left: 3px solid #3b82f6;
 }
 
 .prose .info-box {
-  background-color: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background-color: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 0.5rem;
   padding: 1rem;
   margin: 1rem 0;
 }
 
 .prose .warning-box {
-  background-color: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background-color: rgba(245, 158, 11, 0.05);
+  border: 1px solid rgba(245, 158, 11, 0.2);
   border-radius: 0.5rem;
   padding: 1rem;
   margin: 1rem 0;
 }
 
 .prose .error-box {
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background-color: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 0.5rem;
   padding: 1rem;
   margin: 1rem 0;
@@ -422,10 +417,10 @@
 
 /* Loading skeleton */
 .skeleton {
-  @apply bg-neutral-700 animate-pulse rounded;
+  @apply bg-gray-200 animate-pulse rounded;
 }
 
 /* Custom focus styles */
 .focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-neutral-900;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white;
 }
