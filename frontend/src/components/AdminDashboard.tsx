@@ -9,7 +9,7 @@ import {
   MessageSquare,
   Search
 } from 'lucide-react';
-import PdfManager from './PdfManager';
+import PDFManager from './PDFManager';
 import UserManager from './UserManager';
 import SystemStatistics from './admin/SystemStatistics';
 import ConversationSearch from './admin/ConversationSearch';
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
       case 'user':
         return <UserManager />;
       case 'pdf':
-        return <PdfManager />;
+        return <PDFManager />;
       default:
         return <SystemStatistics />;
     }

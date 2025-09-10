@@ -10,6 +10,7 @@ import Register from './components/Register';
 import Chatbot from './components/Chatbot';
 import Pagenotfound from './components/Pagenotfound';
 import AdminDashboard from './components/AdminDashboard';
+import PDFManager from './components/PDFManager';
 import ErrorBoundary from './components/ErrorBoundary';
 import TypingTest from './components/TypingTest';
 
@@ -315,6 +316,7 @@ const AppContent: React.FC = () => {
         <Route path="/register" element={<Register />} />
         <Route element={<AdminRoute />}>
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/pdfs" element={<PDFManager />} />
         </Route>
       </Routes>
     );

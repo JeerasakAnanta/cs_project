@@ -13,7 +13,7 @@ from app.chat.anonymous_router import router as router_anonymous
 from app.chat.guest_router import router as router_guest
 from app.routers.router_login import router as router_login
 from app.chat.feedback_router import router as router_feedback
-from app.routers.router_pdfs import router as router_pdfs
+from app.routers.router_pdfs_enhanced import router as router_pdfs_enhanced
 from app.routers.router_admin import router as router_admin
 from app.routers.router_admin_conversations import router as router_admin_conversations
 
@@ -73,7 +73,7 @@ app.include_router(router_guest)
 app.include_router(router_feedback)
 
 # PDF routers
-app.include_router(router_pdfs)
+app.include_router(router_pdfs_enhanced)
 
 # Admin routers
 app.include_router(router_admin)
