@@ -19,10 +19,10 @@ interface FeedbackData {
   priority?: string;
 }
 
-const FeedbackSystem: React.FC<FeedbackProps> = ({ 
-  messageId, 
-  conversationId, 
-  onFeedbackSubmit 
+const FeedbackSystem: React.FC<FeedbackProps> = ({
+  messageId,
+  conversationId,
+  onFeedbackSubmit,
 }) => {
   const [showRating, setShowRating] = useState(false);
   const [rating, setRating] = useState(0);
@@ -33,11 +33,11 @@ const FeedbackSystem: React.FC<FeedbackProps> = ({
   const handleRatingClick = (selectedRating: number) => {
     setRating(selectedRating);
     setShowRating(false);
-    
+
     if (onFeedbackSubmit) {
       onFeedbackSubmit(selectedRating, feedbackText);
     }
-    
+
     // ส่ง feedback ไปยัง API
     submitRating(selectedRating, feedbackText);
   };
@@ -53,7 +53,7 @@ const FeedbackSystem: React.FC<FeedbackProps> = ({
           conversation_id: conversationId,
           message_id: messageId,
           rating: ratingValue,
-          feedback_text: feedback
+          feedback_text: feedback,
         }),
       });
 
@@ -102,7 +102,9 @@ const FeedbackSystem: React.FC<FeedbackProps> = ({
             <Star
               key={star}
               className={`h-4 w-4 ${
-                star <= rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                star <= rating
+                  ? 'text-yellow-400 fill-current'
+                  : 'text-gray-300'
               }`}
             />
           ))}
@@ -179,7 +181,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ onSubmit, onCancel }) => {
     feedback_type: 'general',
     feedback_text: '',
     category: 'suggestion',
-    priority: 'medium'
+    priority: 'medium',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -198,7 +200,12 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ onSubmit, onCancel }) => {
           </label>
           <select
             value={feedbackData.feedback_type}
-            onChange={(e) => setFeedbackData({...feedbackData, feedback_type: e.target.value})}
+            onChange={(e) =>
+              setFeedbackData({
+                ...feedbackData,
+                feedback_type: e.target.value,
+              })
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="general">ทั่วไป</option>
@@ -215,7 +222,12 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ onSubmit, onCancel }) => {
           <textarea
             required
             value={feedbackData.feedback_text}
-            onChange={(e) => setFeedbackData({...feedbackData, feedback_text: e.target.value})}
+            onChange={(e) =>
+              setFeedbackData({
+                ...feedbackData,
+                feedback_text: e.target.value,
+              })
+            }
             placeholder="กรุณาเขียนข้อเสนอแนะของคุณ..."
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows={3}
@@ -229,7 +241,9 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ onSubmit, onCancel }) => {
             </label>
             <select
               value={feedbackData.category}
-              onChange={(e) => setFeedbackData({...feedbackData, category: e.target.value})}
+              onChange={(e) =>
+                setFeedbackData({ ...feedbackData, category: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="suggestion">ข้อเสนอแนะ</option>
@@ -245,7 +259,9 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ onSubmit, onCancel }) => {
             </label>
             <select
               value={feedbackData.priority}
-              onChange={(e) => setFeedbackData({...feedbackData, priority: e.target.value})}
+              onChange={(e) =>
+                setFeedbackData({ ...feedbackData, priority: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="low">ต่ำ</option>

@@ -17,4 +17,4 @@ const GuestRoute: React.FC<Props> = ({ children }) => {
   return children;
 };
 
-export default GuestRoute; 
+export default GuestRoute;

@@ -19,8 +19,12 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(localStorage.getItem('authToken'));
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem('authToken')
+  );
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isGuest, setIsGuest] = useState<boolean>(() => {
     // ถ้าไม่มี token และไม่มี guestMode ใน localStorage ให้เริ่มต้นเป็น guest mode
@@ -89,16 +93,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      currentUser, 
-      isAuthenticated, 
-      isAdmin, 
-      isGuestMode, 
-      login, 
-      logout, 
-      enableGuestMode, 
-      disableGuestMode 
-    }}>
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        isAuthenticated,
+        isAdmin,
+        isGuestMode,
+        login,
+        logout,
+        enableGuestMode,
+        disableGuestMode,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -110,4 +116,4 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}; 
+};

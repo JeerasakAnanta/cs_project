@@ -4,7 +4,8 @@ import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
 
 // Fix: Use correct backend port (8001) instead of incorrect port
-const VITE_HOST = import.meta.env.VITE_BACKEND_DOCS_API || 'http://localhost:8001';
+const VITE_HOST =
+  import.meta.env.VITE_BACKEND_DOCS_API || 'http://localhost:8001';
 
 const Uploadpdf: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -48,7 +49,7 @@ const Uploadpdf: React.FC = () => {
       await axios.post(`${VITE_HOST}/api/pdfs/upload/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${authToken}`
+          Authorization: `Bearer ${authToken}`,
         },
       });
       setStatusText('อัปโหลดสำเร็จ!');

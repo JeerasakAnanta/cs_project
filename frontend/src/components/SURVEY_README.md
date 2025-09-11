@@ -7,11 +7,13 @@
 ## คุณสมบัติ
 
 ### 1. การประเมินแบบดาว (Star Rating)
+
 - ให้คะแนนความพึงพอใจโดยรวม 1-5 ดาว
 - แสดงคำอธิบายระดับความพึงพอใจ
 - จำเป็นต้องให้คะแนนก่อนส่งแบบประเมิน
 
 ### 2. การประเมินรายละเอียด
+
 - ความง่ายในการใช้งาน
 - ความเร็วในการตอบสนอง
 - ความแม่นยำของข้อมูล
@@ -19,16 +21,19 @@
 - การออกแบบส่วนติดต่อผู้ใช้
 
 ### 3. การเลือกคุณสมบัติ
+
 - เลือกคุณสมบัติที่ประทับใจได้หลายข้อ
 - แสดงผลการเลือกด้วย Chip
 - มีไอคอนประกอบแต่ละคุณสมบัติ
 
 ### 4. คำถามแนะนำ
+
 - จะแนะนำให้ผู้อื่นหรือไม่
 - มีตัวเลือก: จะแนะนำ / อาจจะแนะนำ / ไม่แนะนำ
 - แสดงไอคอนประกอบ
 
 ### 5. ข้อเสนอแนะและความคิดเห็น
+
 - ช่องข้อเสนอแนะเพื่อการปรับปรุง
 - ช่องความคิดเห็นเพิ่มเติม
 - รองรับการพิมพ์หลายบรรทัด
@@ -54,7 +59,7 @@ const App = () => {
       <h1>LannaFinChat</h1>
       {/* ปุ่มแบบประเมิน */}
       <SurveyButton variant="button" />
-      
+
       {/* ปุ่มลอย */}
       <SurveyButton variant="fab" position="fixed" />
     </div>
@@ -85,7 +90,7 @@ const CustomSurvey = () => {
       <button onClick={() => setOpen(true)}>
         เปิดแบบประเมิน
       </button>
-      
+
       <SatisfactionSurvey
         open={open}
         onClose={() => setOpen(false)}
@@ -102,17 +107,17 @@ const CustomSurvey = () => {
 
 ```typescript
 interface SurveyData {
-  overallSatisfaction: number;      // ความพึงพอใจโดยรวม (1-5)
-  easeOfUse: number;               // ความง่ายในการใช้งาน (1-5)
-  responseSpeed: number;            // ความเร็วในการตอบสนอง (1-5)
-  accuracy: number;                 // ความแม่นยำของข้อมูล (1-5)
-  helpfulness: number;              // ประโยชน์ที่ได้รับ (1-5)
-  userInterface: number;            // การออกแบบส่วนติดต่อผู้ใช้ (1-5)
-  features: string[];               // คุณสมบัติที่ประทับใจ
-  improvements: string;             // ข้อเสนอแนะเพื่อการปรับปรุง
-  recommendToOthers: string;        // จะแนะนำให้ผู้อื่นหรือไม่
-  additionalComments: string;       // ความคิดเห็นเพิ่มเติม
-  timestamp: Date;                  // เวลาที่ส่งแบบประเมิน
+  overallSatisfaction: number; // ความพึงพอใจโดยรวม (1-5)
+  easeOfUse: number; // ความง่ายในการใช้งาน (1-5)
+  responseSpeed: number; // ความเร็วในการตอบสนอง (1-5)
+  accuracy: number; // ความแม่นยำของข้อมูล (1-5)
+  helpfulness: number; // ประโยชน์ที่ได้รับ (1-5)
+  userInterface: number; // การออกแบบส่วนติดต่อผู้ใช้ (1-5)
+  features: string[]; // คุณสมบัติที่ประทับใจ
+  improvements: string; // ข้อเสนอแนะเพื่อการปรับปรุง
+  recommendToOthers: string; // จะแนะนำให้ผู้อื่นหรือไม่
+  additionalComments: string; // ความคิดเห็นเพิ่มเติม
+  timestamp: Date; // เวลาที่ส่งแบบประเมิน
 }
 ```
 
@@ -174,9 +179,9 @@ const handleSubmit = async (data: SurveyData) => {
     const response = await fetch('/api/survey', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
-    
+
     if (response.ok) {
       // แสดงข้อความสำเร็จ
     }
@@ -197,7 +202,7 @@ import SatisfactionSurvey from './SatisfactionSurvey';
 test('opens and closes survey modal', () => {
   const onClose = jest.fn();
   render(<SatisfactionSurvey open={true} onClose={onClose} />);
-  
+
   fireEvent.click(screen.getByText('ยกเลิก'));
   expect(onClose).toHaveBeenCalled();
 });
@@ -209,13 +214,13 @@ test('opens and closes survey modal', () => {
 test('submits survey data', () => {
   const onSubmit = jest.fn();
   render(<SatisfactionSurvey open={true} onClose={() => {}} onSubmit={onSubmit} />);
-  
+
   // ให้คะแนน
   fireEvent.click(screen.getByLabelText('5 stars'));
-  
+
   // ส่งแบบประเมิน
   fireEvent.click(screen.getByText('ส่งแบบประเมิน'));
-  
+
   expect(onSubmit).toHaveBeenCalled();
 });
 ```

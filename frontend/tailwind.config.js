@@ -9,7 +9,7 @@ module.exports = {
         'rmutl-gold': '#a88f58',
         'rmutl-tan': '#a19282',
         // Enhanced color palette
-        'primary': {
+        primary: {
           50: '#eff6ff',
           100: '#dbeafe',
           200: '#bfdbfe',
@@ -21,7 +21,7 @@ module.exports = {
           800: '#1e40af',
           900: '#1e3a8a',
         },
-        'neutral': {
+        neutral: {
           50: '#fafafa',
           100: '#f5f5f5',
           200: '#e5e5e5',
@@ -33,17 +33,17 @@ module.exports = {
           800: '#262626',
           900: '#171717',
         },
-        'chat': {
-          'bg': 'var(--chat-bg, #0f0f23)',
-          'sidebar': 'var(--chat-sidebar, #1a1a2e)',
+        chat: {
+          bg: 'var(--chat-bg, #0f0f23)',
+          sidebar: 'var(--chat-sidebar, #1a1a2e)',
           'message-user': 'var(--chat-message-user, #3b82f6)',
           'message-bot': 'var(--chat-message-bot, #1f2937)',
-          'input': 'var(--chat-input, #374151)',
-        }
+          input: 'var(--chat-input, #374151)',
+        },
       },
       fontFamily: {
-        'sans': ['Inter', 'system-ui', 'sans-serif'],
-        'thai': ['Sarabun', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        thai: ['Sarabun', 'Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
@@ -69,12 +69,10 @@ module.exports = {
         xs: '2px',
       },
       boxShadow: {
-        'glow': '0 0 20px rgba(59, 130, 246, 0.3)',
+        glow: '0 0 20px rgba(59, 130, 246, 0.3)',
         'glow-lg': '0 0 40px rgba(59, 130, 246, 0.4)',
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [require('@tailwindcss/typography')],
 };

@@ -45,7 +45,9 @@ class ErrorBoundary extends Component<Props, State> {
             </button>
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mt-4 text-left">
-                <summary className="cursor-pointer text-blue-400">รายละเอียดข้อผิดพลาด (Development)</summary>
+                <summary className="cursor-pointer text-blue-400">
+                  รายละเอียดข้อผิดพลาด (Development)
+                </summary>
                 <pre className="mt-2 text-xs bg-gray-700 p-2 rounded overflow-auto">
                   {this.state.error.toString()}
                 </pre>
@@ -60,4 +62,4 @@ class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-export default ErrorBoundary; 
+export default ErrorBoundary;

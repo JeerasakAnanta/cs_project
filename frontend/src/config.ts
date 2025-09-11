@@ -1,38 +1,40 @@
 // Backend API configuration
 const getBackendUrl = () => {
   // Check if we're in production by looking at the current URL
-  const isProduction = window.location.hostname !== 'localhost' && 
-                      window.location.protocol === 'https:';
-  
+  const isProduction =
+    window.location.hostname !== 'localhost' &&
+    window.location.protocol === 'https:';
+
   // If environment variable is set, use it
   if (import.meta.env.VITE_BACKEND_CHATBOT_API) {
     return import.meta.env.VITE_BACKEND_CHATBOT_API;
   }
-  
+
   // In production with Cloudflare Tunnel, use HTTPS for backend
   if (isProduction) {
     return 'https://10.50.5.31:8001';
   }
-  
+
   // In development, use localhost
   return 'http://localhost:8001';
 };
 
 const getDocsUrl = () => {
   // Check if we're in production by looking at the current URL
-  const isProduction = window.location.hostname !== 'localhost' && 
-                      window.location.protocol === 'https:';
-  
+  const isProduction =
+    window.location.hostname !== 'localhost' &&
+    window.location.protocol === 'https:';
+
   // If environment variable is set, use it
   if (import.meta.env.VITE_BACKEND_DOCS_STATIC) {
     return import.meta.env.VITE_BACKEND_DOCS_STATIC;
   }
-  
+
   // In production with Cloudflare Tunnel, use HTTPS for backend
   if (isProduction) {
     return 'https://10.50.5.31:8001';
   }
-  
+
   // In development, use localhost
   return 'http://localhost:8001';
 };
@@ -44,16 +46,16 @@ export const DOCS_STATIC = getDocsUrl();
 export const GUEST_MODE_CONFIG = {
   // Machine ID storage key
   MACHINE_ID_KEY: 'guest_machine_id',
-  
+
   // Guest mode storage key
   GUEST_MODE_KEY: 'guestMode',
-  
+
   // Auto-entry enabled
   AUTO_ENTRY_ENABLED: true,
-  
+
   // Default conversation title length
   MAX_TITLE_LENGTH: 50,
-  
+
   // Export/Import settings
   EXPORT_FILENAME: 'guest_conversations_backup.json',
 };
@@ -62,13 +64,13 @@ export const GUEST_MODE_CONFIG = {
 export const CHAT_CONFIG = {
   // Message formatting
   BOT_MESSAGE_FORMATTING: true,
-  
+
   // Auto-scroll
   AUTO_SCROLL_ENABLED: true,
-  
+
   // Typing indicator
   TYPING_INDICATOR_ENABLED: true,
-  
+
   // Message delay (ms)
   TYPING_DELAY: 1000,
 };
@@ -77,10 +79,10 @@ export const CHAT_CONFIG = {
 export const UI_CONFIG = {
   // Theme
   DEFAULT_THEME: 'dark',
-  
+
   // Language
   DEFAULT_LANGUAGE: 'th',
-  
+
   // Responsive breakpoints
   BREAKPOINTS: {
     mobile: 768,
@@ -93,10 +95,10 @@ export const UI_CONFIG = {
 export const ERROR_CONFIG = {
   // Retry attempts
   MAX_RETRY_ATTEMPTS: 3,
-  
+
   // Retry delay (ms)
   RETRY_DELAY: 1000,
-  
+
   // Timeout (ms)
   REQUEST_TIMEOUT: 30000,
-}; 
+};

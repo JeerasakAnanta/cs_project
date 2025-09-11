@@ -34,15 +34,20 @@ class AnonymousChatService {
     }
   }
 
-  async createAnonymousConversation(title: string): Promise<AnonymousConversation> {
+  async createAnonymousConversation(
+    title: string
+  ): Promise<AnonymousConversation> {
     try {
-      const response = await fetch(`${BACKEND_API}/chat/anonymous/conversations`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title }),
-      });
+      const response = await fetch(
+        `${BACKEND_API}/chat/anonymous/conversations`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ title }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -56,17 +61,20 @@ class AnonymousChatService {
   }
 
   async addMessageToAnonymousConversation(
-    conversationId: string, 
+    conversationId: string,
     message: string
   ): Promise<string> {
     try {
-      const response = await fetch(`${BACKEND_API}/chat/anonymous/conversations/${conversationId}/messages`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content: message }),
-      });
+      const response = await fetch(
+        `${BACKEND_API}/chat/anonymous/conversations/${conversationId}/messages`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ content: message }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -81,4 +89,4 @@ class AnonymousChatService {
   }
 }
 
-export const anonymousChatService = new AnonymousChatService(); 
+export const anonymousChatService = new AnonymousChatService();

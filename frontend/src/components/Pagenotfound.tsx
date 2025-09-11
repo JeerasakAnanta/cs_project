@@ -8,8 +8,14 @@ const Pagenotfound: React.FC = () => {
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+        <div
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl animate-pulse-slow"
+          style={{ animationDelay: '1s' }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl animate-pulse-slow"
+          style={{ animationDelay: '2s' }}
+        ></div>
       </div>
 
       <div className="relative z-10 text-center px-6">
@@ -23,7 +29,9 @@ const Pagenotfound: React.FC = () => {
           </div>
 
           {/* Content */}
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">ไม่พบหน้าเว็บ</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            ไม่พบหน้าเว็บ
+          </h2>
           <p className="text-gray-600 mb-8 leading-relaxed">
             หน้าที่คุณกำลังค้นหาอาจถูกลบ ย้าย หรือไม่มีอยู่จริง
           </p>
@@ -37,7 +45,7 @@ const Pagenotfound: React.FC = () => {
               <Home className="w-5 h-5 mr-2" />
               กลับหน้าหลัก
             </Link>
-            
+
             <button
               onClick={() => window.history.back()}
               className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 text-base font-semibold flex items-center justify-center rounded-lg transition-colors border border-gray-300"

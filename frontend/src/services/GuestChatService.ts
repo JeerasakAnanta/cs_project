@@ -51,7 +51,7 @@ class GuestChatService {
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
-    
+
     conversations.unshift(newConversation);
     this.saveConversations(conversations);
     return newConversation;
@@ -59,13 +59,18 @@ class GuestChatService {
 
   getConversation(id: string): GuestConversation | null {
     const conversations = this.getConversationsFromStorage();
-    return conversations.find(conv => conv.id === id) || null;
+    return conversations.find((conv) => conv.id === id) || null;
   }
 
-  addMessage(conversationId: string, message: Omit<GuestMessage, 'id' | 'timestamp'>): GuestMessage {
+  addMessage(
+    conversationId: string,
+    message: Omit<GuestMessage, 'id' | 'timestamp'>
+  ): GuestMessage {
     const conversations = this.getConversationsFromStorage();
-    const conversationIndex = conversations.findIndex(conv => conv.id === conversationId);
-    
+    const conversationIndex = conversations.findIndex(
+      (conv) => conv.id === conversationId
+    );
+
     if (conversationIndex === -1) {
       throw new Error('Conversation not found');
     }
@@ -78,34 +83,41 @@ class GuestChatService {
 
     conversations[conversationIndex].messages.push(newMessage);
     conversations[conversationIndex].updatedAt = Date.now();
-    
+
     this.saveConversations(conversations);
     return newMessage;
   }
 
-  updateConversationTitle(conversationId: string, title: string): GuestConversation | null {
+  updateConversationTitle(
+    conversationId: string,
+    title: string
+  ): GuestConversation | null {
     const conversations = this.getConversationsFromStorage();
-    const conversationIndex = conversations.findIndex(conv => conv.id === conversationId);
-    
+    const conversationIndex = conversations.findIndex(
+      (conv) => conv.id === conversationId
+    );
+
     if (conversationIndex === -1) {
       return null;
     }
 
     conversations[conversationIndex].title = title;
     conversations[conversationIndex].updatedAt = Date.now();
-    
+
     this.saveConversations(conversations);
     return conversations[conversationIndex];
   }
 
   deleteConversation(conversationId: string): boolean {
     const conversations = this.getConversationsFromStorage();
-    const filteredConversations = conversations.filter(conv => conv.id !== conversationId);
-    
+    const filteredConversations = conversations.filter(
+      (conv) => conv.id !== conversationId
+    );
+
     if (filteredConversations.length === conversations.length) {
       return false; // Conversation not found
     }
-    
+
     this.saveConversations(filteredConversations);
     return true;
   }
@@ -135,4 +147,4 @@ class GuestChatService {
   }
 }
 
-export const guestChatService = new GuestChatService(); 
+export const guestChatService = new GuestChatService();

@@ -76,11 +76,11 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-in fade-in duration-300">
-      <div className={`${getBgColor()} backdrop-blur-sm border rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl shadow-black/50 transform transition-all duration-300 animate-in zoom-in-95 duration-300`}>
+      <div
+        className={`${getBgColor()} backdrop-blur-sm border rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl shadow-black/50 transform transition-all duration-300 animate-in zoom-in-95 duration-300`}
+      >
         <div className="flex items-start">
-          <div className="flex-shrink-0 mr-4">
-            {getIcon()}
-          </div>
+          <div className="flex-shrink-0 mr-4">{getIcon()}</div>
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <h3 className={`text-lg font-semibold ${getTitleColor()}`}>
@@ -105,4 +105,4 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
   );
 };
 
-export default CustomAlert; 
+export default CustomAlert;

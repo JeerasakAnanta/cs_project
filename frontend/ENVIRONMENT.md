@@ -24,6 +24,7 @@ The frontend now automatically detects the environment and uses appropriate URLs
 If you need to override the automatic detection, you can set environment variables:
 
 #### Development
+
 ```bash
 # .env.development
 VITE_BACKEND_CHATBOT_API=http://localhost:8001
@@ -31,6 +32,7 @@ VITE_BACKEND_DOCS_STATIC=http://localhost:8001
 ```
 
 #### Production (Cloudflare Tunnel)
+
 ```bash
 # .env.production
 VITE_BACKEND_CHATBOT_API=http://10.50.5.31:8001

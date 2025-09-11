@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
 
 export interface Conversation {
   id: number;
@@ -63,18 +64,20 @@ class ConversationService {
       throw new Error('ไม่พบ token การเข้าสู่ระบบ');
     }
     return {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     };
   }
 
   /**
    * ดึงรายการการสนทนาทั้งหมด
    */
-  async getConversations(filters?: ConversationFilters): Promise<Conversation[]> {
+  async getConversations(
+    filters?: ConversationFilters
+  ): Promise<Conversation[]> {
     try {
       const params = new URLSearchParams();
-      
+
       if (filters?.search) params.append('search', filters.search);
       if (filters?.satisfaction && filters.satisfaction !== 'all') {
         params.append('satisfaction', filters.satisfaction);
@@ -90,14 +93,16 @@ class ConversationService {
         `${API_BASE_URL}/admin/conversations/?${params.toString()}`,
         { headers: this.getAuthHeaders() }
       );
-      
+
       return response.data;
     } catch (error: any) {
       console.error('Error fetching conversations:', error);
       if (error.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้เข้าถึงข้อมูลการสนทนา');
       }
-      throw new Error(error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงข้อมูลการสนทนา');
+      throw new Error(
+        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงข้อมูลการสนทนา'
+      );
     }
   }
 
@@ -110,7 +115,7 @@ class ConversationService {
         `${API_BASE_URL}/admin/conversations/${id}`,
         { headers: this.getAuthHeaders() }
       );
-      
+
       return response.data;
     } catch (error: any) {
       console.error('Error fetching conversation:', error);
@@ -120,17 +125,21 @@ class ConversationService {
       if (error.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้เข้าถึงข้อมูลการสนทนา');
       }
-      throw new Error(error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงข้อมูลการสนทนา');
+      throw new Error(
+        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงข้อมูลการสนทนา'
+      );
     }
   }
 
   /**
    * ดึงสถิติการสนทนา
    */
-  async getConversationStats(filters?: ConversationFilters): Promise<ConversationStats> {
+  async getConversationStats(
+    filters?: ConversationFilters
+  ): Promise<ConversationStats> {
     try {
       const params = new URLSearchParams();
-      
+
       if (filters?.dateFrom) params.append('date_from', filters.dateFrom);
       if (filters?.dateTo) params.append('date_to', filters.dateTo);
 
@@ -138,14 +147,16 @@ class ConversationService {
         `${API_BASE_URL}/admin/conversations/stats/overview?${params.toString()}`,
         { headers: this.getAuthHeaders() }
       );
-      
+
       return response.data;
     } catch (error: any) {
       console.error('Error fetching conversation stats:', error);
       if (error.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้เข้าถึงสถิติการสนทนา');
       }
-      throw new Error(error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติการสนทนา');
+      throw new Error(
+        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติการสนทนา'
+      );
     }
   }
 
@@ -159,7 +170,7 @@ class ConversationService {
         { satisfaction_rating: rating },
         { headers: this.getAuthHeaders() }
       );
-      
+
       return response.data;
     } catch (error: any) {
       console.error('Error updating satisfaction:', error);
@@ -169,7 +180,9 @@ class ConversationService {
       if (error.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้อัปเดตข้อมูลการสนทนา');
       }
-      throw new Error(error.response?.data?.detail || 'เกิดข้อผิดพลาดในการอัปเดตความพึงพอใจ');
+      throw new Error(
+        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการอัปเดตความพึงพอใจ'
+      );
     }
   }
 
@@ -178,10 +191,9 @@ class ConversationService {
    */
   async deleteConversation(id: number): Promise<void> {
     try {
-      await axios.delete(
-        `${API_BASE_URL}/admin/conversations/${id}`,
-        { headers: this.getAuthHeaders() }
-      );
+      await axios.delete(`${API_BASE_URL}/admin/conversations/${id}`, {
+        headers: this.getAuthHeaders(),
+      });
     } catch (error: any) {
       console.error('Error deleting conversation:', error);
       if (error.response?.status === 404) {
@@ -190,7 +202,9 @@ class ConversationService {
       if (error.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้ลบข้อมูลการสนทนา');
       }
-      throw new Error(error.response?.data?.detail || 'เกิดข้อผิดพลาดในการลบการสนทนา');
+      throw new Error(
+        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการลบการสนทนา'
+      );
     }
   }
 
@@ -200,7 +214,7 @@ class ConversationService {
   async exportConversations(filters?: ConversationFilters): Promise<Blob> {
     try {
       const params = new URLSearchParams();
-      
+
       if (filters?.search) params.append('search', filters.search);
       if (filters?.satisfaction && filters.satisfaction !== 'all') {
         params.append('satisfaction', filters.satisfaction);
@@ -214,19 +228,21 @@ class ConversationService {
 
       const response = await axios.get(
         `${API_BASE_URL}/admin/conversations/export/csv?${params.toString()}`,
-        { 
+        {
           headers: this.getAuthHeaders(),
-          responseType: 'blob'
+          responseType: 'blob',
         }
       );
-      
+
       return response.data;
     } catch (error: any) {
       console.error('Error exporting conversations:', error);
       if (error.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้ส่งออกข้อมูลการสนทนา');
       }
-      throw new Error(error.response?.data?.detail || 'เกิดข้อผิดพลาดในการส่งออกข้อมูล');
+      throw new Error(
+        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการส่งออกข้อมูล'
+      );
     }
   }
 
@@ -253,17 +269,19 @@ class ConversationService {
         {},
         { headers: this.getAuthHeaders() }
       );
-      
+
       return response.data;
     } catch (error: any) {
       console.error('Error migrating data:', error);
       if (error.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้ทำการ migration');
       }
-      throw new Error(error.response?.data?.detail || 'เกิดข้อผิดพลาดในการ migration');
+      throw new Error(
+        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการ migration'
+      );
     }
   }
 }
 
 export const conversationService = new ConversationService();
-export type { Conversation, ConversationFilters, ConversationStats };
+//export type { Conversation, ConversationFilters, ConversationStats };

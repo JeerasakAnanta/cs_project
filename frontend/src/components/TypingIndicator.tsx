@@ -5,15 +5,15 @@ interface TypingIndicatorProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-const TypingIndicator: React.FC<TypingIndicatorProps> = ({ 
-  variant = 'dots', 
-  size = 'medium' 
+const TypingIndicator: React.FC<TypingIndicatorProps> = ({
+  variant = 'dots',
+  size = 'medium',
 }) => {
   // Define sizes
   const sizes = {
     small: { dotSize: 4, gap: 2 },
     medium: { dotSize: 8, gap: 4 },
-    large: { dotSize: 12, gap: 6 }
+    large: { dotSize: 12, gap: 6 },
   };
 
   const currentSize = sizes[size];
@@ -21,7 +21,7 @@ const TypingIndicator: React.FC<TypingIndicatorProps> = ({
   const containerStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
-    gap: `${currentSize.gap}px`
+    gap: `${currentSize.gap}px`,
   };
 
   const baseDotStyle: React.CSSProperties = {
@@ -29,7 +29,7 @@ const TypingIndicator: React.FC<TypingIndicatorProps> = ({
     height: `${currentSize.dotSize}px`,
     backgroundColor: '#a855f7',
     borderRadius: '50%',
-    opacity: 0.3
+    opacity: 0.3,
   };
 
   // Add CSS animations to head if they don't exist
@@ -69,32 +69,35 @@ const TypingIndicator: React.FC<TypingIndicatorProps> = ({
 
   return (
     <div style={containerStyle}>
-      <div 
+      <div
         style={{
           ...baseDotStyle,
-          animation: variant === 'pulse' 
-            ? `pulse 1.5s infinite ease-in-out ${delays[0]}s`
-            : `bounce 1.4s infinite ease-in-out ${delays[0]}s`
+          animation:
+            variant === 'pulse'
+              ? `pulse 1.5s infinite ease-in-out ${delays[0]}s`
+              : `bounce 1.4s infinite ease-in-out ${delays[0]}s`,
         }}
       ></div>
-      <div 
+      <div
         style={{
           ...baseDotStyle,
-          animation: variant === 'pulse' 
-            ? `pulse 1.5s infinite ease-in-out ${delays[1]}s`
-            : `bounce 1.4s infinite ease-in-out ${delays[1]}s`
+          animation:
+            variant === 'pulse'
+              ? `pulse 1.5s infinite ease-in-out ${delays[1]}s`
+              : `bounce 1.4s infinite ease-in-out ${delays[1]}s`,
         }}
       ></div>
-      <div 
+      <div
         style={{
           ...baseDotStyle,
-          animation: variant === 'pulse' 
-            ? `pulse 1.5s infinite ease-in-out ${delays[2]}s`
-            : `bounce 1.4s infinite ease-in-out ${delays[2]}s`
+          animation:
+            variant === 'pulse'
+              ? `pulse 1.5s infinite ease-in-out ${delays[2]}s`
+              : `bounce 1.4s infinite ease-in-out ${delays[2]}s`,
         }}
       ></div>
     </div>
   );
 };
 
-export default TypingIndicator; 
+export default TypingIndicator;

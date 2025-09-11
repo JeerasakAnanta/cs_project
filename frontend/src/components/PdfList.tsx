@@ -25,8 +25,8 @@ const PdfList: React.FC = () => {
 
         const response = await fetch(`${HOST}/api/pdfs/`, {
           headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer ${authToken}`
+            accept: 'application/json',
+            Authorization: `Bearer ${authToken}`,
           },
         });
 

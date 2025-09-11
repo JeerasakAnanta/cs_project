@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
 type Theme = 'light' | 'dark';
 type SectionTheme = 'chat' | 'admin';
@@ -42,7 +48,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   useEffect(() => {
     // บังคับใช้ธีมสว่างเสมอ
     setTheme('light');
-    
+
     // Save theme to localStorage
     localStorage.setItem('theme', 'light');
 
@@ -96,7 +102,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, sectionTheme, toggleTheme, setSectionTheme }}>
+    <ThemeContext.Provider
+      value={{ theme, sectionTheme, toggleTheme, setSectionTheme }}
+    >
       {children}
     </ThemeContext.Provider>
   );

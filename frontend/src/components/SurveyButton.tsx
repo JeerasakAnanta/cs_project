@@ -12,7 +12,7 @@ interface SurveyButtonProps {
 const SurveyButton: React.FC<SurveyButtonProps> = ({
   variant = 'button',
   position = 'inline',
-  className = ''
+  className = '',
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -22,7 +22,7 @@ const SurveyButton: React.FC<SurveyButtonProps> = ({
   const handleSubmit = (data: any) => {
     // Here you can send the survey data to your backend
     console.log('Survey submitted:', data);
-    
+
     // Example: Send to API
     // fetch('/api/survey', {
     //   method: 'POST',
@@ -42,13 +42,13 @@ const SurveyButton: React.FC<SurveyButtonProps> = ({
             className={`${position === 'fixed' ? 'fixed bottom-4 right-4' : ''} ${className}`}
             style={{
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)'
+              boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
             }}
           >
             <Feedback />
           </Fab>
         </Tooltip>
-        
+
         <SatisfactionSurvey
           open={open}
           onClose={handleClose}
@@ -67,12 +67,12 @@ const SurveyButton: React.FC<SurveyButtonProps> = ({
         className={`${className}`}
         style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)'
+          boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
         }}
       >
         แบบประเมินความพึงพอใจ
       </Button>
-      
+
       <SatisfactionSurvey
         open={open}
         onClose={handleClose}

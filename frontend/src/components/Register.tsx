@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
-import { Eye, EyeOff, Lock, User, Mail, Sparkles, CheckCircle } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Lock,
+  User,
+  Mail,
+  Sparkles,
+  CheckCircle,
+} from 'lucide-react';
 
-const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
+const BACKEND_API =
+  import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -46,7 +55,7 @@ const Register: React.FC = () => {
     }
 
     setIsLoading(true);
-    
+
     try {
       const response = await fetch(`${BACKEND_API}/api/register`, {
         method: 'POST',
@@ -64,7 +73,9 @@ const Register: React.FC = () => {
         if (errorData?.detail) {
           // Handle array of validation errors
           if (Array.isArray(errorData.detail)) {
-            const errorMessages = errorData.detail.map((err: any) => err.msg).join(', ');
+            const errorMessages = errorData.detail
+              .map((err: any) => err.msg)
+              .join(', ');
             setError(errorMessages);
           } else {
             // Handle single error message
@@ -83,68 +94,102 @@ const Register: React.FC = () => {
 
   if (success) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${
-        theme === 'light' 
-          ? 'bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100' 
-          : 'bg-gradient-to-br from-chat-bg via-neutral-900 to-chat-bg'
-      }`}>
+      <div
+        className={`min-h-screen flex items-center justify-center ${
+          theme === 'light'
+            ? 'bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100'
+            : 'bg-gradient-to-br from-chat-bg via-neutral-900 to-chat-bg'
+        }`}
+      >
         <div className="text-center">
           <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-white" />
           </div>
-          <h2 className={`text-2xl font-bold mb-4 ${
-            theme === 'light' ? 'text-gray-900' : 'text-white'
-          }`}>สมัครสมาชิกสำเร็จ!</h2>
-          <p className={`${
-            theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
-          }`}>กำลังนำคุณไปยังหน้าล็อกอิน...</p>
+          <h2
+            className={`text-2xl font-bold mb-4 ${
+              theme === 'light' ? 'text-gray-900' : 'text-white'
+            }`}
+          >
+            สมัครสมาชิกสำเร็จ!
+          </h2>
+          <p
+            className={`${
+              theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
+            }`}
+          >
+            กำลังนำคุณไปยังหน้าล็อกอิน...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen flex items-center justify-center relative overflow-hidden ${
-      theme === 'light' 
-        ? 'bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100' 
-        : 'bg-gradient-to-br from-chat-bg via-neutral-900 to-chat-bg'
-    }`}>
+    <div
+      className={`min-h-screen flex items-center justify-center relative overflow-hidden ${
+        theme === 'light'
+          ? 'bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100'
+          : 'bg-gradient-to-br from-chat-bg via-neutral-900 to-chat-bg'
+      }`}
+    >
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className={`absolute -top-40 -right-40 w-80 h-80 rounded-full blur-3xl animate-pulse-slow ${
-          theme === 'light' ? 'bg-purple-500/10' : 'bg-purple-500/10'
-        }`}></div>
-        <div className={`absolute -bottom-40 -left-40 w-80 h-80 rounded-full blur-3xl animate-pulse-slow ${
-          theme === 'light' ? 'bg-primary-500/10' : 'bg-primary-500/10'
-        }`} style={{ animationDelay: '1s' }}></div>
-        <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl animate-pulse-slow ${
-          theme === 'light' ? 'bg-blue-500/5' : 'bg-blue-500/5'
-        }`} style={{ animationDelay: '2s' }}></div>
+        <div
+          className={`absolute -top-40 -right-40 w-80 h-80 rounded-full blur-3xl animate-pulse-slow ${
+            theme === 'light' ? 'bg-purple-500/10' : 'bg-purple-500/10'
+          }`}
+        ></div>
+        <div
+          className={`absolute -bottom-40 -left-40 w-80 h-80 rounded-full blur-3xl animate-pulse-slow ${
+            theme === 'light' ? 'bg-primary-500/10' : 'bg-primary-500/10'
+          }`}
+          style={{ animationDelay: '1s' }}
+        ></div>
+        <div
+          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl animate-pulse-slow ${
+            theme === 'light' ? 'bg-blue-500/5' : 'bg-blue-500/5'
+          }`}
+          style={{ animationDelay: '2s' }}
+        ></div>
       </div>
 
       <div className="relative z-10 w-full max-w-md mx-4">
-        <div className={`card p-8 shadow-2xl border backdrop-blur-sm ${
-          theme === 'light' 
-            ? 'bg-white/90 border-gray-200/30 shadow-blue-500/20' 
-            : 'border-neutral-700/50'
-        }`}>
+        <div
+          className={`card p-8 shadow-2xl border backdrop-blur-sm ${
+            theme === 'light'
+              ? 'bg-white/90 border-gray-200/30 shadow-blue-500/20'
+              : 'border-neutral-700/50'
+          }`}
+        >
           {/* Header */}
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mr-3 ${
-                theme === 'light' 
-                  ? 'bg-gradient-to-br from-blue-500 via-purple-600 to-blue-700' 
-                  : 'bg-gradient-to-br from-primary-500 to-purple-600'
-              }`}>
+              <div
+                className={`w-12 h-12 rounded-xl flex items-center justify-center mr-3 ${
+                  theme === 'light'
+                    ? 'bg-gradient-to-br from-blue-500 via-purple-600 to-blue-700'
+                    : 'bg-gradient-to-br from-primary-500 to-purple-600'
+                }`}
+              >
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <h1 className={`text-3xl font-bold ${
-                theme === 'light' ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent drop-shadow-sm' : 'gradient-text'
-              }`}>LannaFinChat</h1>
+              <h1
+                className={`text-3xl font-bold ${
+                  theme === 'light'
+                    ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent drop-shadow-sm'
+                    : 'gradient-text'
+                }`}
+              >
+                LannaFinChat
+              </h1>
             </div>
-            <p className={`text-sm ${
-              theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
-            }`}>สร้างบัญชีใหม่เพื่อเริ่มการใช้งาน</p>
+            <p
+              className={`text-sm ${
+                theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
+              }`}
+            >
+              สร้างบัญชีใหม่เพื่อเริ่มการใช้งาน
+            </p>
           </div>
 
           {/* Error message */}
@@ -157,16 +202,21 @@ const Register: React.FC = () => {
           {/* Register form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className={`block text-sm font-medium mb-2 ${
-                theme === 'light' ? 'text-gray-700' : 'text-neutral-300'
-              }`} htmlFor="username">
+              <label
+                className={`block text-sm font-medium mb-2 ${
+                  theme === 'light' ? 'text-gray-700' : 'text-neutral-300'
+                }`}
+                htmlFor="username"
+              >
                 ชื่อผู้ใช้
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className={`h-5 w-5 ${
-                    theme === 'light' ? 'text-gray-500' : 'text-neutral-400'
-                  }`} />
+                  <User
+                    className={`h-5 w-5 ${
+                      theme === 'light' ? 'text-gray-500' : 'text-neutral-400'
+                    }`}
+                  />
                 </div>
                 <input
                   type="text"
@@ -174,8 +224,8 @@ const Register: React.FC = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className={`input-field pl-10 ${
-                    theme === 'light' 
-                      ? 'bg-white border-gray-300 text-gray-900 placeholder-gray-500' 
+                    theme === 'light'
+                      ? 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                       : 'bg-neutral-800 border-neutral-600 text-white placeholder-neutral-400'
                   }`}
                   placeholder="กรอกชื่อผู้ใช้"
@@ -186,16 +236,21 @@ const Register: React.FC = () => {
             </div>
 
             <div>
-              <label className={`block text-sm font-medium mb-2 ${
-                theme === 'light' ? 'text-gray-700' : 'text-neutral-300'
-              }`} htmlFor="email">
+              <label
+                className={`block text-sm font-medium mb-2 ${
+                  theme === 'light' ? 'text-gray-700' : 'text-neutral-300'
+                }`}
+                htmlFor="email"
+              >
                 อีเมล
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className={`h-5 w-5 ${
-                    theme === 'light' ? 'text-gray-500' : 'text-neutral-400'
-                  }`} />
+                  <Mail
+                    className={`h-5 w-5 ${
+                      theme === 'light' ? 'text-gray-500' : 'text-neutral-400'
+                    }`}
+                  />
                 </div>
                 <input
                   type="email"
@@ -203,8 +258,8 @@ const Register: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className={`input-field pl-10 ${
-                    theme === 'light' 
-                      ? 'bg-white border-gray-300 text-gray-900 placeholder-gray-500' 
+                    theme === 'light'
+                      ? 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                       : 'bg-neutral-800 border-neutral-600 text-white placeholder-neutral-400'
                   }`}
                   placeholder="กรอกอีเมล"
@@ -215,16 +270,21 @@ const Register: React.FC = () => {
             </div>
 
             <div>
-              <label className={`block text-sm font-medium mb-2 ${
-                theme === 'light' ? 'text-gray-700' : 'text-neutral-300'
-              }`} htmlFor="password">
+              <label
+                className={`block text-sm font-medium mb-2 ${
+                  theme === 'light' ? 'text-gray-700' : 'text-neutral-300'
+                }`}
+                htmlFor="password"
+              >
                 รหัสผ่าน
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className={`h-5 w-5 ${
-                    theme === 'light' ? 'text-gray-500' : 'text-neutral-400'
-                  }`} />
+                  <Lock
+                    className={`h-5 w-5 ${
+                      theme === 'light' ? 'text-gray-500' : 'text-neutral-400'
+                    }`}
+                  />
                 </div>
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -232,8 +292,8 @@ const Register: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className={`input-field pl-10 pr-10 ${
-                    theme === 'light' 
-                      ? 'bg-white border-gray-300 text-gray-900 placeholder-gray-500' 
+                    theme === 'light'
+                      ? 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                       : 'bg-neutral-800 border-neutral-600 text-white placeholder-neutral-400'
                   }`}
                   placeholder="กรอกรหัสผ่าน (อย่างน้อย 6 ตัวอักษร)"
@@ -245,28 +305,37 @@ const Register: React.FC = () => {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className={`absolute inset-y-0 right-0 pr-3 flex items-center transition-colors ${
-                    theme === 'light' 
-                      ? 'text-gray-500 hover:text-gray-700' 
+                    theme === 'light'
+                      ? 'text-gray-500 hover:text-gray-700'
                       : 'text-neutral-400 hover:text-neutral-300'
                   }`}
                   disabled={isLoading}
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
             </div>
 
             <div>
-              <label className={`block text-sm font-medium mb-2 ${
-                theme === 'light' ? 'text-gray-700' : 'text-neutral-300'
-              }`} htmlFor="confirmPassword">
+              <label
+                className={`block text-sm font-medium mb-2 ${
+                  theme === 'light' ? 'text-gray-700' : 'text-neutral-300'
+                }`}
+                htmlFor="confirmPassword"
+              >
                 ยืนยันรหัสผ่าน
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className={`h-5 w-5 ${
-                    theme === 'light' ? 'text-gray-500' : 'text-neutral-400'
-                  }`} />
+                  <Lock
+                    className={`h-5 w-5 ${
+                      theme === 'light' ? 'text-gray-500' : 'text-neutral-400'
+                    }`}
+                  />
                 </div>
                 <input
                   type={showConfirmPassword ? 'text' : 'password'}
@@ -274,8 +343,8 @@ const Register: React.FC = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className={`input-field pl-10 pr-10 ${
-                    theme === 'light' 
-                      ? 'bg-white border-gray-300 text-gray-900 placeholder-gray-500' 
+                    theme === 'light'
+                      ? 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                       : 'bg-neutral-800 border-neutral-600 text-white placeholder-neutral-400'
                   }`}
                   placeholder="กรอกรหัสผ่านอีกครั้ง"
@@ -286,13 +355,17 @@ const Register: React.FC = () => {
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className={`absolute inset-y-0 right-0 pr-3 flex items-center transition-colors ${
-                    theme === 'light' 
-                      ? 'text-gray-500 hover:text-gray-700' 
+                    theme === 'light'
+                      ? 'text-gray-500 hover:text-gray-700'
                       : 'text-neutral-400 hover:text-neutral-300'
                   }`}
                   disabled={isLoading}
                 >
-                  {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -319,15 +392,17 @@ const Register: React.FC = () => {
 
           {/* Login link */}
           <div className="mt-8 text-center">
-            <p className={`text-sm ${
-              theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
-            }`}>
+            <p
+              className={`text-sm ${
+                theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
+              }`}
+            >
               มีบัญชีอยู่แล้ว?{' '}
-              <Link 
-                to="/login" 
+              <Link
+                to="/login"
                 className={`font-medium transition-colors duration-200 hover:underline ${
-                  theme === 'light' 
-                    ? 'text-blue-600 hover:text-blue-700' 
+                  theme === 'light'
+                    ? 'text-blue-600 hover:text-blue-700'
                     : 'text-primary-400 hover:text-primary-300'
                 }`}
               >
@@ -339,10 +414,13 @@ const Register: React.FC = () => {
 
         {/* Footer */}
         <div className="text-center mt-6">
-          <p className={`text-xs ${
-            theme === 'light' ? 'text-gray-500' : 'text-neutral-500'
-          }`}>
-            © 2025 LannaFinChat. Developed by CS RMUTL NAN. All rights reserved.
+          <p
+            className={`text-xs ${
+              theme === 'light' ? 'text-gray-500' : 'text-neutral-500'
+            }`}
+          >
+            © 2025 LannaFinChat. Developed by CS RMUTL NAN. All rights
+            reserved.
           </p>
         </div>
       </div>

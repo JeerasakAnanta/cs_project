@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  FileText, 
-  Trash2, 
-  Download, 
-  Eye, 
-  Upload, 
-  RefreshCw, 
+import {
+  FileText,
+  Trash2,
+  Download,
+  Eye,
+  Upload,
+  RefreshCw,
   CheckCircle,
   Database,
-  Search
+  Search,
 } from 'lucide-react';
 
 // Fix: Use correct backend port (8001) instead of incorrect port (8004)
-const VITE_HOST = import.meta.env.VITE_BACKEND_DOCS_API || 'http://localhost:8001';
+const VITE_HOST =
+  import.meta.env.VITE_BACKEND_DOCS_API || 'http://localhost:8001';
 
 const PdfCrud: React.FC = () => {
   const [pdfs, setPdfs] = useState<string[]>([]);
@@ -33,7 +34,7 @@ const PdfCrud: React.FC = () => {
     setIsLoading(true);
     try {
       console.log('🔍 Fetching PDFs from:', `${VITE_HOST}/api/pdfs/`);
-      
+
       // Get authentication token
       const authToken = localStorage.getItem('authToken');
       if (!authToken) {
@@ -41,18 +42,20 @@ const PdfCrud: React.FC = () => {
         setPdfs([]);
         return;
       }
-      
+
       const response = await fetch(`${VITE_HOST}/api/pdfs/`, {
         method: 'GET',
-        headers: { 
-          'accept': 'application/json',
-          'Authorization': `Bearer ${authToken}`
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${authToken}`,
         },
       });
 
       if (!response.ok) {
         if (response.status === 401) {
-          throw new Error('ไม่ได้รับอนุญาตให้เข้าถึง PDFs กรุณาเข้าสู่ระบบใหม่');
+          throw new Error(
+            'ไม่ได้รับอนุญาตให้เข้าถึง PDFs กรุณาเข้าสู่ระบบใหม่'
+          );
         }
         throw new Error(`Network response was not ok: ${response.status}`);
       }
@@ -77,7 +80,7 @@ const PdfCrud: React.FC = () => {
     if (!searchTerm) {
       setFilteredPdfs(pdfs);
     } else {
-      const filtered = pdfs.filter(pdf =>
+      const filtered = pdfs.filter((pdf) =>
         pdf.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredPdfs(filtered);
@@ -119,11 +122,11 @@ const PdfCrud: React.FC = () => {
     }
 
     const deletePromises = selectedPdfs.map((filename) =>
-      fetch(`${VITE_HOST}/api/pdfs/${filename}`, { 
+      fetch(`${VITE_HOST}/api/pdfs/${filename}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
+          Authorization: `Bearer ${authToken}`,
+        },
       })
     );
 
@@ -172,13 +175,12 @@ const PdfCrud: React.FC = () => {
             <FileText className="w-6 h-6 text-white" />
           </div>
           <div>
-            <p className="text-neutral-400 text-sm">จัดการไฟล์ PDF ในระบบ ({pdfs.length} ไฟล์)</p>
+            <p className="text-neutral-400 text-sm">
+              จัดการไฟล์ PDF ในระบบ ({pdfs.length} ไฟล์)
+            </p>
           </div>
         </div>
-        <button
-          onClick={fetchPdfs}
-          className="btn-secondary flex items-center"
-        >
+        <button onClick={fetchPdfs} className="btn-secondary flex items-center">
           <RefreshCw className="w-4 h-4 mr-2" />
           รีเฟรช
         </button>
@@ -206,7 +208,9 @@ const PdfCrud: React.FC = () => {
               className="btn-secondary flex items-center"
             >
               <CheckCircle className="w-4 h-4 mr-2" />
-              {selectedPdfs.length === filteredPdfs.length ? 'ยกเลิกเลือกทั้งหมด' : 'เลือกทั้งหมด'}
+              {selectedPdfs.length === filteredPdfs.length
+                ? 'ยกเลิกเลือกทั้งหมด'
+                : 'เลือกทั้งหมด'}
             </button>
             <button
               onClick={handleDelete}
@@ -254,7 +258,7 @@ const PdfCrud: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-2 ml-4">
                   <a
                     href={`${VITE_HOST}/${pdf}`}
@@ -284,10 +288,9 @@ const PdfCrud: React.FC = () => {
               {searchTerm ? 'ไม่พบไฟล์ PDF' : 'ยังไม่มีไฟล์ PDF'}
             </h3>
             <p className="text-neutral-500 text-sm">
-              {searchTerm 
-                ? 'ลองเปลี่ยนคำค้นหา' 
-                : 'อัปโหลดไฟล์ PDF แรกของคุณเพื่อเริ่มต้น'
-              }
+              {searchTerm
+                ? 'ลองเปลี่ยนคำค้นหา'
+                : 'อัปโหลดไฟล์ PDF แรกของคุณเพื่อเริ่มต้น'}
             </p>
           </div>
         )}
@@ -299,7 +302,9 @@ const PdfCrud: React.FC = () => {
           <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <Upload className="w-8 h-8 text-white" />
           </div>
-          <h3 className="text-lg font-medium text-white mb-2">อัปโหลดไฟล์ PDF ใหม่</h3>
+          <h3 className="text-lg font-medium text-white mb-2">
+            อัปโหลดไฟล์ PDF ใหม่
+          </h3>
           <p className="text-neutral-400 text-sm mb-4">
             ลากและวางไฟล์ PDF หรือคลิกเพื่อเลือกไฟล์
           </p>

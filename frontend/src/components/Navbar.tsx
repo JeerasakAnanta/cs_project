@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LogOut, LogIn, User, Menu, X, Trash2, Shield, MessageSquare, MessageCirclePlus, Sun, Moon } from 'lucide-react';
+import {
+  LogOut,
+  LogIn,
+  User,
+  Menu,
+  X,
+  Trash2,
+  Shield,
+  MessageSquare,
+  MessageCirclePlus,
+  Sun,
+  Moon,
+} from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 
-const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
-
+const BACKEND_API =
+  import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
 
 const Navbar: React.FC<{
   onSelectConversation: (id: number | string) => void;
@@ -13,13 +25,21 @@ const Navbar: React.FC<{
   onConversationDeleted: (id: number | string) => void;
   currentConversationId: number | string | null;
   conversations: { id: number | string; title: string }[];
-}> = ({ onSelectConversation, onNewConversation, onConversationDeleted, currentConversationId, conversations }) => {
+}> = ({
+  onSelectConversation,
+  onNewConversation,
+  onConversationDeleted,
+  currentConversationId,
+  conversations,
+}) => {
   const [isOpen, setIsOpen] = useState(true);
   const { currentUser, logout, isGuestMode } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const authToken = localStorage.getItem('authToken');
 
-  const handleDeleteConversation: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+  const handleDeleteConversation: React.MouseEventHandler<
+    HTMLButtonElement
+  > = async (e) => {
     e.stopPropagation();
     const id = e.currentTarget.dataset.id || '';
     if (!id) return;
@@ -36,10 +56,13 @@ const Navbar: React.FC<{
       if (isNaN(numericId)) return;
 
       try {
-        const response = await fetch(`${BACKEND_API}/chat/conversations/${numericId}`, {
-          method: 'DELETE',
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
+        const response = await fetch(
+          `${BACKEND_API}/chat/conversations/${numericId}`,
+          {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
         if (response.ok) {
           onConversationDeleted(numericId);
           if (currentConversationId === numericId) {
@@ -51,7 +74,11 @@ const Navbar: React.FC<{
           window.location.href = '/login';
           return;
         } else {
-          console.error('Error deleting conversation:', response.status, response.statusText);
+          console.error(
+            'Error deleting conversation:',
+            response.status,
+            response.statusText
+          );
         }
       } catch (error) {
         console.error('Error deleting conversation:', error);
@@ -75,15 +102,20 @@ const Navbar: React.FC<{
 
       {/* Sidebar */}
       <div
-        className={`bg-white w-80 h-full flex flex-col transition-all duration-300 ease-in-out border-r border-gray-200 ${isOpen ? 'translate-x-0' : '-translate-x-full'
-          } md:translate-x-0 md:relative fixed z-40 shadow-2xl`}
+        className={`bg-white w-80 h-full flex flex-col transition-all duration-300 ease-in-out border-r border-gray-200 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } md:translate-x-0 md:relative fixed z-40 shadow-2xl`}
       >
         {/* Header */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-center">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent drop-shadow-sm">LannaFinChat</h1>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent drop-shadow-sm">
+              LannaFinChat
+            </h1>
           </div>
-          <p className="text-center text-gray-600 text-xs mt-2">AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่าย</p>
+          <p className="text-center text-gray-600 text-xs mt-2">
+            AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่าย
+          </p>
         </div>
 
         {/* New conversation button */}
@@ -101,20 +133,26 @@ const Navbar: React.FC<{
         <div className="flex-1 overflow-y-auto px-4">
           {conversations.length > 0 ? (
             <>
-              <p className="text-xs text-gray-600 px-2 mb-3 font-medium">การสนทนาล่าสุด</p>
+              <p className="text-xs text-gray-600 px-2 mb-3 font-medium">
+                การสนทนาล่าสุด
+              </p>
               <div className="space-y-1">
                 {conversations.map((conv) => (
                   <div
                     key={conv.id}
                     onClick={() => onSelectConversation(conv.id)}
-                    className={`group relative p-3 rounded-lg cursor-pointer transition-all duration-200 ${currentConversationId === conv.id
-                      ? 'bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-300'
-                      : 'hover:bg-gray-100 border border-transparent'
-                      }`}
+                    className={`group relative p-3 rounded-lg cursor-pointer transition-all duration-200 ${
+                      currentConversationId === conv.id
+                        ? 'bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-300'
+                        : 'hover:bg-gray-100 border border-transparent'
+                    }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center min-w-0 flex-1">
-                        <MessageSquare size={16} className="text-gray-500 mr-2 flex-shrink-0" />
+                        <MessageSquare
+                          size={16}
+                          className="text-gray-500 mr-2 flex-shrink-0"
+                        />
                         <span className="text-sm text-gray-700 truncate font-medium">
                           {conv.title}
                         </span>
@@ -135,7 +173,9 @@ const Navbar: React.FC<{
             <div className="text-center py-8">
               <MessageSquare size={48} className="text-gray-400 mx-auto mb-3" />
               <p className="text-gray-600 text-sm">ยังไม่มีการสนทนา</p>
-              <p className="text-gray-500 text-xs mt-1">เริ่มการสนทนาใหม่เพื่อเริ่มต้น</p>
+              <p className="text-gray-500 text-xs mt-1">
+                เริ่มการสนทนาใหม่เพื่อเริ่มต้น
+              </p>
             </div>
           )}
         </div>
@@ -150,10 +190,15 @@ const Navbar: React.FC<{
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-700 truncate">
-                  {currentUser?.username || (isGuestMode() ? 'ผู้เยี่ยมชม' : 'ผู้ใช้')}
+                  {currentUser?.username ||
+                    (isGuestMode() ? 'ผู้เยี่ยมชม' : 'ผู้ใช้')}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {currentUser?.role === 'admin' ? 'ผู้ดูแลระบบ' : (isGuestMode() ? 'โหมดผู้เยี่ยมชม' : 'ผู้ใช้ทั่วไป')}
+                  {currentUser?.role === 'admin'
+                    ? 'ผู้ดูแลระบบ'
+                    : isGuestMode()
+                      ? 'โหมดผู้เยี่ยมชม'
+                      : 'ผู้ใช้ทั่วไป'}
                 </p>
               </div>
               <div className="flex items-center gap-2">

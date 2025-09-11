@@ -12,7 +12,7 @@ export default defineConfig({
       'localhost',
       '127.0.0.1',
       'chat.jeerasakananta.dev',
-      '.jeerasakananta.dev' // Allow all subdomains
+      '.jeerasakananta.dev', // Allow all subdomains
     ],
   },
   plugins: [react()],

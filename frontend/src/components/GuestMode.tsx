@@ -25,9 +25,13 @@ const GuestMode: React.FC<GuestModeProps> = ({ onLoginClick }) => {
             </button>
           </div>
           <p className="text-sm text-yellow-100 mt-1">
-            คุณกำลังใช้งานในโหมดผู้เยี่ยมชม ประวัติการสนทนาจะถูกเก็บในเครื่องของคุณเท่านั้น 
+            คุณกำลังใช้งานในโหมดผู้เยี่ยมชม
+            ประวัติการสนทนาจะถูกเก็บในเครื่องของคุณเท่านั้น
             หากต้องการเก็บประวัติในระบบ กรุณา{' '}
-            <Link to="/login" className="text-blue-400 hover:text-blue-300 underline">
+            <Link
+              to="/login"
+              className="text-blue-400 hover:text-blue-300 underline"
+            >
               เข้าสู่ระบบ
             </Link>
           </p>
@@ -37,4 +41,4 @@ const GuestMode: React.FC<GuestModeProps> = ({ onLoginClick }) => {
   );
 };
 
-export default GuestMode; 
+export default GuestMode;

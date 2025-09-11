@@ -1,5 +1,15 @@
 import React from 'react';
-import { X, Clock, ThumbsUp, ThumbsDown, MessageSquare, User, Bot, Calendar, Star } from 'lucide-react';
+import {
+  X,
+  Clock,
+  ThumbsUp,
+  ThumbsDown,
+  MessageSquare,
+  User,
+  Bot,
+  Calendar,
+  Star,
+} from 'lucide-react';
 import { marked } from 'marked';
 import './ConversationDetail.css';
 
@@ -20,12 +30,16 @@ interface ConversationDetailProps {
   onClose: () => void;
 }
 
-const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, onClose }) => {
+const ConversationDetail: React.FC<ConversationDetailProps> = ({
+  conversation,
+  onClose,
+}) => {
   if (!conversation) return null;
 
   const getSatisfactionIcon = (rating: number) => {
     if (rating >= 4) return <ThumbsUp className="w-6 h-6 text-green-500" />;
-    if (rating === 3) return <MessageSquare className="w-6 h-6 text-yellow-500" />;
+    if (rating === 3)
+      return <MessageSquare className="w-6 h-6 text-yellow-500" />;
     return <ThumbsDown className="w-6 h-6 text-red-500" />;
   };
 
@@ -55,7 +69,7 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit'
+      second: '2-digit',
     });
   };
 
@@ -71,9 +85,9 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
       // Configure marked options for security
       marked.setOptions({
         breaks: true,
-        gfm: true
+        gfm: true,
       });
-      
+
       return marked(text);
     } catch (error) {
       console.error('Error rendering markdown:', error);
@@ -106,18 +120,28 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
             <div className="bg-neutral-700/30 p-4 rounded-lg border border-neutral-600/30">
               <div className="flex items-center gap-2 mb-2">
                 <User className="w-5 h-5 text-blue-400" />
-                <span className="text-sm font-medium text-neutral-300">ผู้ใช้</span>
+                <span className="text-sm font-medium text-neutral-300">
+                  ผู้ใช้
+                </span>
               </div>
-              <p className="text-lg font-semibold text-white">{conversation.username}</p>
-              <p className="text-sm text-neutral-400">ID: {conversation.user_id}</p>
+              <p className="text-lg font-semibold text-white">
+                {conversation.username}
+              </p>
+              <p className="text-sm text-neutral-400">
+                ID: {conversation.user_id}
+              </p>
             </div>
 
             <div className="bg-neutral-700/30 p-4 rounded-lg border border-neutral-600/30">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-5 h-5 text-purple-400" />
-                <span className="text-sm font-medium text-neutral-300">วันที่สร้าง</span>
+                <span className="text-sm font-medium text-neutral-300">
+                  วันที่สร้าง
+                </span>
               </div>
-              <p className="text-sm text-white">{formatDate(conversation.created_at)}</p>
+              <p className="text-sm text-white">
+                {formatDate(conversation.created_at)}
+              </p>
               <p className="text-xs text-neutral-400">
                 อัปเดต: {formatDate(conversation.updated_at)}
               </p>
@@ -126,9 +150,13 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
             <div className="bg-neutral-700/30 p-4 rounded-lg border border-neutral-600/30">
               <div className="flex items-center gap-2 mb-2">
                 <Clock className="w-5 h-5 text-indigo-400" />
-                <span className="text-sm font-medium text-neutral-300">เวลาตอบสนอง</span>
+                <span className="text-sm font-medium text-neutral-300">
+                  เวลาตอบสนอง
+                </span>
               </div>
-              <p className={`text-lg font-semibold ${getResponseTimeColor(conversation.response_time_ms || 0)}`}>
+              <p
+                className={`text-lg font-semibold ${getResponseTimeColor(conversation.response_time_ms || 0)}`}
+              >
                 {formatDuration(conversation.response_time_ms || 0)}
               </p>
               <p className="text-sm text-neutral-400">
@@ -141,7 +169,9 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
           <div className="bg-gradient-to-r from-blue-500/20 to-green-500/20 p-6 rounded-lg border border-blue-500/30">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-white mb-2">ความพึงพอใจของผู้ใช้</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  ความพึงพอใจของผู้ใช้
+                </h3>
                 <div className="flex items-center gap-3">
                   {getSatisfactionIcon(conversation.satisfaction_rating || 0)}
                   <div>
@@ -149,12 +179,14 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
                       {conversation.satisfaction_rating || 'N/A'}/5
                     </p>
                     <p className="text-sm text-neutral-400">
-                      {getSatisfactionLabel(conversation.satisfaction_rating || 0)}
+                      {getSatisfactionLabel(
+                        conversation.satisfaction_rating || 0
+                      )}
                     </p>
                   </div>
                 </div>
               </div>
-              
+
               {/* Star Rating Display */}
               <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -178,10 +210,10 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
               คำถามจากผู้ใช้
             </h3>
             <div className="bg-blue-500/20 p-4 rounded-lg border border-blue-500/30">
-              <div 
+              <div
                 className="text-white text-lg leading-relaxed markdown-content-full"
                 dangerouslySetInnerHTML={{
-                  __html: renderMarkdown(conversation.question)
+                  __html: renderMarkdown(conversation.question),
                 }}
               />
             </div>
@@ -194,10 +226,10 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
               คำตอบจาก Bot
             </h3>
             <div className="bg-green-500/20 p-4 rounded-lg border border-green-500/30">
-              <div 
+              <div
                 className="text-white text-lg leading-relaxed markdown-content-full"
                 dangerouslySetInnerHTML={{
-                  __html: renderMarkdown(conversation.bot_response)
+                  __html: renderMarkdown(conversation.bot_response),
                 }}
               />
             </div>
@@ -205,29 +237,33 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({ conversation, o
 
           {/* Performance Metrics */}
           <div className="bg-neutral-700/30 p-6 rounded-lg border border-neutral-600/30">
-            <h3 className="text-lg font-semibold text-white mb-4">เมตริกประสิทธิภาพ</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              เมตริกประสิทธิภาพ
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center justify-between p-3 bg-neutral-800/50 rounded-lg border border-neutral-600/30">
                 <span className="text-neutral-400">เวลาตอบสนอง</span>
-                <span className={`font-semibold ${getResponseTimeColor(conversation.response_time_ms || 0)}`}>
+                <span
+                  className={`font-semibold ${getResponseTimeColor(conversation.response_time_ms || 0)}`}
+                >
                   {conversation.response_time_ms || 'N/A'}ms
                 </span>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 bg-neutral-800/50 rounded-lg border border-neutral-600/30">
                 <span className="text-neutral-400">ความพึงพอใจ</span>
                 <span className="font-semibold text-white">
                   {conversation.satisfaction_rating || 'N/A'}/5
                 </span>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 bg-neutral-800/50 rounded-lg border border-neutral-600/30">
                 <span className="text-neutral-400">สถานะ</span>
                 <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded-full border border-green-500/30">
                   เสร็จสิ้น
                 </span>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 bg-neutral-800/50 rounded-lg border border-neutral-600/30">
                 <span className="text-neutral-400">ประเภท</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full border border-blue-500/30">

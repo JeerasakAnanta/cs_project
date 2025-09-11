@@ -3,9 +3,11 @@
 ## ไฟล์ที่สร้างขึ้น
 
 ### 1. SatisfactionSurvey.tsx
+
 คอมโพเนนต์หลักของแบบประเมินความพึงพอใจ
 
 **คุณสมบัติ:**
+
 - การประเมินแบบดาว (1-5 ดาว)
 - การประเมินรายละเอียดแต่ละด้าน
 - การเลือกคุณสมบัติที่ประทับใจ
@@ -15,18 +17,22 @@
 - การแสดงข้อความสำเร็จ/ข้อผิดพลาด
 
 ### 2. SurveyButton.tsx
+
 คอมโพเนนต์ปุ่มสำหรับเปิดแบบประเมิน
 
 **คุณสมบัติ:**
+
 - รองรับ 2 รูปแบบ: ปุ่มธรรมดา และปุ่มลอย (FAB)
 - สามารถกำหนดตำแหน่งได้
 - มี tooltip แสดงคำอธิบาย
 - การจัดการการเปิด/ปิด modal
 
 ### 3. SurveyDemo.tsx
+
 หน้าแสดงตัวอย่างการใช้งานแบบประเมิน
 
 **คุณสมบัติ:**
+
 - แสดงคุณสมบัติของแบบประเมิน
 - ตัวอย่างการใช้งานทั้งสองรูปแบบ
 - คำแนะนำการใช้งาน
@@ -65,7 +71,7 @@ const MyComponent = () => {
       <button onClick={() => setOpen(true)}>
         เปิดแบบประเมิน
       </button>
-      
+
       <SatisfactionSurvey
         open={open}
         onClose={() => setOpen(false)}
@@ -84,34 +90,37 @@ const MyComponent = () => {
 
 ```typescript
 interface SurveyData {
-  overallSatisfaction: number;      // ความพึงพอใจโดยรวม (1-5)
-  easeOfUse: number;               // ความง่ายในการใช้งาน (1-5)
-  responseSpeed: number;            // ความเร็วในการตอบสนอง (1-5)
-  accuracy: number;                 // ความแม่นยำของข้อมูล (1-5)
-  helpfulness: number;              // ประโยชน์ที่ได้รับ (1-5)
-  userInterface: number;            // การออกแบบส่วนติดต่อผู้ใช้ (1-5)
-  features: string[];               // คุณสมบัติที่ประทับใจ
-  improvements: string;             // ข้อเสนอแนะเพื่อการปรับปรุง
-  recommendToOthers: string;        // จะแนะนำให้ผู้อื่นหรือไม่
-  additionalComments: string;       // ความคิดเห็นเพิ่มเติม
-  timestamp: Date;                  // เวลาที่ส่งแบบประเมิน
+  overallSatisfaction: number; // ความพึงพอใจโดยรวม (1-5)
+  easeOfUse: number; // ความง่ายในการใช้งาน (1-5)
+  responseSpeed: number; // ความเร็วในการตอบสนอง (1-5)
+  accuracy: number; // ความแม่นยำของข้อมูล (1-5)
+  helpfulness: number; // ประโยชน์ที่ได้รับ (1-5)
+  userInterface: number; // การออกแบบส่วนติดต่อผู้ใช้ (1-5)
+  features: string[]; // คุณสมบัติที่ประทับใจ
+  improvements: string; // ข้อเสนอแนะเพื่อการปรับปรุง
+  recommendToOthers: string; // จะแนะนำให้ผู้อื่นหรือไม่
+  additionalComments: string; // ความคิดเห็นเพิ่มเติม
+  timestamp: Date; // เวลาที่ส่งแบบประเมิน
 }
 ```
 
 ## การทดสอบ
 
 ### 1. ทดสอบการเปิดแบบประเมิน
+
 - ไปที่หน้า Chatbot
 - คลิกปุ่มลอยที่มุมขวาล่าง
 - ตรวจสอบว่า modal เปิดขึ้นมา
 
 ### 2. ทดสอบการกรอกแบบประเมิน
+
 - ให้คะแนนความพึงพอใจโดยรวม
 - กรอกข้อมูลในส่วนต่างๆ
 - คลิก "ส่งแบบประเมิน"
 - ตรวจสอบข้อความสำเร็จ
 
 ### 3. ทดสอบหน้า Demo
+
 - ไปที่ `/survey-demo`
 - ดูตัวอย่างการใช้งาน
 - ทดสอบปุ่มต่างๆ
@@ -119,6 +128,7 @@ interface SurveyData {
 ## การปรับแต่ง
 
 ### 1. เปลี่ยนสีธีม
+
 ```typescript
 // ใน SatisfactionSurvey.tsx
 <Dialog
@@ -132,6 +142,7 @@ interface SurveyData {
 ```
 
 ### 2. เพิ่มคุณสมบัติใหม่
+
 ```typescript
 const featureOptions = [
   // เพิ่มคุณสมบัติใหม่
@@ -140,6 +151,7 @@ const featureOptions = [
 ```
 
 ### 3. เปลี่ยนข้อความ
+
 ```typescript
 const getRatingLabel = (value: number) => {
   const labels = {
@@ -153,6 +165,7 @@ const getRatingLabel = (value: number) => {
 ## การเชื่อมต่อกับ Backend
 
 ### 1. สร้าง API Endpoint
+
 ```python
 # ใน FastAPI backend
 @app.post("/api/survey")
@@ -162,15 +175,16 @@ async def submit_survey(survey_data: SurveyData):
 ```
 
 ### 2. ส่งข้อมูลจาก Frontend
+
 ```typescript
 const handleSubmit = async (data: SurveyData) => {
   try {
     const response = await fetch('/api/survey', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
-    
+
     if (response.ok) {
       // แสดงข้อความสำเร็จ
     }

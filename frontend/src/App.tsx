@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 
@@ -14,16 +19,20 @@ import PDFManager from './components/PDFManager';
 import ErrorBoundary from './components/ErrorBoundary';
 import TypingTest from './components/TypingTest';
 
-
 // Auth Wrapper
 import AdminRoute from './components/AdminRoute';
 import GuestRoute from './components/GuestRoute';
 
 // Services
-import { guestPostgreSQLService, GuestConversation } from './services/GuestPostgreSQLService';
+import {
+  guestPostgreSQLService,
+  GuestConversation,
+} from './services/GuestPostgreSQLService';
 
-const BACKEND_API = import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
-const DOCS_STATIC = import.meta.env.VITE_BACKEND_DOCS_STATIC || 'http://localhost:8001';
+const BACKEND_API =
+  import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
+const DOCS_STATIC =
+  import.meta.env.VITE_BACKEND_DOCS_STATIC || 'http://localhost:8001';
 
 interface Message {
   id?: number | string;
@@ -34,20 +43,26 @@ interface Message {
 const AppContent: React.FC = () => {
   const location = useLocation();
   const { currentUser, isGuestMode } = useAuth();
-  const isLoginPage = location.pathname === '/login' || location.pathname === '/register';
+  const isLoginPage =
+    location.pathname === '/login' || location.pathname === '/register';
   const isAdminPage = location.pathname.startsWith('/admin');
-  const [currentConversationId, setCurrentConversationId] = useState<number | string | null>(null);
+  const [currentConversationId, setCurrentConversationId] = useState<
+    number | string | null
+  >(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [conversations, setConversations] = useState<{ id: number | string; title: string }[]>([]);
-  const [guestConversations, setGuestConversations] = useState<GuestConversation[]>([]);
+  const [conversations, setConversations] = useState<
+    { id: number | string; title: string }[]
+  >([]);
+  const [guestConversations, setGuestConversations] = useState<
+    GuestConversation[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
-
 
   const handleConversationDeleted = async (id: number | string) => {
     if (isGuestMode()) {
       try {
         await guestPostgreSQLService.deleteConversation(id as string);
-        setGuestConversations(prev => prev.filter(c => c.id !== id));
+        setGuestConversations((prev) => prev.filter((c) => c.id !== id));
       } catch (error) {
         console.error('Error deleting guest conversation:', error);
       }
@@ -82,7 +97,11 @@ const AppContent: React.FC = () => {
         localStorage.removeItem('authToken');
         window.location.href = '/login';
       } else {
-        console.error('Error fetching conversations:', response.status, response.statusText);
+        console.error(
+          'Error fetching conversations:',
+          response.status,
+          response.statusText
+        );
       }
     } catch (error) {
       console.error('Error fetching conversations:', error);
@@ -95,8 +114,12 @@ const AppContent: React.FC = () => {
     } else if (currentUser) {
       fetchAuthenticatedConversations();
     }
-  }, [currentUser, isGuestMode, fetchGuestConversations, fetchAuthenticatedConversations]);
-
+  }, [
+    currentUser,
+    isGuestMode,
+    fetchGuestConversations,
+    fetchAuthenticatedConversations,
+  ]);
 
   const handleNewConversation = () => {
     setCurrentConversationId(null);
@@ -106,28 +129,37 @@ const AppContent: React.FC = () => {
   const formatBotMessage = async (content: string): Promise<string> => {
     const sourceRegex = /อ้างอิง: <a href="[^"]+"[^>]+>([^<]+)<\/a>/;
     const match = content.match(sourceRegex);
-    
+
     if (match) {
       const fileName = match[1];
       const fileUrl = `${DOCS_STATIC}/pdfs/${encodeURIComponent(fileName)}`;
-      return content.replace(sourceRegex, `อ้างอิง: <a href="${fileUrl}" target="_blank" class="text-blue-400 hover:text-blue-300 underline">${fileName}</a>`);
+      return content.replace(
+        sourceRegex,
+        `อ้างอิง: <a href="${fileUrl}" target="_blank" class="text-blue-400 hover:text-blue-300 underline">${fileName}</a>`
+      );
     }
-    
+
     return content;
   };
 
   const handleSelectConversation = async (id: number | string) => {
     setCurrentConversationId(id);
-    
+
     if (isGuestMode()) {
       // Load guest conversation from PostgreSQL
       try {
-        const conversation = await guestPostgreSQLService.getConversation(id as string);
+        const conversation = await guestPostgreSQLService.getConversation(
+          id as string
+        );
         if (conversation) {
           const formattedMessages: Message[] = await Promise.all(
             conversation.messages.map(async (msg) => {
               if (msg.sender === 'bot') {
-                return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' as const };
+                return {
+                  id: msg.id,
+                  text: await formatBotMessage(msg.content),
+                  sender: 'bot' as const,
+                };
               }
               return { id: msg.id, text: msg.content, sender: 'user' as const };
             })
@@ -143,15 +175,22 @@ const AppContent: React.FC = () => {
       const authToken = localStorage.getItem('authToken');
       if (!authToken) return;
       try {
-        const response = await fetch(`${BACKEND_API}/chat/conversations/${id}`, {
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
+        const response = await fetch(
+          `${BACKEND_API}/chat/conversations/${id}`,
+          {
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
         if (response.ok) {
           const data = await response.json();
           const formattedMessages: Message[] = await Promise.all(
             data.messages.map(async (msg: any) => {
               if (msg.sender === 'bot') {
-                return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' as const };
+                return {
+                  id: msg.id,
+                  text: await formatBotMessage(msg.content),
+                  sender: 'bot' as const,
+                };
               }
               return { id: msg.id, text: msg.content, sender: 'user' as const };
             })
@@ -162,7 +201,11 @@ const AppContent: React.FC = () => {
           localStorage.removeItem('authToken');
           window.location.href = '/login';
         } else {
-          console.error('Error fetching conversation details:', response.status, response.statusText);
+          console.error(
+            'Error fetching conversation details:',
+            response.status,
+            response.statusText
+          );
           setMessages([]);
         }
       } catch (error) {
@@ -182,45 +225,48 @@ const AppContent: React.FC = () => {
 
   const handleGuestSendMessage = async (messageContent: string) => {
     let conversationId = currentConversationId as string;
-    
+
     setIsLoading(true);
     try {
       // Create a new conversation if one doesn't exist
       if (!conversationId) {
         // Use the user's message as the conversation title (truncate if too long)
-        const title = messageContent.length > 50 
-          ? messageContent.substring(0, 50) + '...' 
-          : messageContent;
-        
-        const newConversation = await guestPostgreSQLService.createConversation(title);
+        const title =
+          messageContent.length > 50
+            ? messageContent.substring(0, 50) + '...'
+            : messageContent;
+
+        const newConversation =
+          await guestPostgreSQLService.createConversation(title);
         conversationId = newConversation.id;
         setCurrentConversationId(newConversation.id);
-        setGuestConversations(prev => [newConversation, ...prev]);
+        setGuestConversations((prev) => [newConversation, ...prev]);
       }
 
       // Add user message to guest conversation and get bot response
       await guestPostgreSQLService.addMessage(conversationId, messageContent);
 
       // Update messages state by fetching the updated conversation
-      const conversation = await guestPostgreSQLService.getConversation(conversationId);
+      const conversation =
+        await guestPostgreSQLService.getConversation(conversationId);
       if (conversation) {
         const formattedMessages: Message[] = await Promise.all(
           conversation.messages.map(async (msg) => {
             if (msg.sender === 'bot') {
-              return { id: msg.id, text: await formatBotMessage(msg.content), sender: 'bot' as const };
+              return {
+                id: msg.id,
+                text: await formatBotMessage(msg.content),
+                sender: 'bot' as const,
+              };
             }
             return { id: msg.id, text: msg.content, sender: 'user' as const };
           })
         );
         setMessages(formattedMessages);
-        
+
         // Update guest conversations list
-        setGuestConversations(prev => 
-          prev.map(conv => 
-            conv.id === conversationId 
-              ? conversation
-              : conv
-          )
+        setGuestConversations((prev) =>
+          prev.map((conv) => (conv.id === conversationId ? conversation : conv))
         );
       }
     } catch (error) {
@@ -234,7 +280,7 @@ const AppContent: React.FC = () => {
     let conversationId = currentConversationId as number;
     const authToken = localStorage.getItem('authToken');
     if (!authToken) return;
-    
+
     setIsLoading(true);
     try {
       // Create a new conversation if one doesn't exist
@@ -242,22 +288,25 @@ const AppContent: React.FC = () => {
         try {
           const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authToken}`,
+            },
             body: JSON.stringify({ title: messageContent }), // Use message as title
           });
-                  if (response.ok) {
-          const newConversation = await response.json();
-          conversationId = newConversation.id;
-          setCurrentConversationId(newConversation.id);
-          setConversations((prev) => [newConversation, ...prev]);
-        } else if (response.status === 401) {
-          // Token is invalid or expired, clear it and redirect to login
-          localStorage.removeItem('authToken');
-          window.location.href = '/login';
-          return;
-        } else {
-          throw new Error('Failed to create new conversation');
-        }
+          if (response.ok) {
+            const newConversation = await response.json();
+            conversationId = newConversation.id;
+            setCurrentConversationId(newConversation.id);
+            setConversations((prev) => [newConversation, ...prev]);
+          } else if (response.status === 401) {
+            // Token is invalid or expired, clear it and redirect to login
+            localStorage.removeItem('authToken');
+            window.location.href = '/login';
+            return;
+          } else {
+            throw new Error('Failed to create new conversation');
+          }
         } catch (error) {
           console.error(error);
           return; // Exit if conversation creation fails
@@ -265,28 +314,47 @@ const AppContent: React.FC = () => {
       }
 
       // Add user message to the conversation
-      const userMessage: Message = { id: Date.now(), text: messageContent, sender: 'user' };
+      const userMessage: Message = {
+        id: Date.now(),
+        text: messageContent,
+        sender: 'user',
+      };
       setMessages((prevMessages) => [...prevMessages, userMessage]);
 
       try {
-        await fetch(`${BACKEND_API}/chat/conversations/${conversationId}/messages/`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
-          body: JSON.stringify({ sender: 'user', content: messageContent }),
-        });
+        await fetch(
+          `${BACKEND_API}/chat/conversations/${conversationId}/messages/`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({ sender: 'user', content: messageContent }),
+          }
+        );
 
         // Now, get the bot's response
-        const response = await fetch(`${BACKEND_API}/chat/conversations/${conversationId}/messages/`, {
+        const response = await fetch(
+          `${BACKEND_API}/chat/conversations/${conversationId}/messages/`,
+          {
             headers: { Authorization: `Bearer ${authToken}` },
-        });
-        
+          }
+        );
+
         if (response.ok) {
           const botMessageData = await response.json();
           if (botMessageData && botMessageData.length > 0) {
             const lastBotMessage = botMessageData[botMessageData.length - 1];
-            const formattedText = await formatBotMessage(lastBotMessage.content);
-            const botMessage: Message = { id: lastBotMessage.id, text: formattedText, sender: 'bot' };
-            
+            const formattedText = await formatBotMessage(
+              lastBotMessage.content
+            );
+            const botMessage: Message = {
+              id: lastBotMessage.id,
+              text: formattedText,
+              sender: 'bot',
+            };
+
             setMessages((prevMessages) => [...prevMessages, botMessage]);
           } else {
             console.error('No bot message received');
@@ -297,9 +365,12 @@ const AppContent: React.FC = () => {
           window.location.href = '/login';
           return;
         } else {
-          console.error('Error getting bot response:', response.status, response.statusText);
+          console.error(
+            'Error getting bot response:',
+            response.status,
+            response.statusText
+          );
         }
-
       } catch (error) {
         console.error('Error sending message or getting response:', error);
       }
@@ -307,7 +378,6 @@ const AppContent: React.FC = () => {
       setIsLoading(false);
     }
   };
-
 
   if (isLoginPage || isAdminPage) {
     return (
@@ -338,13 +408,14 @@ const AppContent: React.FC = () => {
             element={
               <GuestRoute>
                 <div className="flex-1 flex flex-col h-full">
-
                   <Chatbot
                     currentConversationId={currentConversationId}
                     messages={messages}
                     setMessages={setMessages}
                     onSendMessage={handleSendMessage}
-                    conversations={isGuestMode() ? guestConversations : conversations}
+                    conversations={
+                      isGuestMode() ? guestConversations : conversations
+                    }
                     isLoading={isLoading}
                   />
                 </div>
@@ -358,7 +429,7 @@ const AppContent: React.FC = () => {
       </main>
     </div>
   );
-}
+};
 
 const App: React.FC = () => {
   return (
@@ -366,7 +437,7 @@ const App: React.FC = () => {
       <Router
         future={{
           v7_startTransition: true,
-          v7_relativeSplatPath: true
+          v7_relativeSplatPath: true,
         }}
       >
         <ThemeProvider>

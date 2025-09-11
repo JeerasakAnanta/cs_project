@@ -32,7 +32,7 @@ class GuestPostgreSQLService {
   private async initializeMachineId(): Promise<void> {
     // Try to get existing machine ID from localStorage
     const existingMachineId = localStorage.getItem('guest_machine_id');
-    
+
     if (existingMachineId) {
       this.machineId = existingMachineId;
     } else {
@@ -44,7 +44,7 @@ class GuestPostgreSQLService {
             'Content-Type': 'application/json',
           },
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           this.machineId = data.machine_id;
@@ -69,11 +69,11 @@ class GuestPostgreSQLService {
     const screenResolution = `${screen.width}x${screen.height}`;
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const language = navigator.language;
-    
+
     // Create a hash from browser characteristics
     const fingerprint = `${userAgent}-${screenResolution}-${timezone}-${language}`;
     const hash = this.simpleHash(fingerprint);
-    
+
     return `client-${hash}-${Date.now()}`;
   }
 
@@ -81,7 +81,7 @@ class GuestPostgreSQLService {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(36);
@@ -91,11 +91,11 @@ class GuestPostgreSQLService {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
-    
+
     if (this.machineId) {
       headers['X-Machine-ID'] = this.machineId;
     }
-    
+
     return headers;
   }
 
@@ -106,14 +106,18 @@ class GuestPostgreSQLService {
         headers: this.getHeaders(),
         body: JSON.stringify({
           title,
-          machine_id: this.machineId
+          machine_id: this.machineId,
         }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`Create conversation failed: ${response.status} - ${errorText}`);
-        throw new Error(`Failed to create conversation: ${response.status} ${response.statusText}`);
+        console.error(
+          `Create conversation failed: ${response.status} - ${errorText}`
+        );
+        throw new Error(
+          `Failed to create conversation: ${response.status} ${response.statusText}`
+        );
       }
 
       return await response.json();
@@ -132,8 +136,12 @@ class GuestPostgreSQLService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`Get conversations failed: ${response.status} - ${errorText}`);
-        throw new Error(`Failed to fetch conversations: ${response.status} ${response.statusText}`);
+        console.error(
+          `Get conversations failed: ${response.status} - ${errorText}`
+        );
+        throw new Error(
+          `Failed to fetch conversations: ${response.status} ${response.statusText}`
+        );
       }
 
       return await response.json();
@@ -144,10 +152,13 @@ class GuestPostgreSQLService {
   }
 
   async getConversation(id: string): Promise<GuestConversation | null> {
-    const response = await fetch(`${BACKEND_API}/chat/guest/conversations/${id}`, {
-      method: 'GET',
-      headers: this.getHeaders(),
-    });
+    const response = await fetch(
+      `${BACKEND_API}/chat/guest/conversations/${id}`,
+      {
+        method: 'GET',
+        headers: this.getHeaders(),
+      }
+    );
 
     if (!response.ok) {
       if (response.status === 404) {
@@ -160,14 +171,17 @@ class GuestPostgreSQLService {
   }
 
   async addMessage(conversationId: string, content: string): Promise<string> {
-    const response = await fetch(`${BACKEND_API}/chat/guest/conversations/${conversationId}/messages`, {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify({
-        content,
-        machine_id: this.machineId
-      }),
-    });
+    const response = await fetch(
+      `${BACKEND_API}/chat/guest/conversations/${conversationId}/messages`,
+      {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({
+          content,
+          machine_id: this.machineId,
+        }),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to add message: ${response.statusText}`);
@@ -178,10 +192,13 @@ class GuestPostgreSQLService {
   }
 
   async deleteConversation(id: string): Promise<void> {
-    const response = await fetch(`${BACKEND_API}/chat/guest/conversations/${id}`, {
-      method: 'DELETE',
-      headers: this.getHeaders(),
-    });
+    const response = await fetch(
+      `${BACKEND_API}/chat/guest/conversations/${id}`,
+      {
+        method: 'DELETE',
+        headers: this.getHeaders(),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to delete conversation: ${response.statusText}`);
@@ -201,13 +218,15 @@ class GuestPostgreSQLService {
     return await response.json();
   }
 
-  async sendMessage(content: string): Promise<{ message: string; machine_id: string }> {
+  async sendMessage(
+    content: string
+  ): Promise<{ message: string; machine_id: string }> {
     const response = await fetch(`${BACKEND_API}/chat/guest/message`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify({
         content,
-        machine_id: this.machineId
+        machine_id: this.machineId,
       }),
     });
 
@@ -226,7 +245,7 @@ class GuestPostgreSQLService {
     // Remove existing machine ID
     localStorage.removeItem('guest_machine_id');
     this.machineId = null;
-    
+
     // Generate new machine ID
     await this.initializeMachineId();
   }
@@ -237,9 +256,9 @@ class GuestPostgreSQLService {
     const exportData = {
       machine_id: this.machineId,
       export_date: new Date().toISOString(),
-      conversations: conversations
+      conversations: conversations,
     };
-    
+
     return JSON.stringify(exportData, null, 2);
   }
 
@@ -247,7 +266,7 @@ class GuestPostgreSQLService {
   async importConversations(importData: string): Promise<void> {
     try {
       const data = JSON.parse(importData);
-      
+
       // Validate import data
       if (!data.conversations || !Array.isArray(data.conversations)) {
         throw new Error('Invalid import data format');
@@ -257,8 +276,10 @@ class GuestPostgreSQLService {
       for (const conversation of data.conversations) {
         if (conversation.title && conversation.messages) {
           // Create new conversation with current machine ID
-          const newConversation = await this.createConversation(conversation.title);
-          
+          const newConversation = await this.createConversation(
+            conversation.title
+          );
+
           // Import messages
           for (const message of conversation.messages) {
             if (message.content && message.sender) {
@@ -273,4 +294,4 @@ class GuestPostgreSQLService {
   }
 }
 
-export const guestPostgreSQLService = new GuestPostgreSQLService(); 
+export const guestPostgreSQLService = new GuestPostgreSQLService();

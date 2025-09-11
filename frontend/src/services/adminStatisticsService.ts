@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
 
 // Types for statistics data
 export interface SystemStats {
@@ -77,8 +78,8 @@ class AdminStatisticsService {
       throw new Error('ไม่พบ token การเข้าสู่ระบบ');
     }
     return {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     };
   }
 
@@ -87,13 +88,18 @@ class AdminStatisticsService {
    */
   async getSystemStatistics(): Promise<SystemStats> {
     try {
-      const response = await axios.get<SystemStats>(`${API_BASE_URL}/admin/statistics/`, {
-        headers: this.getAuthHeaders()
-      });
+      const response = await axios.get<SystemStats>(
+        `${API_BASE_URL}/admin/statistics/`,
+        {
+          headers: this.getAuthHeaders(),
+        }
+      );
       return response.data;
     } catch (error: any) {
       console.error('Error fetching system statistics:', error);
-      throw new Error(error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติระบบ');
+      throw new Error(
+        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติระบบ'
+      );
     }
   }
 
@@ -102,13 +108,18 @@ class AdminStatisticsService {
    */
   async getUserStatistics(): Promise<UserStats> {
     try {
-      const response = await axios.get<UserStats>(`${API_BASE_URL}/admin/statistics/users/`, {
-        headers: this.getAuthHeaders()
-      });
+      const response = await axios.get<UserStats>(
+        `${API_BASE_URL}/admin/statistics/users/`,
+        {
+          headers: this.getAuthHeaders(),
+        }
+      );
       return response.data;
     } catch (error: any) {
       console.error('Error fetching user statistics:', error);
-      throw new Error(error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติผู้ใช้');
+      throw new Error(
+        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติผู้ใช้'
+      );
     }
   }
 
@@ -117,13 +128,18 @@ class AdminStatisticsService {
    */
   async getConversationStatistics(): Promise<ConversationStats> {
     try {
-      const response = await axios.get<ConversationStats>(`${API_BASE_URL}/admin/statistics/conversations/`, {
-        headers: this.getAuthHeaders()
-      });
+      const response = await axios.get<ConversationStats>(
+        `${API_BASE_URL}/admin/statistics/conversations/`,
+        {
+          headers: this.getAuthHeaders(),
+        }
+      );
       return response.data;
     } catch (error: any) {
       console.error('Error fetching conversation statistics:', error);
-      throw new Error(error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติการสนทนา');
+      throw new Error(
+        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติการสนทนา'
+      );
     }
   }
 
@@ -139,13 +155,13 @@ class AdminStatisticsService {
       const [systemStats, userStats, conversationStats] = await Promise.all([
         this.getSystemStatistics(),
         this.getUserStatistics(),
-        this.getConversationStatistics()
+        this.getConversationStatistics(),
       ]);
 
       return {
         system: systemStats,
         users: userStats,
-        conversations: conversationStats
+        conversations: conversationStats,
       };
     } catch (error: any) {
       console.error('Error fetching all statistics:', error);
@@ -177,7 +193,7 @@ class AdminStatisticsService {
       const stats = await this.getSystemStatistics();
       return {
         timestamp: new Date().toISOString(),
-        stats
+        stats,
       };
     } catch (error) {
       throw error;

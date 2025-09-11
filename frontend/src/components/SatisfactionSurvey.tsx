@@ -19,7 +19,7 @@ import {
   Alert,
   Snackbar,
   Chip,
-  IconButton
+  IconButton,
 } from '@mui/material';
 import {
   Star,
@@ -31,7 +31,7 @@ import {
   Speed,
   Security,
   Support,
-  ContentPaste
+  ContentPaste,
 } from '@mui/icons-material';
 
 interface SatisfactionSurveyProps {
@@ -57,7 +57,7 @@ interface SurveyData {
 const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
   open,
   onClose,
-  onSubmit
+  onSubmit,
 }) => {
   const [surveyData, setSurveyData] = useState<SurveyData>({
     overallSatisfaction: 0,
@@ -70,41 +70,49 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
     improvements: '',
     recommendToOthers: '',
     additionalComments: '',
-    timestamp: new Date()
+    timestamp: new Date(),
   });
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
   const featureOptions = [
-    { value: 'chat_interface', label: 'ส่วนติดต่อผู้ใช้แชท', icon: <EmojiEmotions /> },
+    {
+      value: 'chat_interface',
+      label: 'ส่วนติดต่อผู้ใช้แชท',
+      icon: <EmojiEmotions />,
+    },
     { value: 'response_speed', label: 'ความเร็วในการตอบสนอง', icon: <Speed /> },
     { value: 'accuracy', label: 'ความแม่นยำของข้อมูล', icon: <ContentPaste /> },
     { value: 'security', label: 'ความปลอดภัย', icon: <Security /> },
     { value: 'support', label: 'การสนับสนุน', icon: <Support /> },
-    { value: 'user_experience', label: 'ประสบการณ์การใช้งาน', icon: <EmojiEmotions /> }
+    {
+      value: 'user_experience',
+      label: 'ประสบการณ์การใช้งาน',
+      icon: <EmojiEmotions />,
+    },
   ];
 
   const handleRatingChange = (field: keyof SurveyData, value: number) => {
-    setSurveyData(prev => ({
+    setSurveyData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleFeatureChange = (feature: string) => {
-    setSurveyData(prev => ({
+    setSurveyData((prev) => ({
       ...prev,
       features: prev.features.includes(feature)
-        ? prev.features.filter(f => f !== feature)
-        : [...prev.features, feature]
+        ? prev.features.filter((f) => f !== feature)
+        : [...prev.features, feature],
     }));
   };
 
   const handleTextChange = (field: keyof SurveyData, value: string) => {
-    setSurveyData(prev => ({
+    setSurveyData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -118,7 +126,7 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
 
       // Here you would typically send the data to your backend
       console.log('Survey Data:', surveyData);
-      
+
       if (onSubmit) {
         onSubmit(surveyData);
       }
@@ -138,7 +146,7 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
           improvements: '',
           recommendToOthers: '',
           additionalComments: '',
-          timestamp: new Date()
+          timestamp: new Date(),
         });
       }, 2000);
     } catch (error) {
@@ -152,7 +160,7 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
       2: 'ไม่พอใจ',
       3: 'พอใจปานกลาง',
       4: 'พอใจ',
-      5: 'พอใจมาก'
+      5: 'พอใจมาก',
     };
     return labels[value as keyof typeof labels] || '';
   };
@@ -167,12 +175,16 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
         PaperProps={{
           style: {
             borderRadius: '16px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-          }
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          },
         }}
       >
         <DialogTitle className="text-white text-center">
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Typography variant="h5" className="font-bold">
               แบบประเมินความพึงพอใจ LannaFinChat
             </Typography>
@@ -189,20 +201,28 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
           <Box className="space-y-6 p-4">
             {/* Overall Satisfaction */}
             <Paper elevation={2} className="p-6 rounded-lg">
-              <Typography variant="h6" className="mb-4 text-gray-800 font-semibold">
+              <Typography
+                variant="h6"
+                className="mb-4 text-gray-800 font-semibold"
+              >
                 <Star className="mr-2 text-yellow-500" />
                 ความพึงพอใจโดยรวม
               </Typography>
               <Box className="flex items-center justify-center mb-2">
                 <Rating
                   value={surveyData.overallSatisfaction}
-                  onChange={(_, value) => handleRatingChange('overallSatisfaction', value || 0)}
+                  onChange={(_, value) =>
+                    handleRatingChange('overallSatisfaction', value || 0)
+                  }
                   size="large"
                   className="text-3xl"
                 />
               </Box>
               {surveyData.overallSatisfaction > 0 && (
-                <Typography variant="body2" className="text-center text-gray-600">
+                <Typography
+                  variant="body2"
+                  className="text-center text-gray-600"
+                >
                   {getRatingLabel(surveyData.overallSatisfaction)}
                 </Typography>
               )}
@@ -210,18 +230,44 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
 
             {/* Detailed Ratings */}
             <Paper elevation={2} className="p-6 rounded-lg">
-              <Typography variant="h6" className="mb-4 text-gray-800 font-semibold">
+              <Typography
+                variant="h6"
+                className="mb-4 text-gray-800 font-semibold"
+              >
                 การประเมินรายละเอียด
               </Typography>
               <Box className="space-y-4">
                 {[
-                  { field: 'easeOfUse', label: 'ความง่ายในการใช้งาน', icon: <EmojiEmotions /> },
-                  { field: 'responseSpeed', label: 'ความเร็วในการตอบสนอง', icon: <Speed /> },
-                  { field: 'accuracy', label: 'ความแม่นยำของข้อมูล', icon: <ContentPaste /> },
-                  { field: 'helpfulness', label: 'ประโยชน์ที่ได้รับ', icon: <Support /> },
-                  { field: 'userInterface', label: 'การออกแบบส่วนติดต่อผู้ใช้', icon: <EmojiEmotions /> }
+                  {
+                    field: 'easeOfUse',
+                    label: 'ความง่ายในการใช้งาน',
+                    icon: <EmojiEmotions />,
+                  },
+                  {
+                    field: 'responseSpeed',
+                    label: 'ความเร็วในการตอบสนอง',
+                    icon: <Speed />,
+                  },
+                  {
+                    field: 'accuracy',
+                    label: 'ความแม่นยำของข้อมูล',
+                    icon: <ContentPaste />,
+                  },
+                  {
+                    field: 'helpfulness',
+                    label: 'ประโยชน์ที่ได้รับ',
+                    icon: <Support />,
+                  },
+                  {
+                    field: 'userInterface',
+                    label: 'การออกแบบส่วนติดต่อผู้ใช้',
+                    icon: <EmojiEmotions />,
+                  },
                 ].map(({ field, label, icon }) => (
-                  <Box key={field} className="flex items-center justify-between">
+                  <Box
+                    key={field}
+                    className="flex items-center justify-between"
+                  >
                     <Box className="flex items-center">
                       <span className="mr-2 text-gray-600">{icon}</span>
                       <Typography variant="body1" className="text-gray-700">
@@ -230,7 +276,12 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
                     </Box>
                     <Rating
                       value={surveyData[field as keyof SurveyData] as number}
-                      onChange={(_, value) => handleRatingChange(field as keyof SurveyData, value || 0)}
+                      onChange={(_, value) =>
+                        handleRatingChange(
+                          field as keyof SurveyData,
+                          value || 0
+                        )
+                      }
                       size="small"
                     />
                   </Box>
@@ -240,7 +291,10 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
 
             {/* Features */}
             <Paper elevation={2} className="p-6 rounded-lg">
-              <Typography variant="h6" className="mb-4 text-gray-800 font-semibold">
+              <Typography
+                variant="h6"
+                className="mb-4 text-gray-800 font-semibold"
+              >
                 คุณสมบัติที่ประทับใจ (เลือกได้หลายข้อ)
               </Typography>
               <FormGroup className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -256,7 +310,9 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
                     }
                     label={
                       <Box className="flex items-center">
-                        <span className="mr-2 text-gray-600">{feature.icon}</span>
+                        <span className="mr-2 text-gray-600">
+                          {feature.icon}
+                        </span>
                         <Typography variant="body2">{feature.label}</Typography>
                       </Box>
                     }
@@ -268,7 +324,10 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
 
             {/* Improvements */}
             <Paper elevation={2} className="p-6 rounded-lg">
-              <Typography variant="h6" className="mb-4 text-gray-800 font-semibold">
+              <Typography
+                variant="h6"
+                className="mb-4 text-gray-800 font-semibold"
+              >
                 ข้อเสนอแนะเพื่อการปรับปรุง
               </Typography>
               <TextField
@@ -278,20 +337,27 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
                 variant="outlined"
                 placeholder="กรุณาแจ้งข้อเสนอแนะหรือความคิดเห็นเพื่อปรับปรุงบริการ..."
                 value={surveyData.improvements}
-                onChange={(e) => handleTextChange('improvements', e.target.value)}
+                onChange={(e) =>
+                  handleTextChange('improvements', e.target.value)
+                }
                 className="mb-4"
               />
             </Paper>
 
             {/* Recommend to Others */}
             <Paper elevation={2} className="p-6 rounded-lg">
-              <Typography variant="h6" className="mb-4 text-gray-800 font-semibold">
+              <Typography
+                variant="h6"
+                className="mb-4 text-gray-800 font-semibold"
+              >
                 คุณจะแนะนำ LannaFinChat ให้ผู้อื่นหรือไม่?
               </Typography>
               <FormControl component="fieldset">
                 <RadioGroup
                   value={surveyData.recommendToOthers}
-                  onChange={(e) => handleTextChange('recommendToOthers', e.target.value)}
+                  onChange={(e) =>
+                    handleTextChange('recommendToOthers', e.target.value)
+                  }
                   className="flex flex-row space-x-4"
                 >
                   <FormControlLabel
@@ -329,7 +395,10 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
 
             {/* Additional Comments */}
             <Paper elevation={2} className="p-6 rounded-lg">
-              <Typography variant="h6" className="mb-4 text-gray-800 font-semibold">
+              <Typography
+                variant="h6"
+                className="mb-4 text-gray-800 font-semibold"
+              >
                 ความคิดเห็นเพิ่มเติม
               </Typography>
               <TextField
@@ -339,7 +408,9 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
                 variant="outlined"
                 placeholder="ความคิดเห็นหรือข้อเสนอแนะอื่นๆ..."
                 value={surveyData.additionalComments}
-                onChange={(e) => handleTextChange('additionalComments', e.target.value)}
+                onChange={(e) =>
+                  handleTextChange('additionalComments', e.target.value)
+                }
               />
             </Paper>
 
@@ -351,7 +422,9 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
                 </Typography>
                 <Box className="flex flex-wrap gap-2">
                   {surveyData.features.map((feature) => {
-                    const featureInfo = featureOptions.find(f => f.value === feature);
+                    const featureInfo = featureOptions.find(
+                      (f) => f.value === feature
+                    );
                     return (
                       <Chip
                         key={feature}

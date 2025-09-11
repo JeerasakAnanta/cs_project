@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ComputerDesktopIcon, 
-  ArrowPathIcon, 
+import {
+  ComputerDesktopIcon,
+  ArrowPathIcon,
   ArrowDownTrayIcon,
   ArrowUpTrayIcon,
-  InformationCircleIcon
+  InformationCircleIcon,
 } from '@heroicons/react/24/outline';
 
 interface MachineInfo {
@@ -28,9 +28,9 @@ interface MachineManagementProps {
   onMachineIdChange?: (newMachineId: string) => void;
 }
 
-const MachineManagement: React.FC<MachineManagementProps> = ({ 
-  machineId, 
-  onMachineIdChange 
+const MachineManagement: React.FC<MachineManagementProps> = ({
+  machineId,
+  onMachineIdChange,
 }) => {
   const [machineInfo, setMachineInfo] = useState<MachineInfo | null>(null);
   const [loading, setLoading] = useState(false);
@@ -46,7 +46,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
 
   const fetchMachineInfo = async () => {
     if (!machineId) return;
-    
+
     setLoading(true);
     try {
       const response = await fetch(`/api/machine/info/${machineId}`);
@@ -67,7 +67,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
       const response = await fetch('/api/machine/generate-id', {
         method: 'POST',
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         if (onMachineIdChange) {
@@ -84,13 +84,13 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
 
   const resetMachineId = async () => {
     if (!machineId) return;
-    
+
     setLoading(true);
     try {
       const response = await fetch(`/api/machine/reset/${machineId}`, {
         method: 'POST',
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         if (onMachineIdChange) {
@@ -108,19 +108,19 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
 
   const exportMachineData = async () => {
     if (!machineId) return;
-    
+
     setLoading(true);
     try {
       const response = await fetch(`/api/machine/export-data/${machineId}`, {
         method: 'POST',
       });
-      
+
       if (response.ok) {
         const data = await response.json();
-        
+
         // สร้างไฟล์ download
         const blob = new Blob([JSON.stringify(data.export_data, null, 2)], {
-          type: 'application/json'
+          type: 'application/json',
         });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -140,12 +140,12 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
 
   const importMachineData = async () => {
     if (!importFile || !machineId) return;
-    
+
     setLoading(true);
     try {
       const fileContent = await importFile.text();
       const importData = JSON.parse(fileContent);
-      
+
       const response = await fetch('/api/machine/import-data', {
         method: 'POST',
         headers: {
@@ -153,10 +153,10 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
         },
         body: JSON.stringify({
           machine_id: machineId,
-          import_data: importData
+          import_data: importData,
         }),
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         console.log('Import successful:', data.message);
@@ -183,7 +183,9 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
       <div className="p-6 bg-white rounded-lg shadow">
         <div className="text-center">
           <ComputerDesktopIcon className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">ไม่มี Machine ID</h3>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">
+            ไม่มี Machine ID
+          </h3>
           <p className="mt-1 text-sm text-gray-500">
             ระบบจะสร้าง Machine ID อัตโนมัติเมื่อเริ่มใช้งาน
           </p>
@@ -233,40 +235,56 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
           <h3 className="text-lg font-medium text-gray-900 mb-4">
             ข้อมูลเครื่อง
           </h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2">ข้อมูลระบบ</h4>
+              <h4 className="text-sm font-medium text-gray-700 mb-2">
+                ข้อมูลระบบ
+              </h4>
               <dl className="space-y-2 text-sm">
                 <div>
                   <dt className="text-gray-500">Platform:</dt>
-                  <dd className="text-gray-900">{machineInfo.system_info.platform}</dd>
+                  <dd className="text-gray-900">
+                    {machineInfo.system_info.platform}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-gray-500">Machine:</dt>
-                  <dd className="text-gray-900">{machineInfo.system_info.machine}</dd>
+                  <dd className="text-gray-900">
+                    {machineInfo.system_info.machine}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-gray-500">Processor:</dt>
-                  <dd className="text-gray-900">{machineInfo.system_info.processor}</dd>
+                  <dd className="text-gray-900">
+                    {machineInfo.system_info.processor}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-gray-500">Node:</dt>
-                  <dd className="text-gray-900">{machineInfo.system_info.node}</dd>
+                  <dd className="text-gray-900">
+                    {machineInfo.system_info.node}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-gray-500">Python Version:</dt>
-                  <dd className="text-gray-900">{machineInfo.system_info.python_version}</dd>
+                  <dd className="text-gray-900">
+                    {machineInfo.system_info.python_version}
+                  </dd>
                 </div>
               </dl>
             </div>
-            
+
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2">สถิติการใช้งาน</h4>
+              <h4 className="text-sm font-medium text-gray-700 mb-2">
+                สถิติการใช้งาน
+              </h4>
               <dl className="space-y-2 text-sm">
                 <div>
                   <dt className="text-gray-500">การสนทนา:</dt>
-                  <dd className="text-gray-900">{machineInfo.conversation_count}</dd>
+                  <dd className="text-gray-900">
+                    {machineInfo.conversation_count}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-gray-500">ข้อความ:</dt>
@@ -293,7 +311,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
       {/* Actions */}
       <div className="p-6 bg-white rounded-lg shadow">
         <h3 className="text-lg font-medium text-gray-900 mb-4">การดำเนินการ</h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={exportMachineData}
@@ -303,7 +321,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
             <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
             ส่งออกข้อมูล
           </button>
-          
+
           <button
             onClick={() => setShowImportForm(true)}
             disabled={loading}
@@ -312,7 +330,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
             <ArrowUpTrayIcon className="h-5 w-5 mr-2" />
             นำเข้าข้อมูล
           </button>
-          
+
           <button
             onClick={generateNewMachineId}
             disabled={loading}
@@ -330,10 +348,12 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
           <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div className="mt-3 text-center">
               <InformationCircleIcon className="mx-auto h-12 w-12 text-yellow-400" />
-              <h3 className="text-lg font-medium text-gray-900 mt-2">ยืนยันการรีเซ็ต</h3>
+              <h3 className="text-lg font-medium text-gray-900 mt-2">
+                ยืนยันการรีเซ็ต
+              </h3>
               <div className="mt-2 px-7 py-3">
                 <p className="text-sm text-gray-500">
-                  การรีเซ็ต Machine ID จะทำให้ไม่สามารถเข้าถึงข้อมูลเก่าได้ 
+                  การรีเซ็ต Machine ID จะทำให้ไม่สามารถเข้าถึงข้อมูลเก่าได้
                   และจะสร้าง Machine ID ใหม่ คุณแน่ใจหรือไม่?
                 </p>
               </div>
@@ -365,7 +385,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
               <h3 className="text-lg font-medium text-gray-900 text-center mb-4">
                 นำเข้าข้อมูลเครื่อง
               </h3>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -378,7 +398,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
                     className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                
+
                 <div className="flex justify-end space-x-3">
                   <button
                     onClick={() => {

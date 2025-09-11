@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { 
+import {
   Settings as SettingsIcon,
   User,
   MessageSquare,
@@ -9,7 +9,7 @@ import {
   Monitor,
   Volume2,
   Database,
-  Trash2
+  Trash2,
 } from 'lucide-react';
 
 const menus = [
@@ -27,13 +27,19 @@ const General = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-white mb-6">การตั้งค่าทั่วไป</h2>
-      
+
       <div className="space-y-4">
         <div className="card p-6">
           <h3 className="text-lg font-semibold text-white mb-4">ธีม</h3>
           <div className="space-y-3">
             <label className="flex items-center">
-              <input type="radio" name="theme" value="dark" defaultChecked className="mr-3" />
+              <input
+                type="radio"
+                name="theme"
+                value="dark"
+                defaultChecked
+                className="mr-3"
+              />
               <span className="text-neutral-300">โหมดมืด (แนะนำ)</span>
             </label>
             <label className="flex items-center">
@@ -56,7 +62,9 @@ const General = () => {
         </div>
 
         <div className="card p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">การแจ้งเตือน</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            การแจ้งเตือน
+          </h3>
           <div className="space-y-3">
             <label className="flex items-center">
               <input type="checkbox" defaultChecked className="mr-3" />
@@ -76,11 +84,15 @@ const General = () => {
 const Interface = () => {
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-white mb-6">การตั้งค่าอินเทอร์เฟซ</h2>
-      
+      <h2 className="text-2xl font-bold text-white mb-6">
+        การตั้งค่าอินเทอร์เฟซ
+      </h2>
+
       <div className="space-y-4">
         <div className="card p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">โมเดลเริ่มต้น</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            โมเดลเริ่มต้น
+          </h3>
           <select className="input-field">
             <option value="gpt-4">GPT-4</option>
             <option value="gpt-3.5">GPT-3.5</option>
@@ -108,8 +120,10 @@ const Interface = () => {
 const Personalization = () => {
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-white mb-6">การตั้งค่าส่วนบุคคล</h2>
-      
+      <h2 className="text-2xl font-bold text-white mb-6">
+        การตั้งค่าส่วนบุคคล
+      </h2>
+
       <div className="card p-6">
         <h3 className="text-lg font-semibold text-white mb-4">การปรับแต่ง</h3>
         <p className="text-neutral-400">ฟีเจอร์นี้จะมาเร็วๆ นี้</p>
@@ -122,27 +136,37 @@ const Audio = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-white mb-6">การตั้งค่าเสียง</h2>
-      
+
       <div className="space-y-4">
         <div className="card p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">การแปลงเสียงเป็นข้อความ (STT)</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            การแปลงเสียงเป็นข้อความ (STT)
+          </h3>
           <div className="space-y-3">
             <label className="flex items-center">
               <input type="checkbox" defaultChecked className="mr-3" />
-              <span className="text-neutral-300">ส่งข้อความอัตโนมัติหลังการแปลงเสียง</span>
+              <span className="text-neutral-300">
+                ส่งข้อความอัตโนมัติหลังการแปลงเสียง
+              </span>
             </label>
           </div>
         </div>
 
         <div className="card p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">การแปลงข้อความเป็นเสียง (TTS)</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            การแปลงข้อความเป็นเสียง (TTS)
+          </h3>
           <div className="space-y-3">
             <label className="flex items-center">
               <input type="checkbox" className="mr-3" />
-              <span className="text-neutral-300">เล่นเสียงตอบกลับอัตโนมัติ</span>
+              <span className="text-neutral-300">
+                เล่นเสียงตอบกลับอัตโนมัติ
+              </span>
             </label>
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">เลือกเสียง</label>
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
+                เลือกเสียง
+              </label>
               <select className="input-field">
                 <option value="th-female">เสียงหญิงไทย</option>
                 <option value="th-male">เสียงชายไทย</option>
@@ -159,10 +183,12 @@ const Chats = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-white mb-6">การจัดการการสนทนา</h2>
-      
+
       <div className="space-y-4">
         <div className="card p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">การนำเข้า/ส่งออก</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            การนำเข้า/ส่งออก
+          </h3>
           <div className="space-y-3">
             <button className="btn-secondary w-full">
               <Database className="w-4 h-4 mr-2" />
@@ -176,7 +202,9 @@ const Chats = () => {
         </div>
 
         <div className="card p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">การจัดการข้อมูล</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            การจัดการข้อมูล
+          </h3>
           <div className="space-y-3">
             <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 w-full">
               <MessageSquare className="w-4 h-4 mr-2 inline" />
@@ -197,23 +225,35 @@ const Account = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-white mb-6">การตั้งค่าบัญชี</h2>
-      
+
       <div className="space-y-4">
         <div className="card p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">ข้อมูลส่วนตัว</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            ข้อมูลส่วนตัว
+          </h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">รูปโปรไฟล์</label>
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
+                รูปโปรไฟล์
+              </label>
               <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center">
                 <User className="w-8 h-8 text-white" />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">ชื่อ</label>
-              <input type="text" className="input-field" placeholder="ชื่อของคุณ" />
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
+                ชื่อ
+              </label>
+              <input
+                type="text"
+                className="input-field"
+                placeholder="ชื่อของคุณ"
+              />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">เปลี่ยนรหัสผ่าน</label>
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
+                เปลี่ยนรหัสผ่าน
+              </label>
               <button className="btn-secondary">เปลี่ยนรหัสผ่าน</button>
             </div>
           </div>
@@ -226,14 +266,20 @@ const Account = () => {
 const AdminSettings = () => {
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-white mb-6">การตั้งค่าผู้ดูแลระบบ</h2>
-      
+      <h2 className="text-2xl font-bold text-white mb-6">
+        การตั้งค่าผู้ดูแลระบบ
+      </h2>
+
       <div className="card p-6">
         <div className="flex items-center mb-4">
           <Shield className="w-6 h-6 text-amber-500 mr-3" />
-          <h3 className="text-lg font-semibold text-white">แผงควบคุมผู้ดูแลระบบ</h3>
+          <h3 className="text-lg font-semibold text-white">
+            แผงควบคุมผู้ดูแลระบบ
+          </h3>
         </div>
-        <p className="text-neutral-400 mb-4">เข้าถึงการตั้งค่าขั้นสูงสำหรับผู้ดูแลระบบ</p>
+        <p className="text-neutral-400 mb-4">
+          เข้าถึงการตั้งค่าขั้นสูงสำหรับผู้ดูแลระบบ
+        </p>
         <button className="btn-primary">
           <Shield className="w-4 h-4 mr-2" />
           ไปยังแผงควบคุม
@@ -247,7 +293,7 @@ const About = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-white mb-6">เกี่ยวกับ</h2>
-      
+
       <div className="card p-6">
         <div className="text-center">
           <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -259,7 +305,8 @@ const About = () => {
             ระบบ AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน
           </p>
           <div className="text-xs text-neutral-500">
-            © 2025 LannaFinChat. Developed by CS RMUTL NAN. All rights reserved.
+            © 2025 LannaFinChat. Developed by CS RMUTL NAN. All rights
+            reserved.
           </div>
         </div>
       </div>
@@ -272,15 +319,24 @@ const Settings = () => {
 
   const renderContent = () => {
     switch (activeMenu) {
-      case 'general': return <General />;
-      case 'interface': return <Interface />;
-      case 'personalization': return <Personalization />;
-      case 'audio': return <Audio />;
-      case 'chats': return <Chats />;
-      case 'account': return <Account />;
-      case 'admin': return <AdminSettings />;
-      case 'about': return <About />;
-      default: return <General />;
+      case 'general':
+        return <General />;
+      case 'interface':
+        return <Interface />;
+      case 'personalization':
+        return <Personalization />;
+      case 'audio':
+        return <Audio />;
+      case 'chats':
+        return <Chats />;
+      case 'account':
+        return <Account />;
+      case 'admin':
+        return <AdminSettings />;
+      case 'about':
+        return <About />;
+      default:
+        return <General />;
     }
   };
 
@@ -293,7 +349,9 @@ const Settings = () => {
             <SettingsIcon className="w-6 h-6 mr-3" />
             การตั้งค่า
           </h1>
-          <p className="text-neutral-400 text-sm mt-1">ปรับแต่งการตั้งค่าระบบ</p>
+          <p className="text-neutral-400 text-sm mt-1">
+            ปรับแต่งการตั้งค่าระบบ
+          </p>
         </div>
 
         <nav className="space-y-2">
@@ -310,18 +368,28 @@ const Settings = () => {
                 }`}
               >
                 <div className="flex items-center">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-all duration-200 ${
-                    activeMenu === menu.id
-                      ? 'bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow'
-                      : 'bg-neutral-700/50 group-hover:bg-neutral-600/50'
-                  }`}>
-                    <Icon className={`w-5 h-5 ${
-                      activeMenu === menu.id ? 'text-white' : 'text-neutral-400 group-hover:text-neutral-300'
-                    }`} />
+                  <div
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-all duration-200 ${
+                      activeMenu === menu.id
+                        ? 'bg-gradient-to-br from-primary-500 to-purple-600 shadow-glow'
+                        : 'bg-neutral-700/50 group-hover:bg-neutral-600/50'
+                    }`}
+                  >
+                    <Icon
+                      className={`w-5 h-5 ${
+                        activeMenu === menu.id
+                          ? 'text-white'
+                          : 'text-neutral-400 group-hover:text-neutral-300'
+                      }`}
+                    />
                   </div>
-                  <span className={`font-medium ${
-                    activeMenu === menu.id ? 'text-white' : 'text-neutral-300 group-hover:text-white'
-                  }`}>
+                  <span
+                    className={`font-medium ${
+                      activeMenu === menu.id
+                        ? 'text-white'
+                        : 'text-neutral-300 group-hover:text-white'
+                    }`}
+                  >
                     {menu.label}
                   </span>
                 </div>
@@ -333,10 +401,8 @@ const Settings = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto p-6">
-          {renderContent()}
-        </div>
-        
+        <div className="flex-1 overflow-y-auto p-6">{renderContent()}</div>
+
         {/* Save Button */}
         <div className="p-6 border-t border-neutral-700/50 bg-neutral-800/30 backdrop-blur-sm">
           <button className="btn-primary flex items-center">

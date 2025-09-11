@@ -10,7 +10,7 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
 } from '@mui/material';
 import {
   Star,
@@ -20,7 +20,7 @@ import {
   Support,
   EmojiEmotions,
   CheckCircle,
-  Info
+  Info,
 } from '@mui/icons-material';
 import SurveyButton from './SurveyButton';
 
@@ -29,33 +29,33 @@ const SurveyDemo: React.FC = () => {
     {
       icon: <Star className="text-yellow-500" />,
       title: 'การประเมินแบบดาว',
-      description: 'ให้คะแนนความพึงพอใจ 1-5 ดาว'
+      description: 'ให้คะแนนความพึงพอใจ 1-5 ดาว',
     },
     {
       icon: <Speed className="text-blue-500" />,
       title: 'ประเมินรายละเอียด',
-      description: 'ประเมินแต่ละด้านแยกกัน'
+      description: 'ประเมินแต่ละด้านแยกกัน',
     },
     {
       icon: <ThumbUp className="text-green-500" />,
       title: 'คำถามแนะนำ',
-      description: 'ถามความตั้งใจในการแนะนำ'
+      description: 'ถามความตั้งใจในการแนะนำ',
     },
     {
       icon: <EmojiEmotions className="text-purple-500" />,
       title: 'เลือกคุณสมบัติ',
-      description: 'เลือกคุณสมบัติที่ประทับใจ'
+      description: 'เลือกคุณสมบัติที่ประทับใจ',
     },
     {
       icon: <Support className="text-orange-500" />,
       title: 'ข้อเสนอแนะ',
-      description: 'รับข้อเสนอแนะเพื่อปรับปรุง'
+      description: 'รับข้อเสนอแนะเพื่อปรับปรุง',
     },
     {
       icon: <Security className="text-red-500" />,
       title: 'ข้อมูลปลอดภัย',
-      description: 'ข้อมูลจะถูกเก็บรักษาอย่างปลอดภัย'
-    }
+      description: 'ข้อมูลจะถูกเก็บรักษาอย่างปลอดภัย',
+    },
   ];
 
   const surveyBenefits = [
@@ -63,7 +63,7 @@ const SurveyDemo: React.FC = () => {
     'เข้าใจความต้องการของผู้ใช้',
     'พัฒนาคุณสมบัติใหม่',
     'เพิ่มความพึงพอใจของผู้ใช้',
-    'สร้างความไว้วางใจ'
+    'สร้างความไว้วางใจ',
   ];
 
   return (
@@ -76,7 +76,7 @@ const SurveyDemo: React.FC = () => {
         <Typography variant="h6" className="text-gray-600 mb-6">
           ช่วยเราในการปรับปรุงบริการให้ดียิ่งขึ้น
         </Typography>
-        
+
         <Box className="flex justify-center gap-4 mb-8">
           <SurveyButton variant="button" />
           <SurveyButton variant="fab" position="inline" />
@@ -89,9 +89,7 @@ const SurveyDemo: React.FC = () => {
           <Grid item xs={12} sm={6} md={4} key={index}>
             <Card className="h-full hover:shadow-lg transition-shadow duration-300">
               <CardContent className="text-center">
-                <Box className="mb-3">
-                  {feature.icon}
-                </Box>
+                <Box className="mb-3">{feature.icon}</Box>
                 <Typography variant="h6" className="font-semibold mb-2">
                   {feature.title}
                 </Typography>
@@ -153,7 +151,7 @@ const SurveyDemo: React.FC = () => {
             </Box>
           </Paper>
         </Grid>
-        
+
         <Grid item xs={12} md={6}>
           <Paper elevation={3} className="p-6 h-full">
             <Typography variant="h6" className="font-bold text-gray-800 mb-4">
@@ -187,7 +185,7 @@ const SurveyDemo: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          
+
           <Grid item xs={12} md={4}>
             <Card className="h-full">
               <CardContent>
@@ -200,7 +198,7 @@ const SurveyDemo: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          
+
           <Grid item xs={12} md={4}>
             <Card className="h-full">
               <CardContent>
@@ -219,7 +217,8 @@ const SurveyDemo: React.FC = () => {
       {/* Footer */}
       <Box className="text-center mt-8 pt-8 border-t">
         <Typography variant="body2" className="text-gray-500">
-          ขอบคุณที่ใช้บริการ LannaFinChat และให้ความสำคัญกับการปรับปรุงบริการของเรา
+          ขอบคุณที่ใช้บริการ LannaFinChat
+          และให้ความสำคัญกับการปรับปรุงบริการของเรา
         </Typography>
       </Box>
     </Container>
