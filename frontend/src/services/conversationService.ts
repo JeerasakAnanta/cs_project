@@ -234,7 +234,7 @@ class ConversationService {
         }
       );
 
-      return response.data;
+      return response.data as Blob;
     } catch (error: any) {
       console.error('Error exporting conversations:', error);
       if (error.response?.status === 401) {

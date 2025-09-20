@@ -11,8 +11,8 @@ import {
   Mail,
   RefreshCw,
 } from 'lucide-react';
-import LoadingSpinner from './LoadingSpinner';
-import { useTheme } from '../contexts/ThemeContext';
+import LoadingSpinner from '../common/ui/LoadingSpinner';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const BACKEND_API =
   import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';

@@ -1,8 +1,8 @@
 // src/components/Login.tsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { Eye, EyeOff, Lock, User, Sparkles } from 'lucide-react';
 
 const BACKEND_API =

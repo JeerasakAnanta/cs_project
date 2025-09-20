@@ -5,7 +5,6 @@ import {
   Users,
   Clock,
   ThumbsUp,
-  ThumbsDown,
   MessageSquare,
   RefreshCw,
 } from 'lucide-react';
@@ -19,7 +18,7 @@ interface ConversationAnalyticsProps {
 }
 
 const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({
-  conversations,
+  conversations: _conversations,
 }) => {
   const [timeRange, setTimeRange] = useState('7d');
   const [isLoading, setIsLoading] = useState(false);

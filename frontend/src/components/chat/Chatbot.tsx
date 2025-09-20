@@ -8,10 +8,10 @@ import {
   ThumbsDown,
   MessageCircle,
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
-import CustomAlert from './CustomAlert';
-import TypingIndicator from './TypingIndicator';
+import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
+import CustomAlert from '../common/feedback/CustomAlert';
+import TypingIndicator from '../common/ui/TypingIndicator';
 import { marked } from 'marked';
 
 const BACKEND_API =
@@ -93,14 +93,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
     }
   };
 
-  /*************  ✨ Codeium Command ⭐  *************/
-  /**
-   * Scrolls the chat box to the bottom.
-   *
-   * @remarks
-   * This is called when the messages change and when the loading state changes.
-   * When the loading state changes, it's to ensure the typing indicator is always visible.
-/******  d13e7d2f-4b32-467a-95fa-d88b5262f0f0  *******/ const scrollToBottom =
+  const scrollToBottom =
     () => {
       if (chatBoxRef.current) {
         chatBoxRef.current.scrollTo({

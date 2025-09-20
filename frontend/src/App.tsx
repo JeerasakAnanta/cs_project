@@ -9,19 +9,12 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 
 // Components
-import Navbar from './components/Navbar';
-import Login from './components/Login';
-import Register from './components/Register';
-import Chatbot from './components/Chatbot';
-import Pagenotfound from './components/Pagenotfound';
+import { Navbar, ErrorBoundary } from './components/common';
+import { Login, Register, AdminRoute, GuestRoute } from './components/auth';
+import { Chatbot, TypingTest } from './components/chat';
+import { Pagenotfound } from './components/pages';
+import { PDFManager } from './components/pdf';
 import AdminDashboard from './components/AdminDashboard';
-import PDFManager from './components/PDFManager';
-import ErrorBoundary from './components/ErrorBoundary';
-import TypingTest from './components/TypingTest';
-
-// Auth Wrapper
-import AdminRoute from './components/AdminRoute';
-import GuestRoute from './components/GuestRoute';
 
 // Services
 import {

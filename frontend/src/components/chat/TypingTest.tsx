@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import TypingIndicator from './TypingIndicator';
+import TypingIndicator from '../common/ui/TypingIndicator';
 
 const TypingTest: React.FC = () => {
   const [showAnimation, setShowAnimation] = useState(false);

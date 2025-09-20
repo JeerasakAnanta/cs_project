@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ComputerDesktopIcon,
-  ArrowPathIcon,
-  ArrowDownTrayIcon,
-  ArrowUpTrayIcon,
-  InformationCircleIcon,
-} from '@heroicons/react/24/outline';
+  Monitor,
+  RotateCcw,
+  Download,
+  Upload,
+  Info,
+} from 'lucide-react';
 
 interface MachineInfo {
   machine_id: string;
@@ -182,7 +182,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
     return (
       <div className="p-6 bg-white rounded-lg shadow">
         <div className="text-center">
-          <ComputerDesktopIcon className="mx-auto h-12 w-12 text-gray-400" />
+          <Monitor className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">
             ไม่มี Machine ID
           </h3>
@@ -223,7 +223,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
               className="p-2 text-gray-400 hover:text-gray-600"
               title="รีเซ็ต Machine ID"
             >
-              <ArrowPathIcon className="h-5 w-5" />
+              <RotateCcw className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -318,7 +318,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
             disabled={loading}
             className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
           >
-            <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
+            <Download className="h-5 w-5 mr-2" />
             ส่งออกข้อมูล
           </button>
 
@@ -327,7 +327,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
             disabled={loading}
             className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
           >
-            <ArrowUpTrayIcon className="h-5 w-5 mr-2" />
+            <Upload className="h-5 w-5 mr-2" />
             นำเข้าข้อมูล
           </button>
 
@@ -336,7 +336,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
             disabled={loading}
             className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
           >
-            <ArrowPathIcon className="h-5 w-5 mr-2" />
+            <RotateCcw className="h-5 w-5 mr-2" />
             สร้าง ID ใหม่
           </button>
         </div>
@@ -347,7 +347,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
           <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div className="mt-3 text-center">
-              <InformationCircleIcon className="mx-auto h-12 w-12 text-yellow-400" />
+              <Info className="mx-auto h-12 w-12 text-yellow-400" />
               <h3 className="text-lg font-medium text-gray-900 mt-2">
                 ยืนยันการรีเซ็ต
               </h3>

@@ -11,8 +11,8 @@ import {
   BarChart3,
   AlertCircle,
 } from 'lucide-react';
-import LoadingSpinner from './LoadingSpinner';
-import { useTheme } from '../contexts/ThemeContext';
+import LoadingSpinner from '../common/ui/LoadingSpinner';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const BACKEND_API =
   import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
@@ -50,7 +50,7 @@ const PDFManager: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const { theme } = useTheme();
+  const { } = useTheme();
 
   const authToken = localStorage.getItem('authToken');
 

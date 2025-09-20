@@ -10,30 +10,24 @@ import {
   MessageSquare,
   Search,
 } from 'lucide-react';
-import PDFManager from './PDFManager';
-import UserManager from './UserManager';
+import PDFManager from './pdf/PDFManager';
+import UserManager from './admin/UserManager';
 import SystemStatistics from './admin/SystemStatistics';
 import ConversationSearch from './admin/ConversationSearch';
 import ConversationAnalytics from './admin/ConversationAnalytics';
 import ConversationDetail from './admin/ConversationDetail';
 
-interface Conversation {
-  id: string;
-  user_id: string;
-  username: string;
-  question: string;
-  bot_response: string;
-  satisfaction_rating?: number;
-  response_time_ms?: number;
-  created_at: string;
-  updated_at: string;
-}
+import { Conversation } from '../services/conversationService';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('statistics');
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation | null>(null);
-  const { theme, sectionTheme } = useTheme();
+  const { theme } = useTheme();
+
+  const handleConversationSelect = (conversation: Conversation) => {
+    setSelectedConversation(conversation);
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -41,7 +35,7 @@ const AdminDashboard = () => {
         return <SystemStatistics />;
       case 'conversations':
         return (
-          <ConversationSearch onConversationSelect={setSelectedConversation} />
+          <ConversationSearch onConversationSelect={handleConversationSelect} />
         );
       case 'analytics':
         return <ConversationAnalytics conversations={[]} />; // TODO: Pass real conversations data

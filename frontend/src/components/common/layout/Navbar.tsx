@@ -11,10 +11,9 @@ import {
   MessageSquare,
   MessageCirclePlus,
   Sun,
-  Moon,
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useTheme } from '../../../contexts/ThemeContext';
 
 const BACKEND_API =
   import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
@@ -34,7 +33,7 @@ const Navbar: React.FC<{
 }) => {
     const [isOpen, setIsOpen] = useState(true);
     const { currentUser, logout, isGuestMode } = useAuth();
-    const { theme, toggleTheme } = useTheme();
+    const { toggleTheme } = useTheme();
     const authToken = localStorage.getItem('authToken');
 
     const handleDeleteConversation: React.MouseEventHandler<

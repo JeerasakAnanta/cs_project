@@ -13,17 +13,7 @@ import {
 import { marked } from 'marked';
 import './ConversationDetail.css';
 
-interface Conversation {
-  id: string;
-  user_id: string;
-  username: string;
-  question: string;
-  bot_response: string;
-  satisfaction_rating?: number;
-  response_time_ms?: number;
-  created_at: string;
-  updated_at: string;
-}
+import { Conversation } from '../../services/conversationService';
 
 interface ConversationDetailProps {
   conversation: Conversation | null;
@@ -117,7 +107,7 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({
         <div className="p-6 space-y-6">
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-neutral-700/30 p-4 rounded-lg border border-neutral-600/30">
+            <div className="bg-gradient-to-br from-neutral-700/40 to-neutral-800/40 p-4 rounded-lg border border-neutral-600/50 shadow-lg">
               <div className="flex items-center gap-2 mb-2">
                 <User className="w-5 h-5 text-blue-400" />
                 <span className="text-sm font-medium text-neutral-300">
@@ -132,7 +122,7 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({
               </p>
             </div>
 
-            <div className="bg-neutral-700/30 p-4 rounded-lg border border-neutral-600/30">
+            <div className="bg-gradient-to-br from-neutral-700/40 to-neutral-800/40 p-4 rounded-lg border border-neutral-600/50 shadow-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-5 h-5 text-purple-400" />
                 <span className="text-sm font-medium text-neutral-300">
@@ -147,7 +137,7 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({
               </p>
             </div>
 
-            <div className="bg-neutral-700/30 p-4 rounded-lg border border-neutral-600/30">
+            <div className="bg-gradient-to-br from-neutral-700/40 to-neutral-800/40 p-4 rounded-lg border border-neutral-600/50 shadow-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Clock className="w-5 h-5 text-indigo-400" />
                 <span className="text-sm font-medium text-neutral-300">
@@ -166,7 +156,7 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({
           </div>
 
           {/* Satisfaction Rating */}
-          <div className="bg-gradient-to-r from-blue-500/20 to-green-500/20 p-6 rounded-lg border border-blue-500/30">
+          <div className="bg-gradient-to-r from-blue-500/30 to-green-500/30 p-6 rounded-lg border border-blue-500/50 shadow-lg">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-white mb-2">
@@ -178,7 +168,7 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({
                     <p className="text-2xl font-bold text-white">
                       {conversation.satisfaction_rating || 'N/A'}/5
                     </p>
-                    <p className="text-sm text-neutral-400">
+                    <p className="text-sm text-neutral-300">
                       {getSatisfactionLabel(
                         conversation.satisfaction_rating || 0
                       )}
@@ -209,7 +199,7 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({
               <User className="w-5 h-5 text-blue-400" />
               คำถามจากผู้ใช้
             </h3>
-            <div className="bg-blue-500/20 p-4 rounded-lg border border-blue-500/30">
+            <div className="bg-gradient-to-r from-blue-500/30 to-indigo-500/30 p-4 rounded-lg border border-blue-500/50 shadow-lg">
               <div
                 className="text-white text-lg leading-relaxed markdown-content-full"
                 dangerouslySetInnerHTML={{
@@ -225,7 +215,7 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({
               <Bot className="w-5 h-5 text-green-400" />
               คำตอบจาก Bot
             </h3>
-            <div className="bg-green-500/20 p-4 rounded-lg border border-green-500/30">
+            <div className="bg-gradient-to-r from-green-500/30 to-emerald-500/30 p-4 rounded-lg border border-green-500/50 shadow-lg">
               <div
                 className="text-white text-lg leading-relaxed markdown-content-full"
                 dangerouslySetInnerHTML={{
@@ -236,13 +226,13 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({
           </div>
 
           {/* Performance Metrics */}
-          <div className="bg-neutral-700/30 p-6 rounded-lg border border-neutral-600/30">
+          <div className="bg-gradient-to-br from-neutral-700/40 to-neutral-800/40 p-6 rounded-lg border border-neutral-600/50 shadow-lg">
             <h3 className="text-lg font-semibold text-white mb-4">
               เมตริกประสิทธิภาพ
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center justify-between p-3 bg-neutral-800/50 rounded-lg border border-neutral-600/30">
-                <span className="text-neutral-400">เวลาตอบสนอง</span>
+              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-neutral-800/60 to-neutral-700/60 rounded-lg border border-neutral-600/40 shadow-sm">
+                <span className="text-neutral-300">เวลาตอบสนอง</span>
                 <span
                   className={`font-semibold ${getResponseTimeColor(conversation.response_time_ms || 0)}`}
                 >
@@ -250,23 +240,23 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-neutral-800/50 rounded-lg border border-neutral-600/30">
-                <span className="text-neutral-400">ความพึงพอใจ</span>
+              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-neutral-800/60 to-neutral-700/60 rounded-lg border border-neutral-600/40 shadow-sm">
+                <span className="text-neutral-300">ความพึงพอใจ</span>
                 <span className="font-semibold text-white">
                   {conversation.satisfaction_rating || 'N/A'}/5
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-neutral-800/50 rounded-lg border border-neutral-600/30">
-                <span className="text-neutral-400">สถานะ</span>
-                <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded-full border border-green-500/30">
+              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-neutral-800/60 to-neutral-700/60 rounded-lg border border-neutral-600/40 shadow-sm">
+                <span className="text-neutral-300">สถานะ</span>
+                <span className="px-2 py-1 bg-gradient-to-r from-green-500/30 to-emerald-500/30 text-green-400 text-xs rounded-full border border-green-500/50">
                   เสร็จสิ้น
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-neutral-800/50 rounded-lg border border-neutral-600/30">
-                <span className="text-neutral-400">ประเภท</span>
-                <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full border border-blue-500/30">
+              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-neutral-800/60 to-neutral-700/60 rounded-lg border border-neutral-600/40 shadow-sm">
+                <span className="text-neutral-300">ประเภท</span>
+                <span className="px-2 py-1 bg-gradient-to-r from-blue-500/30 to-indigo-500/30 text-blue-400 text-xs rounded-full border border-blue-500/50">
                   คำถามทั่วไป
                 </span>
               </div>
