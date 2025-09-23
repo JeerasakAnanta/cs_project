@@ -1,10 +1,19 @@
 import { BACKEND_API } from '../config';
 
+export interface DocumentReference {
+  filename: string;
+  page: number | null;
+  confidence_score: number;
+  content_preview: string;
+  full_content: string;
+}
+
 export interface GuestMessage {
   id: string;
   content: string;
   sender: 'user' | 'bot';
   timestamp: string;
+  source_documents?: DocumentReference[];
 }
 
 export interface GuestConversation {
@@ -170,7 +179,7 @@ class GuestPostgreSQLService {
     return await response.json();
   }
 
-  async addMessage(conversationId: string, content: string): Promise<string> {
+  async addMessage(conversationId: string, content: string): Promise<{ message: string; source_documents?: DocumentReference[] }> {
     const response = await fetch(
       `${BACKEND_API}/chat/guest/conversations/${conversationId}/messages`,
       {
@@ -188,7 +197,7 @@ class GuestPostgreSQLService {
     }
 
     const data = await response.json();
-    return data.message;
+    return data;
   }
 
   async deleteConversation(id: string): Promise<void> {
@@ -220,7 +229,7 @@ class GuestPostgreSQLService {
 
   async sendMessage(
     content: string
-  ): Promise<{ message: string; machine_id: string }> {
+  ): Promise<{ message: string; machine_id: string; source_documents?: DocumentReference[] }> {
     const response = await fetch(`${BACKEND_API}/chat/guest/message`, {
       method: 'POST',
       headers: this.getHeaders(),

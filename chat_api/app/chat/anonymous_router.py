@@ -20,7 +20,23 @@ async def send_anonymous_message(message: schemas.AnonymousMessageCreate):
     try:
         # Get bot response using RAG system
         bot_response = rag_chatbot(message.content)
-        return {"message": bot_response['message']}
+        
+        # Convert document references to schema format
+        source_documents = []
+        if 'source_documents' in bot_response and bot_response['source_documents']:
+            for doc_ref in bot_response['source_documents']:
+                source_documents.append(schemas.DocumentReference(
+                    filename=doc_ref['filename'],
+                    page=doc_ref['page'],
+                    confidence_score=doc_ref['confidence_score'],
+                    content_preview=doc_ref['content_preview'],
+                    full_content=doc_ref['full_content']
+                ))
+        
+        return {
+            "message": bot_response['message'],
+            "source_documents": source_documents
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing message: {str(e)}")
 
@@ -68,16 +84,33 @@ async def add_message_to_anonymous_conversation(
     # Get bot response
     try:
         bot_response = rag_chatbot(message.content)
+        
+        # Convert document references to schema format
+        source_documents = []
+        if 'source_documents' in bot_response and bot_response['source_documents']:
+            for doc_ref in bot_response['source_documents']:
+                source_documents.append(schemas.DocumentReference(
+                    filename=doc_ref['filename'],
+                    page=doc_ref['page'],
+                    confidence_score=doc_ref['confidence_score'],
+                    content_preview=doc_ref['content_preview'],
+                    full_content=doc_ref['full_content']
+                ))
+        
         bot_message = {
             "id": str(uuid.uuid4()),
             "content": bot_response['message'],
             "sender": "bot",
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
+            "source_documents": source_documents
         }
         conversation["messages"].append(bot_message)
         conversation["updated_at"] = datetime.utcnow().isoformat()
         
-        return {"message": bot_response['message']}
+        return {
+            "message": bot_response['message'],
+            "source_documents": source_documents
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing message: {str(e)}")
 

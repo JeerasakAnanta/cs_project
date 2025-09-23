@@ -84,11 +84,24 @@ async def send_guest_message(
         # Get bot response using RAG system
         bot_response = rag_chatbot(message.content)
         
+        # Convert document references to schema format
+        source_documents = []
+        if 'source_documents' in bot_response and bot_response['source_documents']:
+            for doc_ref in bot_response['source_documents']:
+                source_documents.append(schemas.DocumentReference(
+                    filename=doc_ref['filename'],
+                    page=doc_ref['page'],
+                    confidence_score=doc_ref['confidence_score'],
+                    content_preview=doc_ref['content_preview'],
+                    full_content=doc_ref['full_content']
+                ))
+        
         # Return bot response without creating conversation
         # Frontend will handle conversation creation separately
         return {
             "message": bot_response['message'],
-            "machine_id": machine_id
+            "machine_id": machine_id,
+            "source_documents": source_documents
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing message: {str(e)}")
@@ -218,6 +231,18 @@ async def add_message_to_guest_conversation(
         # Get bot response
         bot_response = rag_chatbot(message.content)
         
+        # Convert document references to schema format
+        source_documents = []
+        if 'source_documents' in bot_response and bot_response['source_documents']:
+            for doc_ref in bot_response['source_documents']:
+                source_documents.append(schemas.DocumentReference(
+                    filename=doc_ref['filename'],
+                    page=doc_ref['page'],
+                    confidence_score=doc_ref['confidence_score'],
+                    content_preview=doc_ref['content_preview'],
+                    full_content=doc_ref['full_content']
+                ))
+        
         # Log bot response to database
         guest_crud.add_guest_message(
             db, 
@@ -239,7 +264,10 @@ async def add_message_to_guest_conversation(
             db=db
         )
         
-        return {"message": bot_response['message']}
+        return {
+            "message": bot_response['message'],
+            "source_documents": source_documents
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing message: {str(e)}")
 

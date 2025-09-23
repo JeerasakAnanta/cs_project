@@ -3,6 +3,18 @@ from datetime import datetime
 from typing import List, Optional
 
 
+# Document reference schemas
+class DocumentReference(BaseModel):
+    filename: str
+    page: Optional[int] = None
+    confidence_score: float
+    content_preview: str
+    full_content: str
+
+    class Config:
+        from_attributes = True
+
+
 # Existing schemas for authenticated users
 class MessageCreate(BaseModel):
     content: str
@@ -13,6 +25,7 @@ class MessageResponse(BaseModel):
     id: int
     content: str
     sender: str
+    source_documents: Optional[List[DocumentReference]] = None
 
     class Config:
         from_attributes = True
@@ -59,6 +72,7 @@ class AnonymousMessageResponse(BaseModel):
     content: str
     sender: str
     timestamp: datetime
+    source_documents: Optional[List[DocumentReference]] = None
 
     class Config:
         from_attributes = True
@@ -92,6 +106,7 @@ class GuestMessageResponse(BaseModel):
     content: str
     sender: str
     timestamp: datetime
+    source_documents: Optional[List[DocumentReference]] = None
 
     class Config:
         from_attributes = True

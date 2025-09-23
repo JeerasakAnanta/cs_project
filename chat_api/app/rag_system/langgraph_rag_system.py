@@ -45,27 +45,32 @@ def retrieve(query: str):
         all_docs = []
         for search_query in search_queries:
             if search_query.strip():  # ตรวจสอบว่าไม่ใช่สตริงว่าง
-                docs = qdrant_store.similarity_search(search_query, k=5)
+                docs = qdrant_store.similarity_search_with_score(search_query, k=5)
                 all_docs.extend(docs)
         
-        # ลบเอกสารที่ซ้ำกัน
+        # ลบเอกสารที่ซ้ำกันและเพิ่มข้อมูลความเชื่อมั่น
         seen_content = set()
         unique_docs = []
-        for doc in all_docs:
+        for doc, score in all_docs:
             if doc.page_content not in seen_content:
                 seen_content.add(doc.page_content)
-                unique_docs.append(doc)
+                # เพิ่มข้อมูลความเชื่อมั่นใน metadata
+                doc.metadata['confidence_score'] = float(score)
+                unique_docs.append((doc, score))
         
         # เรียงลำดับตามความเกี่ยวข้อง (ใช้เฉพาะ 10 อันดับแรก)
-        unique_docs = unique_docs[:10]
+        unique_docs = sorted(unique_docs, key=lambda x: x[1], reverse=True)[:10]
+        
+        # แยก docs และ scores
+        docs_only = [doc for doc, score in unique_docs]
         
         serialized = "\n\n".join(
-            f"Source: {doc.metadata.get('filename', 'Unknown')}\nContent: {doc.page_content}" 
-            for doc in unique_docs
+            f"Source: {doc.metadata.get('filename', 'Unknown')} (Page: {doc.metadata.get('page', 'N/A')}, Confidence: {doc.metadata.get('confidence_score', 0):.2f})\nContent: {doc.page_content}" 
+            for doc in docs_only
         )
         
-        logging.info(f"Retrieved {len(unique_docs)} documents for query: {query}")
-        return serialized, unique_docs
+        logging.info(f"Retrieved {len(docs_only)} documents for query: {query}")
+        return serialized, docs_only
         
     except Exception as e:
         logging.error(f"Error in retrieve function: {e}")
@@ -157,8 +162,7 @@ def chatbot(user_message: str) -> dict[str, Any]:
         
         # ดึงข้อมูล source documents จาก tool messages
         tool_messages = [msg for msg in result["messages"] if msg.type == "tool"]
-        source_document = None
-        source_document_page = None
+        source_documents = []
         
         if tool_messages:
             # ดึงข้อมูลจาก tool message ล่าสุด
@@ -166,15 +170,27 @@ def chatbot(user_message: str) -> dict[str, Any]:
             if hasattr(latest_tool_msg, 'artifact') and latest_tool_msg.artifact:
                 docs = latest_tool_msg.artifact
                 if docs and len(docs) > 0:
-                    source_document = docs[0].metadata.get('filename', 'Unknown')
-                    source_document_page = docs[0].metadata.get('page', None)
+                    # สร้างรายการเอกสารอ้างอิงที่ครบถ้วน
+                    for doc in docs:
+                        source_documents.append({
+                            'filename': doc.metadata.get('filename', 'Unknown'),
+                            'page': doc.metadata.get('page', None),
+                            'confidence_score': doc.metadata.get('confidence_score', 0.0),
+                            'content_preview': doc.page_content[:200] + '...' if len(doc.page_content) > 200 else doc.page_content,
+                            'full_content': doc.page_content
+                        })
+        
+        # เก็บข้อมูลเดิมเพื่อ backward compatibility
+        source_document = source_documents[0]['filename'] if source_documents else None
+        source_document_page = source_documents[0]['page'] if source_documents else None
         
         logging.info(f"LangGraph chatbot response generated for query: {user_message}")
         
         return {
             "message": answer,
             "source_document": source_document,
-            "source_document_page": source_document_page
+            "source_document_page": source_document_page,
+            "source_documents": source_documents
         }
         
     except Exception as e:
@@ -182,5 +198,6 @@ def chatbot(user_message: str) -> dict[str, Any]:
         return {
             "message": "ขออภัยครับ เกิดข้อผิดพลาดในการประมวลผลคำถาม",
             "source_document": None,
-            "source_document_page": None
+            "source_document_page": None,
+            "source_documents": []
         }

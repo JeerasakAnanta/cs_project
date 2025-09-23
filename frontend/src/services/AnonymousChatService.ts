@@ -1,8 +1,17 @@
 import { BACKEND_API } from '../config';
 
+export interface DocumentReference {
+  filename: string;
+  page: number | null;
+  confidence_score: number;
+  content_preview: string;
+  full_content: string;
+}
+
 export interface AnonymousMessage {
   content: string;
   sender: 'user' | 'bot';
+  source_documents?: DocumentReference[];
 }
 
 export interface AnonymousConversation {
@@ -12,7 +21,7 @@ export interface AnonymousConversation {
 }
 
 class AnonymousChatService {
-  async sendMessage(message: string): Promise<string> {
+  async sendMessage(message: string): Promise<{ message: string; source_documents?: DocumentReference[] }> {
     try {
       const response = await fetch(`${BACKEND_API}/chat/anonymous/message`, {
         method: 'POST',
@@ -27,7 +36,7 @@ class AnonymousChatService {
       }
 
       const data = await response.json();
-      return data.message;
+      return data;
     } catch (error) {
       console.error('Error sending anonymous message:', error);
       throw error;
@@ -63,7 +72,7 @@ class AnonymousChatService {
   async addMessageToAnonymousConversation(
     conversationId: string,
     message: string
-  ): Promise<string> {
+  ): Promise<{ message: string; source_documents?: DocumentReference[] }> {
     try {
       const response = await fetch(
         `${BACKEND_API}/chat/anonymous/conversations/${conversationId}/messages`,
@@ -81,7 +90,7 @@ class AnonymousChatService {
       }
 
       const data = await response.json();
-      return data.message;
+      return data;
     } catch (error) {
       console.error('Error adding message to anonymous conversation:', error);
       throw error;

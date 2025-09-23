@@ -12,15 +12,25 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import CustomAlert from '../common/feedback/CustomAlert';
 import TypingIndicator from '../common/ui/TypingIndicator';
+import DocumentReferences from './DocumentReferences';
 import { marked } from 'marked';
 
 const BACKEND_API =
   import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
 
+interface DocumentReference {
+  filename: string;
+  page: number | null;
+  confidence_score: number;
+  content_preview: string;
+  full_content: string;
+}
+
 interface Message {
   id?: number | string;
   text: string;
   sender: 'user' | 'bot';
+  source_documents?: DocumentReference[];
 }
 
 interface ChatbotProps {
@@ -480,6 +490,14 @@ const Chatbot: React.FC<ChatbotProps> = ({
                               : msg.text,
                         }}
                       />
+
+                      {/* Document References for bot messages */}
+                      {msg.sender === 'bot' && msg.source_documents && msg.source_documents.length > 0 && (
+                        <DocumentReferences 
+                          references={msg.source_documents}
+                          className="mt-4"
+                        />
+                      )}
 
                       {/* Feedback buttons for bot messages - only for authenticated users */}
                       {msg.sender === 'bot' &&

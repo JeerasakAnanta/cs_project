@@ -79,11 +79,27 @@ def create_message_for_conversation(
     # Create user message
     crud.create_message(db=db, message=message, conversation_id=conversation_id)
 
-    # Generate bot response
+    # Generate bot response with document references
     bot_response = rag_chatbot(message.content)
-    bot_message = schemas.MessageCreate(sender="bot", content=bot_response['message'])
     
-    return crud.create_message(db=db, message=bot_message, conversation_id=conversation_id)
+    # Convert document references to schema format
+    source_documents = []
+    if 'source_documents' in bot_response and bot_response['source_documents']:
+        for doc_ref in bot_response['source_documents']:
+            source_documents.append(schemas.DocumentReference(
+                filename=doc_ref['filename'],
+                page=doc_ref['page'],
+                confidence_score=doc_ref['confidence_score'],
+                content_preview=doc_ref['content_preview'],
+                full_content=doc_ref['full_content']
+            ))
+    
+    bot_message = schemas.MessageCreate(sender="bot", content=bot_response['message'])
+    created_message = crud.create_message(db=db, message=bot_message, conversation_id=conversation_id)
+    
+    # Add source documents to the response
+    created_message.source_documents = source_documents
+    return created_message
 
 
 @router.delete("/conversations/{conversation_id}", response_model=schemas.Conversation)
