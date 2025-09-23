@@ -29,10 +29,7 @@ docker-compose.yaml
 # ===============================================================
 #              Jupyter Notebook  for reference 
 # ===============================================================
-/chatbot_api/tests
 chatbot_api/.python-version
-
-
 
 # Log files
 logs/
