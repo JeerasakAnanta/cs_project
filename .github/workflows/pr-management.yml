@@ -1,0 +1,200 @@
+name: Issue and PR Management
+
+on:
+  issues:
+    types: [opened, labeled]
+  pull_request:
+    types: [opened, synchronize, labeled]
+
+jobs:
+  issue-management:
+    name: Issue Management
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Label Issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const labels = issue.labels.map(label => label.name);
+            
+            // Auto-label based on title/content
+            const title = issue.title.toLowerCase();
+            const body = issue.body?.toLowerCase() || '';
+            
+            const newLabels = [];
+            
+            if (title.includes('bug') || body.includes('bug') || body.includes('error')) {
+              newLabels.push('bug');
+            }
+            
+            if (title.includes('feature') || title.includes('enhancement')) {
+              newLabels.push('enhancement');
+            }
+            
+            if (title.includes('documentation') || body.includes('doc')) {
+              newLabels.push('documentation');
+            }
+            
+            if (title.includes('test') || body.includes('test')) {
+              newLabels.push('testing');
+            }
+            
+            if (title.includes('urgent') || title.includes('critical')) {
+              newLabels.push('priority: high');
+            }
+            
+            // Add labels if not already present
+            const labelsToAdd = newLabels.filter(label => !labels.includes(label));
+            
+            if (labelsToAdd.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: labelsToAdd
+              });
+            }
+
+  pr-management:
+    name: PR Management
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Auto-label PRs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const labels = pr.labels.map(label => label.name);
+            
+            // Auto-label based on PR content
+            const title = pr.title.toLowerCase();
+            const body = pr.body?.toLowerCase() || '';
+            
+            const newLabels = [];
+            
+            // Check if it's a draft
+            if (pr.draft) {
+              newLabels.push('draft');
+            }
+            
+            // Check for breaking changes
+            if (title.includes('breaking') || body.includes('breaking change')) {
+              newLabels.push('breaking-change');
+            }
+            
+            // Check for dependencies
+            if (title.includes('dependenc') || body.includes('dependenc')) {
+              newLabels.push('dependencies');
+            }
+            
+            // Check for documentation
+            if (title.includes('doc') || body.includes('documentation')) {
+              newLabels.push('documentation');
+            }
+            
+            // Check for tests
+            if (title.includes('test') || body.includes('test')) {
+              newLabels.push('testing');
+            }
+            
+            // Add labels if not already present
+            const labelsToAdd = newLabels.filter(label => !labels.includes(label));
+            
+            if (labelsToAdd.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                labels: labelsToAdd
+              });
+            }
+
+      - name: Check PR Size
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const additions = pr.additions;
+            const deletions = pr.deletions;
+            const changedFiles = pr.changed_files;
+            
+            // Add size labels
+            const totalChanges = additions + deletions;
+            let sizeLabel = '';
+            
+            if (totalChanges < 50) {
+              sizeLabel = 'size: XS';
+            } else if (totalChanges < 200) {
+              sizeLabel = 'size: S';
+            } else if (totalChanges < 500) {
+              sizeLabel = 'size: M';
+            } else if (totalChanges < 1000) {
+              sizeLabel = 'size: L';
+            } else {
+              sizeLabel = 'size: XL';
+            }
+            
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              labels: [sizeLabel]
+            });
+
+  pr-validation:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            
+            // Check if PR has description
+            if (!pr.body || pr.body.trim().length < 10) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: `## ⚠️ PR Description Required
+                
+                Please provide a detailed description of your changes. This helps reviewers understand what you've modified and why.
+                
+                **Required information:**
+                - What changes were made?
+                - Why were these changes necessary?
+                - Any breaking changes?
+                - How to test the changes?`
+              });
+            }
+            
+            // Check if PR is targeting the correct branch
+            if (pr.base.ref !== 'main' && pr.base.ref !== 'develop') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: `## ⚠️ Incorrect Target Branch
+                
+                This PR is targeting \`${pr.base.ref}\` instead of \`main\` or \`develop\`. Please update the target branch.`
+              });
+            }

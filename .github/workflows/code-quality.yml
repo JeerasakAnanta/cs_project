@@ -1,0 +1,99 @@
+name: Code Quality
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      # Frontend Quality Checks
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Frontend Lint Check
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Frontend Type Check
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+      - name: Frontend Format Check
+        working-directory: frontend
+        run: npx prettier --check .
+
+      # Backend Quality Checks
+      - name: Install Backend Dependencies
+        working-directory: chat_api
+        run: uv sync --frozen --group dev
+
+      - name: Backend Lint Check
+        working-directory: chat_api
+        run: uv run ruff check .
+
+      - name: Backend Format Check
+        working-directory: chat_api
+        run: uv run ruff format --check .
+
+      - name: Backend Type Check
+        working-directory: chat_api
+        run: uv run mypy .
+
+      # Security Checks
+      - name: Frontend Security Audit
+        working-directory: frontend
+        run: npm audit --audit-level moderate
+
+      - name: Backend Security Check
+        working-directory: chat_api
+        run: uv run safety check
+
+      # Code Coverage
+      - name: Backend Test Coverage
+        working-directory: chat_api
+        run: uv run pytest --cov=app --cov-report=xml --cov-report=html
+        env:
+          DATABASE_URL: sqlite:///./test.db
+          OPENAI_API_KEY: test-key
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: chat_api/coverage.xml
+          flags: code-quality
+          name: code-quality-coverage
+
+      # Upload coverage reports as artifacts
+      - name: Upload Coverage Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            chat_api/htmlcov/
+            chat_api/coverage.xml
+          retention-days: 7
