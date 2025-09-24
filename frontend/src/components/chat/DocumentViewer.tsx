@@ -54,12 +54,12 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
   const handleDownload = () => {
     const blob = new Blob([document.full_content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = window.document.createElement('a');
     a.href = url;
     a.download = `${document.filename}_page_${document.page || 'unknown'}.txt`;
-    document.body.appendChild(a);
+    window.document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    window.document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
