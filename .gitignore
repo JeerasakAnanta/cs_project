@@ -1,59 +1,180 @@
-# Python environment files
+# ===============================================================
+#                    Python Environment & Dependencies
+# ===============================================================
+
+# Virtual environments
 .env
-.venv
-env
-.env.swp
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
 
 # Python cache files
-__pycache__
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.Python
 
-# Data directories
-rag_app_full_appclition_with_chatgpt/data
-data
-chatbot_create_collection/qdrant_data
-qdrant_data
-chatbot_create_collection/pdfs
+# uv specific files
+uv.lock
+
+# ===============================================================
+#                    Environment Variables
+# ===============================================================
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production
+.env.production.local
+.env.backup
+.env.production.backup
+.env.swp
+.env.example
+
+# ===============================================================
+#                    Node.js & Frontend
+# ===============================================================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# ===============================================================
+#                    Databases & Data Storage
+# ===============================================================
+
+# PostgreSQL data
+postgres_data/
+postgresql_data/
+*.sqlite
+*.sqlite3
+*.db
+
+# Qdrant vector database
+qdrant_data/
+chatbot_create_collection/qdrant_data/
+
+# PDF data directories
+pdf_Data/
+pdfs/
+chatbot_create_collection/pdfs/
 chatbot_pdf_management_api/pdfs/
-pdf_Data
 
-# Node.js modules
-node_modules
-
-# FastAPI and Docker related files
-./chatbot_api/env_fastapi
-./chatbot_api/app.log
-chatbot_api/app.log
-docker-compose.yaml
-
+# Other data directories
+data/
+rag_app_full_appclition_with_chatgpt/data/
 
 # ===============================================================
-#              Jupyter Notebook  for reference 
+#                    Logs & Runtime Files
 # ===============================================================
-chatbot_api/.python-version
 
 # Log files
 logs/
+log/
+*.log
+app.log
+chatbot_api/app.log
 ./logs/app.log
 logfile
-log/
 
-# Other directories to ignore
-chat_pdf_management_api/
-
-# Production environment
-.env.production
-
-# Distribution files
-dist
-
+# Runtime files
+*.pid
+*.tmp
+*.temp
 
 # ===============================================================
-#              Jupyter Notebook  for reference 
+#                    Development Tools
 # ===============================================================
 
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+
+# Jupyter Notebook
 notebook/*
 *.ipynb
-.env.backup
-.env.production.backup
+.ipynb_checkpoints/
 
-./postgres_data/
+# ===============================================================
+#                    Docker & Containerization
+# ===============================================================
+
+# Docker
+docker-compose.yaml
+docker-compose.yml
+.dockerignore
+
+# ===============================================================
+#                    Legacy & Deprecated
+# ===============================================================
+
+# Old API directories
+chat_pdf_management_api/
+chatbot_api/env_fastapi
+chatbot_api/.python-version
+
+# ===============================================================
+#                    System Files
+# ===============================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
