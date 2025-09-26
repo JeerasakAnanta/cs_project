@@ -1,36 +1,38 @@
 
-# ล้านนาฟินแชต (LannaFinChat)
+
+# 🤖 ล้านนาฟินแชต (LannaFinChat)
 ระบบแชตบอตถาม-ตอบจากเอกสารราชการด้วยเทคนิค RAG และ LLM
+
 
 ## 🔎 ภาพรวมโครงการ
 โครงการนี้เป็นการพัฒนาแชตบอตสำหรับตอบคำถามจากเอกสารราชการ (คู่มือปฏิบัติงานการเบิกจ่ายค่าใช้จ่ายของ มทร.ล้านนา) โดยใช้เทคโนโลยี LLM (Large Language Model) ร่วมกับเทคนิค RAG (Retrieval Augmented Generation) เพื่อให้ได้คำตอบที่ถูกต้องและตรงประเด็น
 
-จุดเด่นของระบบนี้
-- ใช้โมเดล LLM (OpenAI GPT-4o-mini) ผสานกับ RAG เพื่อค้นหาข้อมูลจากฐานข้อมูลเวกเตอร์ (Qdrant)
-- อินเทอร์เฟซเว็บใช้งานง่าย ผ่านเว็บ  เชื่อมต่อกับระบบหลังบ้านผ่าน FastAPI
-- มีระบบวิเคราะห์ข้อมูลและจัดการเอกสาร 
+✨ **จุดเด่นของระบบนี้**
+- 🤖 ใช้โมเดล LLM (OpenAI GPT-4o-mini) ผสานกับ RAG เพื่อค้นหาข้อมูลจากฐานข้อมูลเวกเตอร์ (Qdrant)
+- 🖥️ อินเทอร์เฟซเว็บใช้งานง่าย ผ่านเว็บ  เชื่อมต่อกับระบบหลังบ้านผ่าน FastAPI
+- 📊 มีระบบวิเคราะห์ข้อมูลและจัดการเอกสาร 
 
 ## 🔑 คุณสมบัติหลัก
-- สนทนากับแชตบอตผ่านหน้าเว็บ
-- ระบบ API หลังบ้าน (FastAPI)
-- ระบบจัดการและประมวลผลเอกสาร PDF
-- แสดงและจัดการฐานข้อมูลเวกเตอร์ (Qdrant)
+- 💬 สนทนากับแชตบอตผ่านหน้าเว็บ
+- 🛠️ ระบบ API หลังบ้าน (FastAPI)
+- 📄 ระบบจัดการและประมวลผลเอกสาร PDF
+- 🗂️ แสดงและจัดการฐานข้อมูลเวกเตอร์ (Qdrant)
 
 ## 🛒 สิ่งที่ต้องเตรียม
-- Python 3.12.3
-- โมเดล LLM (OpenAI API หรือ Ollama)
+- 🐍 Python 3.12.3
+### 🖥️ Frontend
+* 🟢 [Node.js](https://nodejs.org/en)
+* ⚡ [Vite](https://vitejs.dev/)
+* ⚛️ [React TypeScript](https://react.dev/)
 
+- 🤖 โมเดล LLM (OpenAI API)
   * [OpenAI API](https://platform.openai.com)
-  * [Ollama](https://ollama.com/)
-* [Langchain](https://www.langchain.com/)
-* [FastAPI](https://fastapi.tiangolo.com/)
-* [Node.js](https://nodejs.org/en)
-* [Vite](https://vitejs.dev/)
-* [React TypeScript](https://react.dev/)
-* [Docker Engine](https://www.docker.com/)
-* [Docker Compose](https://docs.docker.com/compose/)
+* 🔗 [Langchain](https://www.langchain.com/)
+* 🚀 [FastAPI](https://fastapi.tiangolo.com/)
+* 🐳 [Docker Engine](https://www.docker.com/)
+* 🧩 [Docker Compose](https://docs.docker.com/compose/)
 
-## ขั้นตอนที่ 1: ⬇️ โคลนโครงการ
+## ⬇️ ขั้นตอนที่ 1: โคลนโครงการ
 
 สามารถโคลนโค้ดจาก [GitHub](https://github.com/JeerasakAnanta/cs_project) ได้ด้วยคำสั่ง:
 
@@ -39,7 +41,7 @@ git clone https://github.com/JeerasakAnanta/cs_project
 cd cs_project
 ```
 
-## ขั้นตอนที่ 2: 📦 สร้าง Virtual Environment ด้วย `uv`
+## 📦 ขั้นตอนที่ 2: สร้าง Virtual Environment ด้วย `uv`
 
 * ติดตั้ง `uv` จากเอกสาร:
 
@@ -54,7 +56,7 @@ uv venv
 uv activate
 ```
 
-## ขั้นตอนที่ 4: ⚙ ตั้งค่าตัวแปรสภาพแวดล้อม `.env`
+## ⚙ ขั้นตอนที่ 3: ตั้งค่าตัวแปรสภาพแวดล้อม `.env`
 
 * คัดลอกไฟล์ตัวอย่าง `.env.example` ไปยัง `.env`:
 
@@ -63,7 +65,7 @@ cp .env.example .env
 cp .env.example chatbot_web/.env
 ```
 
-## ขั้นตอนที่ 5: 🗂 สร้างฐานข้อมูลเวกเตอร์ด้วย Qdrant
+## 🗂️ ขั้นตอนที่ 4: สร้างฐานข้อมูลเวกเตอร์ด้วย Qdrant
 
 * แก้ไข `docker-compose.yml` เพื่อตั้งค่าระบบ Qdrant ตามตัวอย่างที่ให้ไว้
 * เริ่มระบบ Qdrant:
@@ -80,7 +82,7 @@ docker ps -a
 python3 chatbot_pdf_management_api/create_vecter_db.py
 ```
 
-## ขั้นตอนที่ 6: เริ่มต้นระบบระหว่างการพัฒนา
+## 🏃‍♂️ ขั้นตอนที่ 5: เริ่มต้นระบบระหว่างการพัฒนา
 
 * ติดตั้ง npm:
 
@@ -106,7 +108,7 @@ uvicorn chatbot_api:app --host 0.0.0.0 --port 8003 --reload
 uvicorn pdf_management_api:app --host 0.0.0.0 --port 8004 --reload
 ```
 
-## ขั้นตอนที่ 6 (ทางเลือก): การรันด้วย Docker
+## 🐳 ขั้นตอนที่ 6 (ทางเลือก): การรันด้วย Docker
 
 * ใช้สคริปต์สร้าง Docker image:
 
@@ -115,7 +117,7 @@ chmod +x run_build_image.sh
 ./run_build_image.sh
 ```
 
-## พอร์ตสำหรับเข้าถึงระบบ
+## 🌐 พอร์ตสำหรับเข้าถึงระบบ
 
 * Web Chatbot UI: [http://localhost:8002](http://localhost:8002)
 * Chat API: [http://localhost:8003](http://localhost:8003)
