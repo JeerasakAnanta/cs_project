@@ -1,10 +1,10 @@
 [project]
 name = "chatbot-api"
 version = "0.2.0"
-description = "API Chatbot  for RMUTL NAN"
+description = "API Chatbot for RMUTL NAN"
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.13.0"
 dependencies = [
     "docling>=2.15.1",
     "fastapi>=0.115.12",
