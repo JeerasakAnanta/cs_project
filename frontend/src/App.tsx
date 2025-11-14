@@ -386,7 +386,7 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-chat-bg overflow-hidden">
+    <div className="flex flex-col md:flex-row h-screen bg-chat-bg overflow-hidden">
       <Navbar
         onNewConversation={handleNewConversation}
         onSelectConversation={handleSelectConversation}
@@ -394,7 +394,7 @@ const AppContent: React.FC = () => {
         currentConversationId={currentConversationId}
         conversations={isGuestMode() ? guestConversations : conversations}
       />
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden w-full">
         <Routes>
           <Route
             path="/"

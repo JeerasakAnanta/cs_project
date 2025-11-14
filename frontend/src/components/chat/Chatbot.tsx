@@ -252,17 +252,27 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
       {/* Feedback Modal */}
       {feedbackModal.isOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-neutral-800/95 dark:bg-neutral-800/95 bg-white/95 border border-neutral-700/50 dark:border-neutral-700/50 border-neutral-300/50 backdrop-blur-sm rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className={`backdrop-blur-sm rounded-2xl p-4 sm:p-6 max-w-md w-full shadow-2xl border ${
+            theme === 'light'
+              ? 'bg-white/95 border-gray-300/50'
+              : 'bg-neutral-800/95 border-neutral-700/50'
+          }`}>
             <div className="flex items-start">
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-white dark:text-white text-gray-900">
+                  <h3 className={`text-base sm:text-lg font-semibold ${
+                    theme === 'light' ? 'text-gray-900' : 'text-white'
+                  }`}>
                     ให้ Feedback
                   </h3>
                   <button
                     onClick={closeFeedbackModal}
-                    className="text-neutral-400 dark:text-neutral-400 text-gray-600 hover:text-white dark:hover:text-white hover:text-gray-900 transition-colors duration-200 p-1 rounded-full hover:bg-neutral-700/50 dark:hover:bg-neutral-700/50 hover:bg-gray-200/50"
+                    className={`p-2 rounded-full transition-colors duration-200 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center ${
+                      theme === 'light'
+                        ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/50'
+                        : 'text-neutral-400 hover:text-white hover:bg-neutral-700/50'
+                    }`}
                   >
                     <svg
                       className="w-5 h-5"
@@ -280,7 +290,9 @@ const Chatbot: React.FC<ChatbotProps> = ({
                   </button>
                 </div>
                 <div className="mb-4">
-                  <p className="text-neutral-300 dark:text-neutral-300 text-gray-700 text-sm mb-2">
+                  <p className={`text-sm mb-2 ${
+                    theme === 'light' ? 'text-gray-700' : 'text-neutral-300'
+                  }`}>
                     คุณ
                     {feedbackModal.feedbackType === 'like' ? 'ชอบ' : 'ไม่ชอบ'}
                     คำตอบนี้หรือไม่?
@@ -289,20 +301,28 @@ const Chatbot: React.FC<ChatbotProps> = ({
                     value={feedbackComment}
                     onChange={(e) => setFeedbackComment(e.target.value)}
                     placeholder="แสดงความคิดเห็นเพิ่มเติม (ไม่บังคับ)..."
-                    className="w-full bg-neutral-700 dark:bg-neutral-700 bg-gray-100 border border-neutral-600 dark:border-neutral-600 border-gray-300 rounded-lg px-4 py-3 text-white dark:text-white text-gray-900 placeholder-neutral-400 dark:placeholder-neutral-400 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 resize-none"
+                    className={`w-full border rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 resize-none ${
+                      theme === 'light'
+                        ? 'bg-gray-100 border-gray-300 text-gray-900 placeholder-gray-500'
+                        : 'bg-neutral-700 border-neutral-600 text-white placeholder-neutral-400'
+                    }`}
                     rows={3}
                   />
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-2 sm:gap-3">
                   <button
                     onClick={closeFeedbackModal}
-                    className="flex-1 bg-neutral-700 dark:bg-neutral-700 bg-gray-200 hover:bg-neutral-600 dark:hover:bg-neutral-600 hover:bg-gray-300 text-white dark:text-white text-gray-900 font-medium py-2 px-4 rounded-lg transition-all duration-200"
+                    className={`flex-1 font-medium py-2.5 sm:py-2 px-3 sm:px-4 rounded-lg transition-all duration-200 text-sm sm:text-base min-h-[44px] sm:min-h-0 ${
+                      theme === 'light'
+                        ? 'bg-gray-200 hover:bg-gray-300 text-gray-900'
+                        : 'bg-neutral-700 hover:bg-neutral-600 text-white'
+                    }`}
                   >
                     ยกเลิก
                   </button>
                   <button
                     onClick={submitFeedback}
-                    className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200"
+                    className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-medium py-2.5 sm:py-2 px-3 sm:px-4 rounded-lg transition-all duration-200 text-sm sm:text-base min-h-[44px] sm:min-h-0"
                   >
                     ส่ง Feedback
                   </button>
@@ -322,22 +342,22 @@ const Chatbot: React.FC<ChatbotProps> = ({
               : 'border-neutral-700/50 bg-neutral-900/50'
           }`}
         >
-          <div className="max-w-5xl mx-auto px-6 py-2">
+          <div className="max-w-5xl mx-auto px-3 sm:px-6 py-2">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <MessageCircle className="w-6 h-6 text-white" />
+              <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h2
-                    className={`text-lg font-semibold ${
+                    className={`text-base sm:text-lg font-semibold truncate ${
                       theme === 'light' ? 'text-gray-900' : 'text-white'
                     }`}
                   >
                     {currentConversationTitle || 'การสนทนาใหม่'}
                   </h2>
                   <p
-                    className={`text-sm ${
+                    className={`text-xs sm:text-sm hidden sm:block ${
                       theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
                     }`}
                   >
@@ -346,11 +366,11 @@ const Chatbot: React.FC<ChatbotProps> = ({
                 </div>
               </div>
               <div
-                className={`text-sm ${
+                className={`text-xs sm:text-sm flex-shrink-0 ml-2 ${
                   theme === 'light' ? 'text-gray-500' : 'text-neutral-500'
                 }`}
               >
-                {messages.length} ข้อความ
+                {messages.length}
               </div>
             </div>
           </div>
@@ -359,36 +379,35 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
       {/* Chat container - with proper flex layout */}
       <div
-        className="flex-1 overflow-y-auto p-6 pb-4 scroll-smooth"
+        className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 pb-4 scroll-smooth"
         ref={chatBoxRef}
         style={{ scrollBehavior: 'smooth' }}
       >
         <div className="max-w-5xl mx-auto">
           {/* Welcome message when no conversation */}
           {messages.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="mb-8 p-8 rounded-3xl shadow-2xl bg-white/80 backdrop-blur-sm border border-gray-200/50">
+            <div className="text-center py-6 sm:py-12">
+              <div className="mb-6 sm:mb-8 p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl bg-white/80 backdrop-blur-sm border border-gray-200/50">
                 <div
-                  className={`w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl ${
+                  className={`w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-2xl ${
                     theme === 'light'
                       ? 'bg-gradient-to-br from-blue-500 via-purple-600 to-blue-700'
                       : 'bg-gradient-to-br from-primary-500 to-purple-600'
                   }`}
                 >
-                  <Sparkles className="w-10 h-10 text-white" />
+                  <Sparkles className="w-7 h-7 sm:w-10 sm:h-10 text-white" />
                 </div>
                 <h2
-                  className={`text-3xl font-bold mb-4 ${
+                  className={`text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 ${
                     theme === 'light'
                       ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent drop-shadow-sm'
                       : 'gradient-text'
                   }`}
                 >
-                  {' '}
                   LannaFinChat
                 </h2>
                 <p
-                  className={`text-lg max-w-2xl mx-auto ${
+                  className={`text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-2 ${
                     theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
                   }`}
                 >
@@ -397,7 +416,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6 max-w-3xl mx-auto">
                 {[
                   'ขั้นตอนการเบิกค่าใช้จ่ายในการเดินทางไปราชการ',
                   'เอกสารที่ต้องใช้ในการเบิกค่าใช้จ่าย',
@@ -407,22 +426,22 @@ const Chatbot: React.FC<ChatbotProps> = ({
                   <button
                     key={index}
                     onClick={() => handleExampleQuestionClick(question)}
-                    className={`group p-6 text-left backdrop-blur-xl rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl ${
+                    className={`group p-4 sm:p-6 text-left backdrop-blur-xl rounded-xl sm:rounded-2xl transition-all duration-300 transform active:scale-95 sm:hover:scale-105 hover:shadow-2xl ${
                       theme === 'light'
                         ? 'bg-white/90 border border-blue-200/50 hover:bg-blue-50/90 hover:border-blue-300/70 hover:shadow-blue-500/30 shadow-lg'
                         : 'bg-gradient-to-br from-slate-900/60 to-purple-900/50 border border-purple-500/30 hover:from-purple-800/70 hover:to-pink-800/60 hover:border-purple-400/50 hover:shadow-purple-500/20 shadow-lg'
                     }`}
                   >
-                    <div className="flex items-start space-x-3">
+                    <div className="flex items-start space-x-2 sm:space-x-3">
                       <div
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-all duration-300 flex-shrink-0 ${
                           theme === 'light'
                             ? 'bg-blue-100 group-hover:bg-blue-200'
                             : 'bg-neutral-700 group-hover:bg-neutral-600'
                         }`}
                       >
                         <Sparkles
-                          className={`w-4 h-4 ${
+                          className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
                             theme === 'light'
                               ? 'text-blue-600'
                               : 'text-purple-300'
@@ -430,7 +449,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
                         />
                       </div>
                       <div
-                        className={`font-medium transition-colors duration-300 leading-relaxed ${
+                        className={`text-sm sm:text-base font-medium transition-colors duration-300 leading-relaxed ${
                           theme === 'light'
                             ? 'text-gray-900 group-hover:text-gray-900'
                             : 'text-white group-hover:text-white'
@@ -444,32 +463,32 @@ const Chatbot: React.FC<ChatbotProps> = ({
               </div>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {messages.map((msg, index) => (
                 <div
                   key={index}
                   className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} ${index === messages.length - 1 ? 'mb-4' : ''}`}
                 >
                   <div
-                    className={`flex items-start max-w-4xl ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
+                    className={`flex items-start max-w-[95%] sm:max-w-[85%] md:max-w-4xl ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
                   >
                     <div
-                      className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-4 ${
+                      className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center mx-2 sm:mx-3 md:mx-4 flex-shrink-0 ${
                         msg.sender === 'user'
                           ? 'bg-blue-600 shadow-lg'
                           : 'bg-neutral-700 shadow-lg'
                       }`}
                     >
                       {msg.sender === 'user' ? (
-                        <User className="w-6 h-6 text-white" />
+                        <User className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
                       ) : (
-                        <Bot className="w-6 h-6 text-white" />
+                        <Bot className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
                       )}
                     </div>
 
                     {/* Message content */}
                     <div
-                      className={`p-6 rounded-3xl max-w-3xl shadow-2xl ${
+                      className={`p-3 sm:p-4 md:p-6 rounded-2xl sm:rounded-3xl max-w-full shadow-2xl ${
                         msg.sender === 'user'
                           ? 'bg-blue-600 text-white shadow-lg'
                           : theme === 'light'
@@ -478,7 +497,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
                       }`}
                     >
                       <div
-                        className={`prose max-w-none ${
+                        className={`prose prose-sm sm:prose-base max-w-none ${
                           theme === 'light'
                             ? 'prose-p:text-black prose-p:font-medium prose-strong:text-black prose-strong:font-bold prose-em:text-black prose-em:font-medium prose-a:text-blue-700 prose-a:font-medium prose-headings:text-black prose-headings:font-bold prose-h1:text-black prose-h1:font-bold prose-h2:text-black prose-h2:font-bold prose-h3:text-black prose-h3:font-bold prose-h4:text-black prose-h4:font-bold prose-h5:text-black prose-h5:font-bold prose-h6:text-black prose-h6:font-bold prose-code:text-blue-700 prose-code:font-semibold prose-pre:bg-gray-50 prose-pre:text-black prose-pre:font-medium prose-pre:border-gray-200 prose-blockquote:border-l-blue-600 prose-blockquote:text-gray-800 prose-blockquote:font-medium prose-ul:text-black prose-ul:font-medium prose-ol:text-black prose-ol:font-medium prose-li:text-black prose-li:font-medium prose-table:text-black prose-table:font-medium prose-th:text-black prose-th:font-bold prose-td:text-black prose-td:font-medium prose-img:border-gray-200'
                             : 'prose-invert prose-p:text-white prose-p:font-medium prose-strong:text-white prose-strong:font-bold prose-em:text-white prose-em:font-medium prose-a:text-blue-300 prose-a:font-medium prose-headings:text-white prose-headings:font-bold prose-h1:text-white prose-h1:font-bold prose-h2:text-white prose-h2:font-bold prose-h3:text-white prose-h3:font-bold prose-h4:text-white prose-h4:font-bold prose-h5:text-white prose-h5:font-bold prose-h6:text-white prose-h6:font-bold prose-code:text-primary-300 prose-code:font-semibold prose-pre:bg-neutral-800 prose-pre:text-white prose-pre:font-medium prose-pre:border-neutral-700 prose-blockquote:border-l-primary-500 prose-blockquote:text-neutral-300 prose-blockquote:font-medium prose-ul:text-white prose-ul:font-medium prose-ol:text-white prose-ol:font-medium prose-li:text-white prose-li:font-medium prose-table:text-white prose-table:font-medium prose-th:text-white prose-th:font-bold prose-td:text-white prose-td:font-medium prose-img:border-neutral-700'
@@ -505,7 +524,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
                         typeof msg.id === 'number' &&
                         !isGuestMode() && (
                           <div
-                            className={`flex items-center gap-2 mt-4 pt-4 border-t ${
+                            className={`flex items-center gap-2 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t ${
                               theme === 'light'
                                 ? 'border-gray-300/50'
                                 : 'border-neutral-600/50'
@@ -515,19 +534,19 @@ const Chatbot: React.FC<ChatbotProps> = ({
                               onClick={() =>
                                 handleFeedback(msg.id as number, 'like')
                               }
-                              className="flex items-center gap-2 px-3 py-1.5 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 hover:border-green-500/50 rounded-lg text-green-400 hover:text-green-300 transition-all duration-200 text-sm"
+                              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-1.5 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 hover:border-green-500/50 rounded-lg text-green-400 hover:text-green-300 transition-all duration-200 text-xs sm:text-sm min-h-[44px] sm:min-h-0"
                             >
-                              <ThumbsUp className="w-4 h-4" />
-                              ชอบ
+                              <ThumbsUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline">ชอบ</span>
                             </button>
                             <button
                               onClick={() =>
                                 handleFeedback(msg.id as number, 'dislike')
                               }
-                              className="flex items-center gap-2 px-3 py-1.5 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 hover:border-red-500/50 rounded-lg text-red-400 hover:text-red-300 transition-all duration-200 text-sm"
+                              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-1.5 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 hover:border-red-500/50 rounded-lg text-red-400 hover:text-red-300 transition-all duration-200 text-xs sm:text-sm min-h-[44px] sm:min-h-0"
                             >
-                              <ThumbsDown className="w-4 h-4" />
-                              ไม่ชอบ
+                              <ThumbsDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline">ไม่ชอบ</span>
                             </button>
                           </div>
                         )}
@@ -542,21 +561,21 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
       {/* Typing indicator */}
       {isLoading && (
-        <div className="px-6 py-4">
+        <div className="px-3 sm:px-4 md:px-6 py-3 sm:py-4">
           <div className="flex items-center space-x-2 max-w-4xl mx-auto">
             <div
-              className={`w-12 h-12 rounded-2xl shadow-lg flex items-center justify-center ${
+              className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-xl sm:rounded-2xl shadow-lg flex items-center justify-center ${
                 theme === 'light' ? 'bg-gray-200' : 'bg-neutral-700'
               }`}
             >
               <Bot
-                className={`w-6 h-6 ${
+                className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 ${
                   theme === 'light' ? 'text-gray-700' : 'text-white'
                 }`}
               />
             </div>
             <div
-              className={`p-4 rounded-3xl backdrop-blur-xl border ${
+              className={`p-3 sm:p-4 rounded-2xl sm:rounded-3xl backdrop-blur-xl border ${
                 theme === 'light'
                   ? 'bg-gray-100/80 border-gray-300'
                   : 'bg-neutral-800/80 border-neutral-600'
@@ -570,7 +589,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
       {/* Input area at bottom - sticky positioning */}
       <div
-        className={`sticky bottom-0 p-3 border-t backdrop-blur-xl shadow-2xl z-10 ${
+        className={`sticky bottom-0 p-2 sm:p-3 border-t backdrop-blur-xl shadow-2xl z-10 ${
           theme === 'light'
             ? 'border-gray-200 bg-white/95'
             : 'border-neutral-700/50 bg-neutral-900/95'
@@ -578,7 +597,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
       >
         <div className="max-w-5xl mx-auto">
           <div
-            className={`relative backdrop-blur-xl rounded-3xl shadow-2xl ${
+            className={`relative backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl ${
               theme === 'light'
                 ? 'bg-white/90 border border-blue-200/50 shadow-blue-500/30'
                 : 'bg-gradient-to-br from-slate-900/80 to-purple-900/70 border border-purple-500/30 shadow-purple-500/20'
@@ -594,34 +613,34 @@ const Chatbot: React.FC<ChatbotProps> = ({
                 }
               }}
               placeholder="ส่งข้อความถึง LannaFinChat..."
-              className={`w-full bg-transparent p-4 pr-16 focus:outline-none resize-none rounded-2xl text-base font-medium ${
+              className={`w-full bg-transparent p-3 sm:p-4 pr-12 sm:pr-16 focus:outline-none resize-none rounded-2xl text-sm sm:text-base font-medium ${
                 theme === 'light'
                   ? 'text-gray-900 placeholder-gray-500/70'
                   : 'text-white placeholder-white/70'
               }`}
               rows={1}
-              style={{ minHeight: '48px', maxHeight: '120px' }}
+              style={{ minHeight: '44px', maxHeight: '120px' }}
             />
             <button
               onClick={handleSendMessage}
               disabled={!userInput.trim() || isLoading}
-              className={`absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl transition-all duration-300 transform hover:scale-110 focus:ring-4 shadow-lg ${
+              className={`absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 p-2.5 sm:p-2 rounded-xl transition-all duration-300 transform active:scale-95 sm:hover:scale-110 focus:ring-4 shadow-lg min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center ${
                 theme === 'light'
                   ? 'bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 focus:ring-blue-400/25'
                   : 'bg-neutral-700 hover:bg-neutral-600 disabled:bg-neutral-800 focus:ring-neutral-500/25'
               } disabled:cursor-not-allowed`}
             >
-              <Send className="w-4 h-4 text-white" />
+              <Send className="w-4 h-4 sm:w-4 sm:h-4 text-white" />
             </button>
           </div>
           <p
-            className={`text-xs text-center mt-3 flex items-center justify-center gap-2 font-medium ${
+            className={`text-xs text-center mt-2 sm:mt-3 flex items-center justify-center gap-1 sm:gap-2 font-medium px-2 ${
               theme === 'light' ? 'text-gray-600/80' : 'text-white/80'
             }`}
           >
-            <Sparkles className="w-3 h-3" />
-            คำตอบสร้างโดย GenAI เพื่อใช้ในการค้นหาข้อมูลเท่านั้น
-            โปรดตรวจสอบข้อมูลก่อนนำไปใช้งาน
+            <Sparkles className="w-3 h-3 flex-shrink-0" />
+            <span className="hidden sm:inline">คำตอบสร้างโดย GenAI เพื่อใช้ในการค้นหาข้อมูลเท่านั้น โปรดตรวจสอบข้อมูลก่อนนำไปใช้งาน</span>
+            <span className="sm:hidden">คำตอบสร้างโดย GenAI โปรดตรวจสอบข้อมูลก่อนใช้งาน</span>
           </p>
         </div>
       </div>

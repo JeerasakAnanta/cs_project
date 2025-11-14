@@ -74,28 +74,28 @@ const Login: React.FC = () => {
         ></div>
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4">
+      <div className="relative z-10 w-full max-w-md mx-4 px-4 sm:px-0">
         <div
-          className={`card p-8 shadow-2xl border backdrop-blur-sm ${
+          className={`card p-4 sm:p-6 md:p-8 shadow-2xl border backdrop-blur-sm ${
             theme === 'light'
               ? 'bg-white/90 border-gray-200/30 shadow-blue-500/20'
               : 'border-neutral-700/50'
           }`}
         >
           {/* Header */}
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center mb-4">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="flex items-center justify-center mb-3 sm:mb-4">
               <div
-                className={`w-12 h-12 rounded-xl flex items-center justify-center mr-3 ${
+                className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mr-2 sm:mr-3 ${
                   theme === 'light'
                     ? 'bg-gradient-to-br from-blue-500 via-purple-600 to-blue-700'
                     : 'bg-gradient-to-br from-primary-500 to-purple-600'
                 }`}
               >
-                <Sparkles className="w-6 h-6 text-white" />
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <h1
-                className={`text-3xl font-bold ${
+                className={`text-2xl sm:text-3xl font-bold ${
                   theme === 'light'
                     ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent drop-shadow-sm'
                     : 'gradient-text'
@@ -105,7 +105,7 @@ const Login: React.FC = () => {
               </h1>
             </div>
             <p
-              className={`text-sm ${
+              className={`text-xs sm:text-sm ${
                 theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
               }`}
             >
@@ -121,7 +121,7 @@ const Login: React.FC = () => {
           )}
 
           {/* Login form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div>
               <label
                 className={`block text-sm font-medium mb-2 ${
@@ -209,7 +209,7 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${
+              className={`w-full py-3 sm:py-3 text-sm sm:text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] rounded-lg transition-colors duration-200 ${
                 theme === 'light'
                   ? 'bg-blue-600 hover:bg-blue-700 text-white'
                   : 'btn-primary'
