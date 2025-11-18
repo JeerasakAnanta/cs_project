@@ -31,7 +31,7 @@ const Navbar: React.FC<{
   currentConversationId,
   conversations,
 }) => {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     const { currentUser, logout, isGuestMode } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const authToken = localStorage.getItem('authToken');
@@ -94,23 +94,25 @@ const Navbar: React.FC<{
         {/* Mobile menu button */}
         <button
           onClick={toggleSidebar}
-          className={`md:hidden fixed top-4 left-4 z-50 p-3 backdrop-blur-sm rounded-lg border transition-all duration-200 focus-ring shadow-lg ${
+          aria-label={isOpen ? 'ปิดเมนู' : 'เปิดเมนู'}
+          className={`md:hidden fixed top-4 left-4 z-50 p-3 backdrop-blur-sm rounded-lg border transition-all duration-200 focus-ring shadow-lg min-w-[44px] min-h-[44px] flex items-center justify-center ${
             theme === 'light'
-              ? 'bg-white/90 border-gray-200 text-gray-700 hover:bg-gray-100'
-              : 'bg-neutral-800/90 border-neutral-700 text-white hover:bg-neutral-700'
+              ? 'bg-white/90 border-gray-200 text-gray-700 hover:bg-gray-100 active:bg-gray-200'
+              : 'bg-neutral-800/90 border-neutral-700 text-white hover:bg-neutral-700 active:bg-neutral-600'
           }`}
         >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
         {/* Sidebar */}
-        <div
-          className={`w-full sm:w-80 md:w-80 h-full flex flex-col transition-all duration-300 ease-in-out border-r ${
+        <nav
+          className={`w-full sm:w-80 md:w-80 h-full flex flex-col transition-all duration-300 ease-in-out border-r safe-top safe-bottom ${
             theme === 'light'
               ? 'bg-white border-gray-200'
               : 'bg-neutral-900 border-neutral-800'
           } ${isOpen ? 'translate-x-0' : '-translate-x-full'
-            } md:translate-x-0 md:relative fixed z-40 shadow-2xl`}
+            } md:translate-x-0 md:relative fixed z-40 shadow-2xl md:shadow-none`}
+          aria-label="เมนูหลัก"
         >
           {/* Header */}
           <div className={`p-4 sm:p-6 border-b ${
@@ -135,16 +137,23 @@ const Navbar: React.FC<{
           {/* New conversation button */}
           <div className="p-4">
             <button
-              onClick={onNewConversation}
-              className="w-full flex items-center justify-center py-3 px-4 bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 rounded-xl text-white font-medium transition-all duration-200 transform hover:scale-105 focus-ring shadow-xl hover:shadow-2xl"
+              onClick={() => {
+                onNewConversation();
+                // Close mobile menu after creating new conversation
+                if (window.innerWidth < 768) {
+                  setIsOpen(false);
+                }
+              }}
+              aria-label="เริ่มการสนทนาใหม่"
+              className="w-full flex items-center justify-center py-3 px-4 bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 active:from-primary-800 active:to-purple-800 rounded-xl text-white font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 focus-ring shadow-xl hover:shadow-2xl min-h-[44px] touch-manipulation"
             >
-              <MessageCirclePlus size={18} className="mr-2" />
+              <MessageCirclePlus size={20} className="mr-2" />
               แชทใหม่
             </button>
           </div>
 
           {/* Conversations list */}
-          <div className="flex-1 overflow-y-auto px-3 sm:px-4">
+          <div className="flex-1 overflow-y-auto px-3 sm:px-4 -webkit-overflow-scrolling-touch">
             {conversations.length > 0 ? (
               <>
                 <p className={`text-xs px-2 mb-3 font-medium ${
@@ -156,15 +165,32 @@ const Navbar: React.FC<{
                   {conversations.map((conv) => (
                     <div
                       key={conv.id}
-                      onClick={() => onSelectConversation(conv.id)}
-                      className={`group relative p-3 rounded-lg cursor-pointer transition-all duration-200 ${
+                      onClick={() => {
+                        onSelectConversation(conv.id);
+                        // Close mobile menu after selecting conversation
+                        if (window.innerWidth < 768) {
+                          setIsOpen(false);
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          onSelectConversation(conv.id);
+                          if (window.innerWidth < 768) {
+                            setIsOpen(false);
+                          }
+                        }
+                      }}
+                      aria-label={`เลือกการสนทนา: ${conv.title}`}
+                      className={`group relative p-3 rounded-lg cursor-pointer transition-all duration-200 touch-manipulation active:scale-95 ${
                         currentConversationId === conv.id
                           ? theme === 'light'
                             ? 'bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-300'
                             : 'bg-gradient-to-r from-primary-900/40 to-purple-900/40 border border-primary-700'
                           : theme === 'light'
-                            ? 'hover:bg-sky-100 border border-transparent'
-                            : 'hover:bg-neutral-800 border border-transparent'
+                            ? 'hover:bg-sky-100 active:bg-sky-200 border border-transparent'
+                            : 'hover:bg-neutral-800 active:bg-neutral-700 border border-transparent'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2">
@@ -184,13 +210,14 @@ const Navbar: React.FC<{
                         <button
                           data-id={conv.id}
                           onClick={handleDeleteConversation}
-                          className={`opacity-0 group-hover:opacity-100 transition-all duration-200 p-2 rounded min-w-[36px] min-h-[36px] flex items-center justify-center ${
+                          aria-label={`ลบการสนทนา: ${conv.title}`}
+                          className={`opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-200 p-2 rounded min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation active:scale-90 ${
                             theme === 'light'
-                              ? 'text-gray-500 hover:text-red-500 hover:bg-red-50'
-                              : 'text-neutral-400 hover:text-red-400 hover:bg-red-900/20'
+                              ? 'text-gray-500 hover:text-red-500 active:text-red-600 hover:bg-red-50 active:bg-red-100'
+                              : 'text-neutral-400 hover:text-red-400 active:text-red-300 hover:bg-red-900/20 active:bg-red-900/30'
                           }`}
                         >
-                          <Trash2 size={14} />
+                          <Trash2 size={18} />
                         </button>
                       </div>
                     </div>
@@ -249,21 +276,23 @@ const Navbar: React.FC<{
                   {currentUser?.role === 'admin' && (
                     <Link
                       to="/admin"
-                      className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 transition-all duration-200 focus-ring min-w-[36px] min-h-[36px] flex items-center justify-center"
+                      aria-label="ไปที่หน้าผู้ดูแลระบบ"
+                      className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:from-amber-700 active:to-orange-800 transition-all duration-200 focus-ring min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation active:scale-95"
                     >
-                      <Shield size={16} className="text-white" />
+                      <Shield size={18} className="text-white" />
                     </Link>
                   )}
                   <button
                     onClick={toggleTheme}
-                    className={`p-2 rounded-lg border transition-all duration-200 focus-ring min-w-[36px] min-h-[36px] flex items-center justify-center ${
+                    aria-label={theme === 'light' ? 'เปลี่ยนเป็นธีมมืด' : 'เปลี่ยนเป็นธีมสว่าง'}
+                    className={`p-2 rounded-lg border transition-all duration-200 focus-ring min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation active:scale-95 ${
                       theme === 'light'
-                        ? 'bg-gray-100 hover:bg-gray-200 border-gray-300 text-gray-600 hover:text-blue-600'
-                        : 'bg-neutral-700 hover:bg-neutral-600 border-neutral-600 text-neutral-300 hover:text-yellow-400'
+                        ? 'bg-gray-100 hover:bg-gray-200 active:bg-gray-300 border-gray-300 text-gray-600 hover:text-blue-600'
+                        : 'bg-neutral-700 hover:bg-neutral-600 active:bg-neutral-500 border-neutral-600 text-neutral-300 hover:text-yellow-400'
                     }`}
                     title={theme === 'light' ? 'ธีมสว่าง (ใช้งานอยู่)' : 'ธีมมืด (ใช้งานอยู่)'}
                   >
-                    <Sun size={16} />
+                    <Sun size={18} />
                   </button>
                 </div>
               </div>
@@ -272,37 +301,43 @@ const Navbar: React.FC<{
               {isGuestMode() ? (
                 <Link
                   to="/login"
-                  className={`w-full flex items-center p-3 rounded-lg border border-transparent transition-all duration-200 focus-ring ${
+                  aria-label="เข้าสู่ระบบ"
+                  className={`w-full flex items-center p-3 rounded-lg border border-transparent transition-all duration-200 focus-ring min-h-[44px] touch-manipulation active:scale-98 ${
                     theme === 'light'
-                      ? 'hover:bg-blue-50 hover:border-blue-200 text-gray-600 hover:text-blue-600'
-                      : 'hover:bg-primary-900/20 hover:border-primary-700 text-neutral-300 hover:text-primary-400'
+                      ? 'hover:bg-blue-50 active:bg-blue-100 hover:border-blue-200 text-gray-600 hover:text-blue-600'
+                      : 'hover:bg-primary-900/20 active:bg-primary-900/30 hover:border-primary-700 text-neutral-300 hover:text-primary-400'
                   }`}
                 >
-                  <LogIn size={16} className="mr-3" />
+                  <LogIn size={18} className="mr-3" />
                   <span className="text-sm font-medium">เข้าสู่ระบบ</span>
                 </Link>
               ) : (
                 <button
                   onClick={logout}
-                  className={`w-full flex items-center p-3 rounded-lg border border-transparent transition-all duration-200 focus-ring ${
+                  aria-label="ออกจากระบบ"
+                  className={`w-full flex items-center p-3 rounded-lg border border-transparent transition-all duration-200 focus-ring min-h-[44px] touch-manipulation active:scale-98 ${
                     theme === 'light'
-                      ? 'hover:bg-red-50 hover:border-red-200 text-gray-600 hover:text-red-600'
-                      : 'hover:bg-red-900/20 hover:border-red-700 text-neutral-300 hover:text-red-400'
+                      ? 'hover:bg-red-50 active:bg-red-100 hover:border-red-200 text-gray-600 hover:text-red-600'
+                      : 'hover:bg-red-900/20 active:bg-red-900/30 hover:border-red-700 text-neutral-300 hover:text-red-400'
                   }`}
                 >
-                  <LogOut size={16} className="mr-3" />
+                  <LogOut size={18} className="mr-3" />
                   <span className="text-sm font-medium">ออกจากระบบ</span>
                 </button>
               )}
             </div>
           </div>
-        </div>
+        </nav>
 
         {/* Backdrop for mobile */}
         {isOpen && (
           <div
-            className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
+            className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30 safe-top safe-bottom"
             onClick={toggleSidebar}
+            onTouchStart={toggleSidebar}
+            role="button"
+            tabIndex={0}
+            aria-label="ปิดเมนู"
           />
         )}
       </>

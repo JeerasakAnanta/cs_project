@@ -73,6 +73,8 @@ const Chatbot: React.FC<ChatbotProps> = ({
   const [currentConversationTitle, setCurrentConversationTitle] =
     useState<string>('');
   const chatBoxRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { isGuestMode } = useAuth();
   const { theme } = useTheme();
 
@@ -125,6 +127,34 @@ const Chatbot: React.FC<ChatbotProps> = ({
     }
   }, [isLoading]);
 
+  // Handle mobile keyboard visibility
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.visualViewport) {
+        const keyboardVisible = window.visualViewport.height < window.innerHeight * 0.75;
+        setIsKeyboardVisible(keyboardVisible);
+        if (keyboardVisible) {
+          // Scroll to bottom when keyboard opens
+          setTimeout(() => scrollToBottom(), 100);
+        }
+      }
+    };
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+      return () => window.visualViewport.removeEventListener('resize', handleResize);
+    }
+  }, []);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = inputRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
+  }, [userInput]);
+
   useEffect(() => {
     if (currentConversation) {
       setCurrentConversationTitle(currentConversation.title);
@@ -157,8 +187,9 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
   const handleExampleQuestionClick = (text: string) => {
     setUserInput(text);
-    // Scroll to bottom when example question is clicked
+    // Focus input and scroll to bottom
     setTimeout(() => {
+      inputRef.current?.focus();
       scrollToBottom();
     }, 100);
   };
@@ -240,7 +271,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden">
+    <div className="flex-1 flex flex-col h-full overflow-hidden safe-top safe-bottom">
       {/* Custom Alert */}
       <CustomAlert
         isOpen={alertState.isOpen}
@@ -252,8 +283,8 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
       {/* Feedback Modal */}
       {feedbackModal.isOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className={`backdrop-blur-sm rounded-2xl p-4 sm:p-6 max-w-md w-full shadow-2xl border ${
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 safe-top safe-bottom">
+          <div className={`backdrop-blur-sm rounded-2xl p-4 sm:p-6 max-w-md w-full shadow-2xl border max-h-[90vh] overflow-y-auto ${
             theme === 'light'
               ? 'bg-white/95 border-gray-300/50'
               : 'bg-neutral-800/95 border-neutral-700/50'
@@ -379,15 +410,22 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
       {/* Chat container - with proper flex layout */}
       <div
-        className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 pb-4 scroll-smooth"
+        className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 pb-4 scroll-smooth -webkit-overflow-scrolling-touch"
         ref={chatBoxRef}
-        style={{ scrollBehavior: 'smooth' }}
+        style={{ 
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch'
+        }}
       >
         <div className="max-w-5xl mx-auto">
           {/* Welcome message when no conversation */}
           {messages.length === 0 ? (
-            <div className="text-center py-6 sm:py-12">
-              <div className="mb-6 sm:mb-8 p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl bg-white/80 backdrop-blur-sm border border-gray-200/50">
+            <div className="text-center py-6 sm:py-12 px-2">
+              <div className={`mb-6 sm:mb-8 p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-sm border ${
+                theme === 'light'
+                  ? 'bg-white/80 border-gray-200/50'
+                  : 'bg-neutral-800/80 border-neutral-700/50'
+              }`}>
                 <div
                   className={`w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-2xl ${
                     theme === 'light'
@@ -416,7 +454,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6 max-w-3xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 max-w-3xl mx-auto px-2">
                 {[
                   'ขั้นตอนการเบิกค่าใช้จ่ายในการเดินทางไปราชการ',
                   'เอกสารที่ต้องใช้ในการเบิกค่าใช้จ่าย',
@@ -426,7 +464,8 @@ const Chatbot: React.FC<ChatbotProps> = ({
                   <button
                     key={index}
                     onClick={() => handleExampleQuestionClick(question)}
-                    className={`group p-4 sm:p-6 text-left backdrop-blur-xl rounded-xl sm:rounded-2xl transition-all duration-300 transform active:scale-95 sm:hover:scale-105 hover:shadow-2xl ${
+                    aria-label={`ถามคำถาม: ${question}`}
+                    className={`group p-4 sm:p-6 text-left backdrop-blur-xl rounded-xl sm:rounded-2xl transition-all duration-300 transform active:scale-95 sm:hover:scale-105 hover:shadow-2xl touch-manipulation min-h-[44px] ${
                       theme === 'light'
                         ? 'bg-white/90 border border-blue-200/50 hover:bg-blue-50/90 hover:border-blue-300/70 hover:shadow-blue-500/30 shadow-lg'
                         : 'bg-gradient-to-br from-slate-900/60 to-purple-900/50 border border-purple-500/30 hover:from-purple-800/70 hover:to-pink-800/60 hover:border-purple-400/50 hover:shadow-purple-500/20 shadow-lg'
@@ -467,13 +506,13 @@ const Chatbot: React.FC<ChatbotProps> = ({
               {messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} ${index === messages.length - 1 ? 'mb-4' : ''}`}
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} ${index === messages.length - 1 ? 'mb-4' : ''} px-1`}
                 >
                   <div
-                    className={`flex items-start max-w-[95%] sm:max-w-[85%] md:max-w-4xl ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
+                    className={`flex items-start max-w-[95%] sm:max-w-[90%] md:max-w-4xl ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
                   >
                     <div
-                      className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center mx-2 sm:mx-3 md:mx-4 flex-shrink-0 ${
+                      className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center mx-1 sm:mx-3 md:mx-4 flex-shrink-0 ${
                         msg.sender === 'user'
                           ? 'bg-blue-600 shadow-lg'
                           : 'bg-neutral-700 shadow-lg'
@@ -534,18 +573,20 @@ const Chatbot: React.FC<ChatbotProps> = ({
                               onClick={() =>
                                 handleFeedback(msg.id as number, 'like')
                               }
-                              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-1.5 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 hover:border-green-500/50 rounded-lg text-green-400 hover:text-green-300 transition-all duration-200 text-xs sm:text-sm min-h-[44px] sm:min-h-0"
+                              aria-label="ชอบคำตอบนี้"
+                              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-1.5 bg-green-600/20 hover:bg-green-600/30 active:bg-green-600/40 border border-green-500/30 hover:border-green-500/50 rounded-lg text-green-400 hover:text-green-300 transition-all duration-200 text-xs sm:text-sm min-h-[44px] sm:min-h-0 touch-manipulation active:scale-95"
                             >
-                              <ThumbsUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                              <ThumbsUp className="w-4 h-4 sm:w-4 sm:h-4" />
                               <span className="hidden sm:inline">ชอบ</span>
                             </button>
                             <button
                               onClick={() =>
                                 handleFeedback(msg.id as number, 'dislike')
                               }
-                              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-1.5 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 hover:border-red-500/50 rounded-lg text-red-400 hover:text-red-300 transition-all duration-200 text-xs sm:text-sm min-h-[44px] sm:min-h-0"
+                              aria-label="ไม่ชอบคำตอบนี้"
+                              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-1.5 bg-red-600/20 hover:bg-red-600/30 active:bg-red-600/40 border border-red-500/30 hover:border-red-500/50 rounded-lg text-red-400 hover:text-red-300 transition-all duration-200 text-xs sm:text-sm min-h-[44px] sm:min-h-0 touch-manipulation active:scale-95"
                             >
-                              <ThumbsDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                              <ThumbsDown className="w-4 h-4 sm:w-4 sm:h-4" />
                               <span className="hidden sm:inline">ไม่ชอบ</span>
                             </button>
                           </div>
@@ -589,7 +630,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
 
       {/* Input area at bottom - sticky positioning */}
       <div
-        className={`sticky bottom-0 p-2 sm:p-3 border-t backdrop-blur-xl shadow-2xl z-10 ${
+        className={`sticky bottom-0 p-2 sm:p-3 border-t backdrop-blur-xl shadow-2xl z-10 safe-bottom ${
           theme === 'light'
             ? 'border-gray-200 bg-white/95'
             : 'border-neutral-700/50 bg-neutral-900/95'
@@ -604,6 +645,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
             }`}
           >
             <textarea
+              ref={inputRef}
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
               onKeyDown={(e) => {
@@ -612,25 +654,35 @@ const Chatbot: React.FC<ChatbotProps> = ({
                   handleSendMessage();
                 }
               }}
+              onFocus={() => {
+                // Scroll to bottom when input is focused
+                setTimeout(() => scrollToBottom(), 300);
+              }}
               placeholder="ส่งข้อความถึง LannaFinChat..."
-              className={`w-full bg-transparent p-3 sm:p-4 pr-12 sm:pr-16 focus:outline-none resize-none rounded-2xl text-sm sm:text-base font-medium ${
+              aria-label="พิมพ์ข้อความ"
+              className={`w-full bg-transparent p-3 sm:p-4 pr-12 sm:pr-16 focus:outline-none resize-none rounded-2xl font-medium ${
                 theme === 'light'
                   ? 'text-gray-900 placeholder-gray-500/70'
                   : 'text-white placeholder-white/70'
               }`}
               rows={1}
-              style={{ minHeight: '44px', maxHeight: '120px' }}
+              style={{ 
+                minHeight: '48px',
+                maxHeight: '120px',
+                fontSize: '16px', // Prevents zoom on iOS
+              }}
             />
             <button
               onClick={handleSendMessage}
               disabled={!userInput.trim() || isLoading}
-              className={`absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 p-2.5 sm:p-2 rounded-xl transition-all duration-300 transform active:scale-95 sm:hover:scale-110 focus:ring-4 shadow-lg min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center ${
+              aria-label="ส่งข้อความ"
+              className={`absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 p-2.5 sm:p-2 rounded-xl transition-all duration-300 transform active:scale-90 sm:hover:scale-110 focus:ring-4 shadow-lg min-w-[48px] min-h-[48px] sm:min-w-0 sm:min-h-0 flex items-center justify-center touch-manipulation ${
                 theme === 'light'
-                  ? 'bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 focus:ring-blue-400/25'
-                  : 'bg-neutral-700 hover:bg-neutral-600 disabled:bg-neutral-800 focus:ring-neutral-500/25'
-              } disabled:cursor-not-allowed`}
+                  ? 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 disabled:bg-gray-300 focus:ring-blue-400/25'
+                  : 'bg-neutral-700 hover:bg-neutral-600 active:bg-neutral-500 disabled:bg-neutral-800 focus:ring-neutral-500/25'
+              } disabled:cursor-not-allowed disabled:active:scale-100`}
             >
-              <Send className="w-4 h-4 sm:w-4 sm:h-4 text-white" />
+              <Send className="w-5 h-5 sm:w-4 sm:h-4 text-white" />
             </button>
           </div>
           <p

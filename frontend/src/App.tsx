@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { OfflineProvider } from './contexts/OfflineContext';
 
 // Components
 import { Navbar, ErrorBoundary } from './components/common';
@@ -15,6 +16,7 @@ import { Chatbot, TypingTest } from './components/chat';
 import { Pagenotfound } from './components/pages';
 import { PDFManager } from './components/pdf';
 import AdminDashboard from './components/AdminDashboard';
+import OfflineIndicator from './components/common/ui/OfflineIndicator';
 
 // Services
 import {
@@ -387,6 +389,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-chat-bg overflow-hidden">
+      <OfflineIndicator />
       <Navbar
         onNewConversation={handleNewConversation}
         onSelectConversation={handleSelectConversation}
@@ -434,9 +437,11 @@ const App: React.FC = () => {
         }}
       >
         <ThemeProvider>
-          <AuthProvider>
-            <AppContent />
-          </AuthProvider>
+          <OfflineProvider>
+            <AuthProvider>
+              <AppContent />
+            </AuthProvider>
+          </OfflineProvider>
         </ThemeProvider>
       </Router>
     </ErrorBoundary>

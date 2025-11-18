@@ -25,6 +25,9 @@
 @layer base {
   html {
     font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+    /* Mobile viewport height fix */
+    height: 100%;
+    height: -webkit-fill-available;
   }
 
   body {
@@ -32,6 +35,25 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: var(--text-primary);
+    /* Mobile viewport height fix */
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    /* Safe area insets for notched devices */
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+    /* Prevent text size adjustment on orientation change */
+    -webkit-text-size-adjust: 100%;
+    /* Smooth scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent pull-to-refresh on Chrome mobile */
+    overscroll-behavior-y: contain;
+  }
+  
+  /* Root element for full height on mobile */
+  #root {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    display: flex;
+    flex-direction: column;
   }
 
   /* Custom scrollbar */
@@ -49,6 +71,26 @@
 
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-400;
+  }
+  
+  /* Mobile-specific styles */
+  @media (max-width: 768px) {
+    /* Hide scrollbar on mobile for cleaner look */
+    ::-webkit-scrollbar {
+      width: 3px;
+    }
+  }
+  
+  /* Prevent tap highlight on mobile */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  
+  /* Allow text selection only on specific elements */
+  input, textarea {
+    -webkit-user-select: text;
+    user-select: text;
   }
 }
 
@@ -408,6 +450,21 @@
   }
 }
 
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -100%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
 /* Gradient text effect */
 .gradient-text {
   background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
@@ -430,4 +487,78 @@
 /* Custom focus styles */
 .focus-ring {
   @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white;
+}
+
+/* Mobile optimization styles */
+@media (max-width: 768px) {
+  /* Improve touch targets */
+  button, a, input, select, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Optimize font sizes for mobile */
+  html {
+    font-size: 16px; /* Prevents zoom on iOS when focusing inputs */
+  }
+  
+  /* Better textarea on mobile */
+  textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Smooth scrolling */
+  * {
+    scroll-behavior: smooth;
+  }
+}
+
+/* iOS safe area support */
+@supports (padding: max(0px)) {
+  .safe-top {
+    padding-top: max(0px, env(safe-area-inset-top));
+  }
+  
+  .safe-bottom {
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+  
+  .safe-left {
+    padding-left: max(0px, env(safe-area-inset-left));
+  }
+  
+  .safe-right {
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}
+
+/* Prevent rubber band scrolling on iOS */
+html, body {
+  position: fixed;
+  overflow: hidden;
+  width: 100%;
+  height: 100vh;
+  height: -webkit-fill-available;
+}
+
+#root {
+  overflow: auto;
+  height: 100vh;
+  height: -webkit-fill-available;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Performance optimizations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Disable iOS text inflation */
+@media screen and (max-width: 768px) {
+  html {
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+  }
 }

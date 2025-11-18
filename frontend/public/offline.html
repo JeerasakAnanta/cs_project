@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ออฟไลน์ - LannaFinChat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Sarabun', 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      text-align: center;
+      max-width: 500px;
+    }
+    
+    .icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 30px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+    }
+    
+    h1 {
+      font-size: 32px;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    p {
+      font-size: 18px;
+      color: #a3a3a3;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    
+    button {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border: none;
+      color: white;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      font-family: inherit;
+    }
+    
+    button:hover {
+      transform: scale(1.05);
+    }
+    
+    button:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">📡</div>
+    <h1>ไม่มีการเชื่อมต่ออินเทอร์เน็ต</h1>
+    <p>
+      ขออภัย คุณไม่ได้เชื่อมต่ออินเทอร์เน็ตในขณะนี้
+      กรุณาตรวจสอบการเชื่อมต่อของคุณแล้วลองใหม่อีกครั้ง
+    </p>
+    <button onclick="window.location.reload()">ลองใหม่อีกครั้ง</button>
+  </div>
+</body>
+</html>
+
