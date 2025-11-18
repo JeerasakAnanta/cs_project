@@ -16,10 +16,7 @@ export default defineConfig({
     ],
   },
   plugins: [
-    react({
-      // Enable fast refresh for better development experience
-      fastRefresh: true,
-    }),
+    react(),
   ],
 
   css: {

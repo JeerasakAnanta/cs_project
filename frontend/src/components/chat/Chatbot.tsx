@@ -74,7 +74,6 @@ const Chatbot: React.FC<ChatbotProps> = ({
     useState<string>('');
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { isGuestMode } = useAuth();
   const { theme } = useTheme();
 
@@ -130,9 +129,9 @@ const Chatbot: React.FC<ChatbotProps> = ({
   // Handle mobile keyboard visibility
   useEffect(() => {
     const handleResize = () => {
-      if (window.visualViewport) {
-        const keyboardVisible = window.visualViewport.height < window.innerHeight * 0.75;
-        setIsKeyboardVisible(keyboardVisible);
+      const visualViewport = window.visualViewport;
+      if (visualViewport) {
+        const keyboardVisible = visualViewport.height < window.innerHeight * 0.75;
         if (keyboardVisible) {
           // Scroll to bottom when keyboard opens
           setTimeout(() => scrollToBottom(), 100);
@@ -140,9 +139,14 @@ const Chatbot: React.FC<ChatbotProps> = ({
       }
     };
 
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', handleResize);
-      return () => window.visualViewport.removeEventListener('resize', handleResize);
+    const visualViewport = window.visualViewport;
+    if (visualViewport) {
+      visualViewport.addEventListener('resize', handleResize);
+      return () => {
+        if (visualViewport) {
+          visualViewport.removeEventListener('resize', handleResize);
+        }
+      };
     }
   }, []);
 
