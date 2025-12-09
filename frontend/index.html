@@ -1,13 +1,55 @@
 <!doctype html>
-<html lang="en">
+<html lang="th">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chatbot คู่มือปฏิบัติงาน 0.1.0</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>LannaFinChat - AI Assistant สำหรับการเบิกจ่าย</title>
+    <meta name="title" content="LannaFinChat - AI Assistant สำหรับการเบิกจ่าย" />
+    <meta name="description" content="AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน" />
+    
+    <!-- Viewport Settings - Optimized for Mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="LannaFinChat" />
+    <meta name="application-name" content="LannaFinChat" />
+    
+    <!-- Theme Colors -->
+    <meta name="theme-color" content="#3b82f6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f0f23" media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content="#3b82f6" />
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon.svg" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon.svg" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- iOS Splash Screens (optional, can be generated) -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <!-- Prevent Zooming on Input Focus (iOS) -->
+    <meta name="format-detection" content="telephone=no" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <noscript>
+      <div style="text-align: center; padding: 50px; font-family: system-ui;">
+        <h1>กรุณาเปิดใช้งาน JavaScript</h1>
+        <p>แอปพลิเคชันนี้ต้องการ JavaScript เพื่อทำงาน</p>
+      </div>
+    </noscript>
   </body>
 </html>

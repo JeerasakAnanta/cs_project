@@ -15,7 +15,9 @@ export default defineConfig({
       '.jeerasakananta.dev', // Allow all subdomains
     ],
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+  ],
 
   css: {
     postcss: {
@@ -24,5 +26,33 @@ export default defineConfig({
         autoprefixer, // Autoprefixer plugin
       ],
     },
+  },
+
+  // Build optimizations
+  build: {
+    // Enable code splitting for better caching
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separate vendor chunks for better caching
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['lucide-react', '@headlessui/react'],
+          'markdown-vendor': ['marked'],
+        },
+      },
+    },
+    // Optimize chunk size
+    chunkSizeWarningLimit: 1000,
+    // Enable minification
+    minify: 'esbuild',
+    // Generate source maps for production debugging (optional)
+    sourcemap: false,
+    // Target modern browsers for smaller bundle size
+    target: 'es2015',
+  },
+
+  // Performance optimizations
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
   },
 });
