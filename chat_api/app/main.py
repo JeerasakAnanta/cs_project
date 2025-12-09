@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 
-# Import database utils and models
+ Import database utils and models
 from app.utils.database import engine, Base
 from app.database import models
 from app.utils.logging_config import setup_logging
@@ -84,6 +84,4 @@ async def startup_event():
     """Log application startup with system time"""
     from app.utils.timezone import now, format_datetime
     logging.info(f"LannaFinChat API started at {format_datetime(now())}")
-
-
 
