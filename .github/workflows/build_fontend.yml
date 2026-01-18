@@ -1,4 +1,4 @@
-name: build fron end
+name: build frontend
 
 on: 
   push: 
@@ -44,16 +44,22 @@ jobs:
           docker build -t ghcr.io/jeerasakananta/cs_project-frontend:latest \
                        -t ghcr.io/jeerasakananta/cs_project-frontend:${{ github.sha }} .
 
-      - name: Push Docker Image
+      - name: Push Docker Image (latest)
         working-directory: frontend
-        run: |
-          docker push ghcr.io/jeerasakananta/cs_project-frontend:latest
-          docker push ghcr.io/jeerasakananta/cs_project-frontend:${{ github.sha }}
+        run: docker push ghcr.io/jeerasakananta/cs_project-frontend:latest
 
-      - name: Deploy Docker Container
+      - name: Push Docker Image (commit SHA)
+        working-directory: frontend
+        run: docker push ghcr.io/jeerasakananta/cs_project-frontend:${{ github.sha }}
+
+      - name: Stop Old Container
+        run: docker stop cs_project-frontend || true
+
+      - name: Remove Old Container
+        run: docker rm cs_project-frontend || true
+
+      - name: Run New Container
         run: |
-          docker stop cs_project-frontend || true
-          docker rm cs_project-frontend || true
           docker run -d \
             --name cs_project-frontend \
             --restart unless-stopped \
