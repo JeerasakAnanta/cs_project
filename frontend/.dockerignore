@@ -50,3 +50,5 @@ docker-compose*
 # Development files
 src/**/*.test.*
 src/**/*.spec.*
+
+*.sh
