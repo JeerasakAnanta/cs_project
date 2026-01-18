@@ -7,8 +7,13 @@ on:
   pull_request: 
     branches: [main]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs: 
-  build: 
+  prepare:
+    name: Build Frontend
     runs-on: self-hosted 
     steps: 
       - name: Checkout code
@@ -31,6 +36,14 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+  build-docker:
+    name: Build และ Push Docker Image
+    runs-on: self-hosted
+    needs: prepare
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -52,6 +65,11 @@ jobs:
         working-directory: frontend
         run: docker push ghcr.io/jeerasakananta/cs_project-frontend:${{ github.sha }}
 
+  deploy:
+    name: Deploy Docker Container
+    runs-on: self-hosted
+    needs: build-docker
+    steps:
       - name: Stop Old Container
         run: docker stop cs_project-frontend || true
 
