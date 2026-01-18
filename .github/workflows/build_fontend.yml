@@ -1,4 +1,4 @@
-name: Build Frontend 
+name: build fron end
 
 on: 
   push: 
@@ -41,14 +41,14 @@ jobs:
       - name: Build Docker Image
         working-directory: frontend
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/cs_project-frontend:latest \
-                       -t ghcr.io/${{ github.repository_owner }}/cs_project-frontend:${{ github.sha }} .
+          docker build -t ghcr.io/jeerasakananta/cs_project-frontend:latest \
+                       -t ghcr.io/jeerasakananta/cs_project-frontend:${{ github.sha }} .
 
       - name: Push Docker Image
         working-directory: frontend
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/cs_project-frontend:latest
-          docker push ghcr.io/${{ github.repository_owner }}/cs_project-frontend:${{ github.sha }}
+          docker push ghcr.io/jeerasakananta/cs_project-frontend:latest
+          docker push ghcr.io/jeerasakananta/cs_project-frontend:${{ github.sha }}
 
       - name: Deploy Docker Container
         run: |
@@ -58,6 +58,6 @@ jobs:
             --name cs_project-frontend \
             --restart unless-stopped \
             -p 8000:8000 \
-            ghcr.io/${{ github.repository_owner }}/cs_project-frontend:latest
+            ghcr.io/jeerasakananta/cs_project-frontend:latest
 
     
