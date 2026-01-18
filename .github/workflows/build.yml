@@ -9,8 +9,7 @@ on:
 
 jobs: 
   build: 
-    runs-on: ubuntu-latest 
-
+    runs-on: self-hosted 
     steps: 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -31,3 +30,34 @@ jobs:
       - name: Build Frontend
         working-directory: frontend
         run: npm run build
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker Image
+        working-directory: frontend
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/cs_project-frontend:latest \
+                       -t ghcr.io/${{ github.repository_owner }}/cs_project-frontend:${{ github.sha }} .
+
+      - name: Push Docker Image
+        working-directory: frontend
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/cs_project-frontend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/cs_project-frontend:${{ github.sha }}
+
+      - name: Deploy Docker Container
+        run: |
+          docker stop cs_project-frontend || true
+          docker rm cs_project-frontend || true
+          docker run -d \
+            --name cs_project-frontend \
+            --restart unless-stopped \
+            -p 8000:8000 \
+            ghcr.io/${{ github.repository_owner }}/cs_project-frontend:latest
+
+    
