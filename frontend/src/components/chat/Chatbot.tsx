@@ -14,6 +14,7 @@ import CustomAlert from '../common/feedback/CustomAlert';
 import TypingIndicator from '../common/ui/TypingIndicator';
 import DocumentReferences from './DocumentReferences';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 const BACKEND_API =
   import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
@@ -90,14 +91,17 @@ const Chatbot: React.FC<ChatbotProps> = ({
   // Function to render markdown content safely
   const renderMarkdown = (content: string): string => {
     try {
-      // Basic sanitization to prevent XSS
-      const sanitizedContent = content
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-        .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-        .replace(/javascript:/gi, '')
-        .replace(/on\w+\s*=/gi, '');
-
-      return marked.parse(sanitizedContent) as string;
+      const htmlContent = marked.parse(content) as string;
+      // Use DOMPurify for comprehensive XSS protection
+      return DOMPurify.sanitize(htmlContent, {
+        ALLOWED_TAGS: [
+          'p', 'br', 'strong', 'em', 'u', 'ol', 'ul', 'li', 'a', 'code', 
+          'pre', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'table', 
+          'thead', 'tbody', 'tr', 'th', 'td'
+        ],
+        ALLOWED_ATTR: ['href', 'target', 'class'],
+        ALLOW_DATA_ATTR: false
+      });
     } catch (error) {
       console.error('Error rendering markdown:', error);
       return content; // Fallback to plain text

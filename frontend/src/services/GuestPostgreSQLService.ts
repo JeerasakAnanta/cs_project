@@ -161,22 +161,32 @@ class GuestPostgreSQLService {
   }
 
   async getConversation(id: string): Promise<GuestConversation | null> {
-    const response = await fetch(
-      `${BACKEND_API}/chat/guest/conversations/${id}`,
-      {
-        method: 'GET',
-        headers: this.getHeaders(),
-      }
-    );
+    try {
+      const response = await fetch(
+        `${BACKEND_API}/chat/guest/conversations/${id}`,
+        {
+          method: 'GET',
+          headers: this.getHeaders(),
+        }
+      );
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null;
+      if (!response.ok) {
+        if (response.status === 404) {
+          return null;
+        }
+        if (response.status === 500) {
+          throw new Error('Server error occurred while fetching conversation');
+        }
+        throw new Error(`Failed to fetch conversation: ${response.statusText}`);
       }
-      throw new Error(`Failed to fetch conversation: ${response.statusText}`);
+
+      return await response.json();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Network error occurred while fetching conversation');
     }
-
-    return await response.json();
   }
 
   async addMessage(conversationId: string, content: string): Promise<{ message: string; source_documents?: DocumentReference[] }> {

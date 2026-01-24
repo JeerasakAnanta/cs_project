@@ -88,9 +88,8 @@ const AppContent: React.FC = () => {
         const data = await response.json();
         setConversations(data);
       } else if (response.status === 401) {
-        // Token is invalid or expired, clear it and redirect to login
+        // Token is invalid or expired, clear it and let the AuthContext handle redirect
         localStorage.removeItem('authToken');
-        window.location.href = '/login';
       } else {
         console.error(
           'Error fetching conversations:',
@@ -109,12 +108,7 @@ const AppContent: React.FC = () => {
     } else if (currentUser) {
       fetchAuthenticatedConversations();
     }
-  }, [
-    currentUser,
-    isGuestMode,
-    fetchGuestConversations,
-    fetchAuthenticatedConversations,
-  ]);
+  }, [currentUser, isGuestMode]);
 
   const handleNewConversation = () => {
     setCurrentConversationId(null);
@@ -192,113 +186,9 @@ const AppContent: React.FC = () => {
           );
           setMessages(formattedMessages);
         } else if (response.status === 401) {
-          // Token is invalid or expired, clear it and redirect to login
+          // Token is invalid or expired, clear it and let AuthContext handle the rest
           localStorage.removeItem('authToken');
-          window.location.href = '/login';
-        } else {
-          console.error(
-            'Error fetching conversation details:',
-            response.status,
-            response.statusText
-          );
-          setMessages([]);
-        }
-      } catch (error) {
-        console.error('Error fetching conversation details:', error);
-        setMessages([]);
-      }
-    }
-  };
-
-  const handleSendMessage = async (messageContent: string) => {
-    if (isGuestMode()) {
-      await handleGuestSendMessage(messageContent);
-    } else {
-      await handleAuthenticatedSendMessage(messageContent);
-    }
-  };
-
-  const handleGuestSendMessage = async (messageContent: string) => {
-    let conversationId = currentConversationId as string;
-
-    setIsLoading(true);
-    try {
-      // Create a new conversation if one doesn't exist
-      if (!conversationId) {
-        // Use the user's message as the conversation title (truncate if too long)
-        const title =
-          messageContent.length > 50
-            ? messageContent.substring(0, 50) + '...'
-            : messageContent;
-
-        const newConversation =
-          await guestPostgreSQLService.createConversation(title);
-        conversationId = newConversation.id;
-        setCurrentConversationId(newConversation.id);
-        setGuestConversations((prev) => [newConversation, ...prev]);
-      }
-
-      // Add user message to guest conversation and get bot response
-      await guestPostgreSQLService.addMessage(conversationId, messageContent);
-
-      // Update messages state by fetching the updated conversation
-      const conversation =
-        await guestPostgreSQLService.getConversation(conversationId);
-      if (conversation) {
-        const formattedMessages: Message[] = await Promise.all(
-          conversation.messages.map(async (msg) => {
-            if (msg.sender === 'bot') {
-              return {
-                id: msg.id,
-                text: await formatBotMessage(msg.content),
-                sender: 'bot' as const,
-              };
-            }
-            return { id: msg.id, text: msg.content, sender: 'user' as const };
-          })
-        );
-        setMessages(formattedMessages);
-
-        // Update guest conversations list
-        setGuestConversations((prev) =>
-          prev.map((conv) => (conv.id === conversationId ? conversation : conv))
-        );
-      }
-    } catch (error) {
-      console.error('Error in guest mode chat:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAuthenticatedSendMessage = async (messageContent: string) => {
-    let conversationId = currentConversationId as number;
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) return;
-
-    setIsLoading(true);
-    try {
-      // Create a new conversation if one doesn't exist
-      if (!conversationId) {
-        try {
-          const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${authToken}`,
-            },
-            body: JSON.stringify({ title: messageContent }), // Use message as title
-          });
-          if (response.ok) {
-            const newConversation = await response.json();
-            conversationId = newConversation.id;
-            setCurrentConversationId(newConversation.id);
-            setConversations((prev) => [newConversation, ...prev]);
-          } else if (response.status === 401) {
-            // Token is invalid or expired, clear it and redirect to login
-            localStorage.removeItem('authToken');
-            window.location.href = '/login';
-            return;
+          return;
           } else {
             throw new Error('Failed to create new conversation');
           }
@@ -354,11 +244,10 @@ const AppContent: React.FC = () => {
           } else {
             console.error('No bot message received');
           }
-        } else if (response.status === 401) {
-          // Token is invalid or expired, clear it and redirect to login
-          localStorage.removeItem('authToken');
-          window.location.href = '/login';
-          return;
+          } else if (response.status === 401) {
+            // Token is invalid or expired, clear it and let AuthContext handle the rest
+            localStorage.removeItem('authToken');
+            return;
         } else {
           console.error(
             'Error getting bot response:',

@@ -40,14 +40,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (token) {
       try {
-        const decoded: { sub: string; role: string } = jwtDecode(token);
-        setCurrentUser({ username: decoded.sub, role: decoded.role });
-        // Disable guest mode when user logs in
-        setIsGuest(false);
-        localStorage.removeItem('guestMode');
+        const decoded = jwtDecode(token);
+        if (typeof decoded === 'object' && decoded !== null && 'sub' in decoded && 'role' in decoded) {
+          setCurrentUser({ 
+            username: String(decoded.sub), 
+            role: String(decoded.role) 
+          });
+          // Disable guest mode when user logs in
+          setIsGuest(false);
+          localStorage.removeItem('guestMode');
+        } else {
+          logout();
+        }
       } catch (error) {
-        // Handle token decoding error, e.g., by logging out
-        logout();
+        // Handle token decoding error without calling logout to prevent infinite loops
+        localStorage.removeItem('authToken');
+        setToken(null);
+        setCurrentUser(null);
       }
     }
   }, [token]);

@@ -43,7 +43,7 @@ jobs:
           echo "Add test commands here if needed (e.g., uv run pytest)"
 
   build-docker:
-    name: Build  Push Docker Image
+    name: Build Push Docker Image
     runs-on: self-hosted
     needs: prepare
     steps:
