@@ -16,99 +16,124 @@ router = APIRouter(
     tags=["chat"],
 )
 
+
 @router.post("/conversations/", response_model=schemas.Conversation)
-def create_conversation_for_user(
+async def create_conversation_for_user(
     conversation: schemas.ConversationCreate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_user),
 ):
-    return crud.create_conversation(db=db, user_id=current_user.id, title=conversation.title)
+    return crud.create_conversation(
+        db=db, user_id=int(current_user.id), title=conversation.title
+    )
+
 
 @router.get("/conversations/", response_model=List[schemas.Conversation])
-def read_conversations_for_user(
-    db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+async def read_conversations_for_user(
+    db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)
 ):
     return crud.get_conversations_by_user(db=db, user_id=current_user.id)
 
+
 @router.get("/conversations/{conversation_id}", response_model=schemas.Conversation)
-def read_conversation(
+async def read_conversation(
     conversation_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_user),
 ):
     db_conversation = crud.get_conversation(db=db, conversation_id=conversation_id)
     if db_conversation is None or db_conversation.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return db_conversation
 
+
 @router.put("/conversations/{conversation_id}", response_model=schemas.Conversation)
-def update_conversation_title(
+async def update_conversation_title(
     conversation_id: int,
     conversation_update: schemas.ConversationUpdate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_user),
 ):
     db_conversation = crud.get_conversation(db=db, conversation_id=conversation_id)
     if db_conversation is None or db_conversation.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Conversation not found")
-    return crud.update_conversation_title(db=db, conversation_id=conversation_id, title=conversation_update.title)
+    return crud.update_conversation_title(
+        db=db, conversation_id=conversation_id, title=conversation_update.title
+    )
 
-@router.get("/conversations/{conversation_id}/messages/", response_model=List[schemas.Message])
-def read_messages_for_conversation(
+
+@router.get(
+    "/conversations/{conversation_id}/messages/", response_model=List[schemas.Message]
+)
+async def read_messages_for_conversation(
     conversation_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_user),
 ):
     db_conversation = crud.get_conversation(db=db, conversation_id=conversation_id)
     if db_conversation is None or db_conversation.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return crud.get_messages_by_conversation(db=db, conversation_id=conversation_id)
 
-@router.post("/conversations/{conversation_id}/messages/", response_model=schemas.Message)
-def create_message_for_conversation(
+
+@router.post(
+    "/conversations/{conversation_id}/messages/", response_model=schemas.Message
+)
+async def create_message_for_conversation(
     conversation_id: int,
     message: schemas.MessageCreate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_user),
 ):
     db_conversation = crud.get_conversation(db=db, conversation_id=conversation_id)
     if db_conversation is None or db_conversation.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Conversation not found")
-    
-    # Create user message
-    crud.create_message(db=db, message=message, conversation_id=conversation_id)
 
-    # Generate bot response with document references
-    bot_response = rag_chatbot(message.content)
-    
-    # Convert document references to schema format
-    source_documents = []
-    if 'source_documents' in bot_response and bot_response['source_documents']:
-        for doc_ref in bot_response['source_documents']:
-            source_documents.append(schemas.DocumentReference(
-                filename=doc_ref['filename'],
-                page=doc_ref['page'],
-                confidence_score=doc_ref['confidence_score'],
-                content_preview=doc_ref['content_preview'],
-                full_content=doc_ref['full_content']
-            ))
-    
-    bot_message = schemas.MessageCreate(sender="bot", content=bot_response['message'])
-    created_message = crud.create_message(db=db, message=bot_message, conversation_id=conversation_id)
-    
-    # Add source documents to the response
-    created_message.source_documents = source_documents
-    return created_message
+    try:
+        # Create user message
+        crud.create_message(db=db, message=message, conversation_id=conversation_id)
+
+        # Generate bot response with document references
+        bot_response = rag_chatbot(message.content)
+
+        # Convert document references to schema format
+        source_documents = []
+        if "source_documents" in bot_response and bot_response["source_documents"]:
+            for doc_ref in bot_response["source_documents"]:
+                source_documents.append(
+                    schemas.DocumentReference(
+                        filename=doc_ref["filename"],
+                        page=doc_ref["page"],
+                        confidence_score=doc_ref["confidence_score"],
+                        content_preview=doc_ref["content_preview"],
+                        full_content=doc_ref["full_content"],
+                    )
+                )
+
+        bot_message = schemas.MessageCreate(
+            sender="bot", content=bot_response["message"]
+        )
+        created_message = crud.create_message(
+            db=db, message=bot_message, conversation_id=conversation_id
+        )
+
+        # Add source documents to the response
+        created_message.source_documents = source_documents
+        return created_message
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error generating bot response: {str(e)}"
+        )
 
 
 @router.delete("/conversations/{conversation_id}", response_model=schemas.Conversation)
-def delete_conversation(
+async def delete_conversation(
     conversation_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_user),
 ):
     db_conversation = crud.get_conversation(db=db, conversation_id=conversation_id)
     if db_conversation is None or db_conversation.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Conversation not found")
-    return crud.delete_conversation(db=db, conversation_id=conversation_id) 
+    return crud.delete_conversation(db=db, conversation_id=conversation_id)

@@ -5,23 +5,26 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.database import models
 from app.login_system import schemas, utils, auth
 from app.login_system.database import get_db
-from app.utils.database import engine  
+from app.utils.database import engine
+import jwt
+from datetime import datetime
 
 
-blacklisted_tokens = set()
-
-
-def register(user: schemas.UserCreate, db: Session):
+def register(user: schemas.UserCreate, db: Session) -> models.User:
     """
     Register a new user in the database.
     """
     # Check if a user with the given email already exists
-    db_user_by_email = db.query(models.User).filter(models.User.email == user.email).first()
+    db_user_by_email = (
+        db.query(models.User).filter(models.User.email == user.email).first()
+    )
     if db_user_by_email:
         raise HTTPException(status_code=400, detail="อีเมลนี้มีผู้ใช้งานแล้ว")
 
     # Check if a user with the given username already exists
-    db_user_by_username = db.query(models.User).filter(models.User.username == user.username).first()
+    db_user_by_username = (
+        db.query(models.User).filter(models.User.username == user.username).first()
+    )
     if db_user_by_username:
         raise HTTPException(status_code=400, detail="ชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว")
 
@@ -33,7 +36,7 @@ def register(user: schemas.UserCreate, db: Session):
         email=user.email,
         username=user.username,
         hashed_password=hashed_password,
-        role=user.role or "user"
+        role=user.role or "user",
     )
 
     # Add the new user to the session and commit to the database
@@ -45,9 +48,11 @@ def register(user: schemas.UserCreate, db: Session):
     return db_user
 
 
-def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+async def login(
+    form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
+) -> dict:
     user = db.query(models.User).filter(models.User.username == form.username).first()
-    if not user or not utils.verify_password(form.password, user.hashed_password):
+    if not user or not utils.verify_password(form.password, str(user.hashed_password)):
         raise HTTPException(status_code=401, detail="Wrong credentials")
     data = {"sub": user.username, "role": user.role, "email": user.email}
     access_token = utils.create_access_token(data)
@@ -59,12 +64,35 @@ def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
     }
 
 
-def logout(token: str = Depends(auth.oauth2_scheme)):
-    blacklisted_tokens.add(token)
-    return {"message": "Logged out"}
+async def logout(
+    token: str = Depends(auth.oauth2_scheme), db: Session = Depends(get_db)
+):
+    try:
+        # Decode token to get JWT ID and expiration
+        payload = utils.decode_access_token(token)
+        jti = payload.get("jti")
+        exp = payload.get("exp")
+
+        if jti and exp:
+            # Convert timestamp to datetime
+            expires_at = datetime.fromtimestamp(exp)
+
+            # Add to blacklist database
+            blacklisted_token = models.TokenBlacklist(
+                token_jti=jti,
+                expires_at=expires_at,
+                user_id=payload.get("sub"),  # Using username as user identifier
+            )
+            db.add(blacklisted_token)
+            db.commit()
+
+        return {"message": "Logged out successfully"}
+    except Exception as e:
+        # Even if we can't decode the token, we should still logout
+        return {"message": "Logged out successfully"}
 
 
-def refresh(refresh_token: str):
+async def refresh(refresh_token: str) -> dict:
     try:
         payload = utils.decode_refresh_token(refresh_token)
         new_access_token = utils.create_access_token(

@@ -1,4 +1,5 @@
 import jwt
+import uuid
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
@@ -9,11 +10,12 @@ from app.utils.config import ACCESS_SECRET, REFRESH_SECRET, ALGORITHM
 # Password hashing context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
 # Password Utils
 def hash_password(password: str) -> str:
     """
     Hash a password using bcrypt
-    """ 
+    """
     return pwd_context.hash(password)
 
 
@@ -30,13 +32,19 @@ def create_token(data: dict, secret: str, expires_delta: timedelta) -> str:
     Create a JWT token
     """
     to_encode = data.copy()
-    to_encode.update({"exp": datetime.utcnow() + expires_delta})
+    to_encode.update(
+        {
+            "exp": datetime.utcnow() + expires_delta,
+            "iat": datetime.utcnow(),  # Issued at claim
+            "jti": str(uuid.uuid4()),  # JWT ID for blacklist tracking
+        }
+    )
     return jwt.encode(to_encode, secret, algorithm=ALGORITHM)
 
 
 def decode_token(token: str, secret: str) -> dict:
     """
-    Decode a JWT token and return the payload   
+    Decode a JWT token and return the payload
     """
     return jwt.decode(token, secret, algorithms=[ALGORITHM])
 
@@ -53,7 +61,7 @@ def decode_access_token(token: str) -> dict:
     """
     Decode an access token
     """
-    
+
     return decode_token(token, ACCESS_SECRET)
 
 

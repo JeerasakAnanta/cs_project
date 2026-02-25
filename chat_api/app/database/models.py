@@ -53,7 +53,9 @@ class Message(Base):
     response_time_ms = Column(Integer, nullable=True)  # Response time in milliseconds
 
     conversation = relationship("Conversation", back_populates="messages")
-    feedbacks = relationship("Feedback", back_populates="message", cascade="all, delete-orphan")
+    feedbacks = relationship(
+        "Feedback", back_populates="message", cascade="all, delete-orphan"
+    )
 
 
 class Feedback(Base):
@@ -68,6 +70,17 @@ class Feedback(Base):
     message = relationship("Message", back_populates="feedbacks")
 
 
+class TokenBlacklist(Base):
+    __tablename__ = "token_blacklist"
+
+    id = Column(Integer, primary_key=True, index=True)
+    token_jti = Column(String, unique=True, index=True)  # JWT ID
+    token_type = Column(String, default="access")  # 'access' or 'refresh'
+    expires_at = Column(DateTime(timezone=True))
+    blacklisted_at = Column(DateTime(timezone=True), server_default=func.now())
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+
 class GuestConversation(Base):
     __tablename__ = "guest_conversations"
 
@@ -75,10 +88,14 @@ class GuestConversation(Base):
     machine_id = Column(String, index=True)  # Machine identifier for device separation
     title = Column(String, default="Guest Conversation")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
     is_deleted = Column(Boolean, default=False)  # Soft delete flag
 
-    messages = relationship("GuestMessage", back_populates="conversation", cascade="all, delete-orphan")
+    messages = relationship(
+        "GuestMessage", back_populates="conversation", cascade="all, delete-orphan"
+    )
 
 
 class GuestMessage(Base):
@@ -100,7 +117,9 @@ class AdminConversation(Base):
     __tablename__ = "admin_conversations"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # Can be null for guest users
+    user_id = Column(
+        Integer, ForeignKey("users.id"), nullable=True
+    )  # Can be null for guest users
     username = Column(String, index=True)  # Store username for easier querying
     question = Column(Text)  # User's question
     bot_response = Column(Text)  # Bot's response
@@ -108,6 +127,8 @@ class AdminConversation(Base):
     response_time_ms = Column(Integer, nullable=True)  # Response time in milliseconds
     conversation_type = Column(String, default="regular")  # "regular", "guest", "admin"
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
-    user = relationship("User", foreign_keys=[user_id]) 
+    user = relationship("User", foreign_keys=[user_id])

@@ -10,7 +10,9 @@ from . import utils
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+async def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
     credentials_exception = HTTPException(
         status_code=401,
         detail="Could not validate credentials",
@@ -19,18 +21,32 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     try:
         payload = utils.decode_access_token(token)
         username: str = payload.get("sub")
-        if username is None:    
+        jti = payload.get("jti")
+
+        if username is None or jti is None:
             raise credentials_exception
+
+        # Check if token is blacklisted
+        blacklisted = (
+            db.query(models.TokenBlacklist)
+            .filter(models.TokenBlacklist.token_jti == jti)
+            .first()
+        )
+        if blacklisted:
+            raise credentials_exception
+
     except Exception:
         raise credentials_exception
-    
+
     user = db.query(models.User).filter(models.User.username == username).first()
     if user is None:
         raise credentials_exception
     return user
 
+
 def is_admin(current_user: models.User = Depends(get_current_user)):
     if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="The user doesn't have enough privileges")
+        raise HTTPException(
+            status_code=403, detail="The user doesn't have enough privileges"
+        )
     return current_user
-
