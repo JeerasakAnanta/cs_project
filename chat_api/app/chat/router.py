@@ -1,7 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    WebSocket,
+    WebSocketDisconnect,
+    Request,
+)
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.database import models
 from app.utils.database import get_db
@@ -15,6 +24,8 @@ router = APIRouter(
     prefix="/chat",
     tags=["chat"],
 )
+
+limiter = Limiter(key_func=get_remote_address)
 
 
 @router.post("/conversations/", response_model=schemas.Conversation)
@@ -79,7 +90,9 @@ async def read_messages_for_conversation(
 @router.post(
     "/conversations/{conversation_id}/messages/", response_model=schemas.Message
 )
+@limiter.limit("30/minute")
 async def create_message_for_conversation(
+    request: Request,
     conversation_id: int,
     message: schemas.MessageCreate,
     db: Session = Depends(get_db),
