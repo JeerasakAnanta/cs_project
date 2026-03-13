@@ -3,31 +3,35 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 # Environment validation
 def validate_environment():
     """Validate that all required environment variables are set."""
     required_vars = [
         "OPENAI_API_KEY",
-        "QDRANT_VECTERDB_HOST", 
+        "QDRANT_VECTERDB_HOST",
         "COLLECTION_NAME",
         "EMBEDDINGS_MODEL",
-        "OPENAI_MODEL", 
+        "OPENAI_MODEL",
         "DB_USER",
         "DB_PASSWORD",
         "DB_HOST",
         "DB_NAME",
         "SECRET_KEY",
         "REFRESH_SECRET",
-        "ALGORITHM"
+        "ALGORITHM",
     ]
-    
+
     missing_vars = []
     for var in required_vars:
         if not os.getenv(var):
             missing_vars.append(var)
-    
+
     if missing_vars:
-        raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+        raise ValueError(
+            f"Missing required environment variables: {', '.join(missing_vars)}"
+        )
+
 
 # Validate environment on import
 try:
@@ -39,10 +43,10 @@ except ValueError as e:
 # Environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL")
-EMBEDDINGS_MODEL = os.getenv("EMBEDDINGS_MODEL") 
+EMBEDDINGS_MODEL = os.getenv("EMBEDDINGS_MODEL")
 
 
-# Qdrant Configuration  
+# Qdrant Configuration
 QDRANT_VECTERDB_HOST = os.getenv("QDRANT_VECTERDB_HOST")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME")
 QDRANT_URL = os.getenv("QDRANT_VECTERDB_HOST")
@@ -56,8 +60,6 @@ DB_NAME = os.getenv("DB_NAME")
 # JWT Configuration
 ACCESS_SECRET = os.getenv("SECRET_KEY")
 REFRESH_SECRET = os.getenv("REFRESH_SECRET")
-ALGORITHM = os.getenv("ALGORITHM")
-
 
 
 # Development settings
