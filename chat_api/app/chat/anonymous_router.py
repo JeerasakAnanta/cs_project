@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from typing import List
 from datetime import datetime
 import uuid
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.rag_system.rag_system import chatbot as rag_chatbot
 from . import schemas
@@ -11,37 +13,53 @@ router = APIRouter(
     tags=["anonymous"],
 )
 
+# Rate limiter for anonymous endpoints
+limiter = Limiter(key_func=get_remote_address)
+
 # In-memory storage for anonymous conversations (in production, you might want to use Redis or similar)
 anonymous_conversations = {}
 
+
 @router.post("/message")
-async def send_anonymous_message(message: schemas.AnonymousMessageCreate):
+@limiter.limit("20/minute")
+async def send_anonymous_message(
+    request: Request, message: schemas.AnonymousMessageCreate
+):
     """Send a message and get bot response without authentication"""
     try:
         # Get bot response using RAG system
         bot_response = rag_chatbot(message.content)
-        
+
         # Convert document references to schema format
         source_documents = []
-        if 'source_documents' in bot_response and bot_response['source_documents']:
-            for doc_ref in bot_response['source_documents']:
-                source_documents.append(schemas.DocumentReference(
-                    filename=doc_ref['filename'],
-                    page=doc_ref['page'],
-                    confidence_score=doc_ref['confidence_score'],
-                    content_preview=doc_ref['content_preview'],
-                    full_content=doc_ref['full_content']
-                ))
-        
+        if "source_documents" in bot_response and bot_response["source_documents"]:
+            for doc_ref in bot_response["source_documents"]:
+                source_documents.append(
+                    schemas.DocumentReference(
+                        filename=doc_ref["filename"],
+                        page=doc_ref["page"],
+                        confidence_score=doc_ref["confidence_score"],
+                        content_preview=doc_ref["content_preview"],
+                        full_content=doc_ref["full_content"],
+                    )
+                )
+
         return {
-            "message": bot_response['message'],
-            "source_documents": source_documents
+            "message": bot_response["message"],
+            "source_documents": source_documents,
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing message: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error processing message: {str(e)}"
+        )
+
 
 @router.post("/conversations", response_model=schemas.AnonymousConversation)
-async def create_anonymous_conversation(conversation: schemas.AnonymousConversationCreate):
+@limiter.limit("10/minute")
+async def create_anonymous_conversation(
+    request: Request,
+    conversation: schemas.AnonymousConversationCreate,
+):
     """Create a new anonymous conversation"""
     conversation_id = str(uuid.uuid4())
     new_conversation = {
@@ -49,76 +67,85 @@ async def create_anonymous_conversation(conversation: schemas.AnonymousConversat
         "title": conversation.title,
         "messages": [],
         "created_at": datetime.utcnow().isoformat(),
-        "updated_at": datetime.utcnow().isoformat()
+        "updated_at": datetime.utcnow().isoformat(),
     }
     anonymous_conversations[conversation_id] = new_conversation
     return new_conversation
 
-@router.get("/conversations/{conversation_id}", response_model=schemas.AnonymousConversation)
+
+@router.get(
+    "/conversations/{conversation_id}", response_model=schemas.AnonymousConversation
+)
 async def get_anonymous_conversation(conversation_id: str):
     """Get an anonymous conversation by ID"""
     if conversation_id not in anonymous_conversations:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return anonymous_conversations[conversation_id]
 
+
 @router.post("/conversations/{conversation_id}/messages")
+@limiter.limit("30/minute")
 async def add_message_to_anonymous_conversation(
-    conversation_id: str, 
-    message: schemas.AnonymousMessageCreate
+    request: Request, conversation_id: str, message: schemas.AnonymousMessageCreate
 ):
     """Add a message to an anonymous conversation and get bot response"""
     if conversation_id not in anonymous_conversations:
         raise HTTPException(status_code=404, detail="Conversation not found")
-    
+
     conversation = anonymous_conversations[conversation_id]
-    
+
     # Add user message
     user_message = {
         "id": str(uuid.uuid4()),
         "content": message.content,
         "sender": "user",
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
     }
     conversation["messages"].append(user_message)
-    
+
     # Get bot response
     try:
         bot_response = rag_chatbot(message.content)
-        
+
         # Convert document references to schema format
         source_documents = []
-        if 'source_documents' in bot_response and bot_response['source_documents']:
-            for doc_ref in bot_response['source_documents']:
-                source_documents.append(schemas.DocumentReference(
-                    filename=doc_ref['filename'],
-                    page=doc_ref['page'],
-                    confidence_score=doc_ref['confidence_score'],
-                    content_preview=doc_ref['content_preview'],
-                    full_content=doc_ref['full_content']
-                ))
-        
+        if "source_documents" in bot_response and bot_response["source_documents"]:
+            for doc_ref in bot_response["source_documents"]:
+                source_documents.append(
+                    schemas.DocumentReference(
+                        filename=doc_ref["filename"],
+                        page=doc_ref["page"],
+                        confidence_score=doc_ref["confidence_score"],
+                        content_preview=doc_ref["content_preview"],
+                        full_content=doc_ref["full_content"],
+                    )
+                )
+
         bot_message = {
             "id": str(uuid.uuid4()),
-            "content": bot_response['message'],
+            "content": bot_response["message"],
             "sender": "bot",
             "timestamp": datetime.utcnow().isoformat(),
-            "source_documents": source_documents
+            "source_documents": source_documents,
         }
         conversation["messages"].append(bot_message)
         conversation["updated_at"] = datetime.utcnow().isoformat()
-        
+
         return {
-            "message": bot_response['message'],
-            "source_documents": source_documents
+            "message": bot_response["message"],
+            "source_documents": source_documents,
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing message: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error processing message: {str(e)}"
+        )
+
 
 @router.delete("/conversations/{conversation_id}")
 async def delete_anonymous_conversation(conversation_id: str):
     """Delete an anonymous conversation"""
     if conversation_id not in anonymous_conversations:
         raise HTTPException(status_code=404, detail="Conversation not found")
-    
+
     del anonymous_conversations[conversation_id]
-    return {"message": "Conversation deleted successfully"} 
+    return {"message": "Conversation deleted successfully"}
