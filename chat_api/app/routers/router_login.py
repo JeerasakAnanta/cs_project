@@ -1,9 +1,11 @@
 import os
 import logging
 from pydantic import BaseModel
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from app.login_system import auth
 from app.login_system.login import register, get_db, login, logout, refresh
 from app.login_system.schemas import UserCreate
@@ -11,6 +13,9 @@ from app.login_system.schemas import UserCreate
 
 # Initialize FastAPI router
 router = APIRouter(prefix="/api", tags=["Authentication"])
+
+# Rate limiter
+limiter = Limiter(key_func=get_remote_address)
 
 
 # Model for chat query
@@ -25,13 +30,16 @@ async def read_root():
 
 
 @router.post("/register", tags=["Authentication"])
-def register_user(user: UserCreate, db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+def register_user(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     """Endpoint to register a new user."""
     return register(user, db)
 
 
 @router.post("/login", tags=["Authentication"])
+@limiter.limit("10/minute")
 def login_user(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ) -> dict:
@@ -49,4 +57,3 @@ def logout_user(token: str = Depends(auth.oauth2_scheme)):
 def refresh_token(refresh_token: str):
     """Endpoint to refresh the access token using a refresh token."""
     return refresh(refresh_token)
- 
