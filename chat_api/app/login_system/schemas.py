@@ -41,6 +41,12 @@ class UserUpdate(BaseModel):
     role: Optional[str] = None
     password: Optional[str] = None
 
+    @field_validator("role")
+    def validate_role(cls, v):
+        if v is not None and v not in ["user", "admin"]:
+            raise ValueError("Role must be either 'user' or 'admin'")
+        return v
+
 
 class User(UserBase):
     id: int
