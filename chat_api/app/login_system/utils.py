@@ -4,7 +4,10 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
 # Load environment variables
-from app.utils.config import ACCESS_SECRET, REFRESH_SECRET, ALGORITHM
+from app.utils.config import ACCESS_SECRET, REFRESH_SECRET
+
+# Hardcode algorithm for security - never trust config for algo selection
+ALGORITHM = "HS256"
 
 
 # Password hashing context
