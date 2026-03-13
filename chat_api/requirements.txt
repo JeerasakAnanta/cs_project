@@ -6,3 +6,4 @@ passlib[bcrypt]
 python-multipart
 pydantic-settings
 bcrypt 
+slowapi
