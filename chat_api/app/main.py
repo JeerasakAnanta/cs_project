@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 import logging
 
- Import database utils and models
+# Import database utils and models
 from app.utils.database import engine, Base
 from app.database import models
 from app.utils.logging_config import setup_logging
@@ -19,10 +23,7 @@ from app.routers.router_admin_conversations import router as router_admin_conver
 
 
 # Setup logging with system timezone
-setup_logging(
-    log_level="INFO",
-    log_file="log/app.log"
-)
+setup_logging(log_level="INFO", log_file="log/app.log")
 
 # Create all tables in the database
 models.Base.metadata.create_all(bind=engine)
@@ -30,40 +31,55 @@ models.Base.metadata.create_all(bind=engine)
 # Initialize FastAPI
 app = FastAPI(title="LannaFinChat API", description="API for LannaFinChat")
 
+# Rate Limiter - Use IP address for limiting
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+
+
+# Exception handler for rate limit exceeded
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(request, exc):
+    return JSONResponse(
+        status_code=429,
+        content={"detail": "Rate limit exceeded. Please try again later."},
+    )
+
+
 # Middleware for CORS
 import os
 from app.utils.config import DEBUG
 
 # Configure CORS based on environment
 if DEBUG:
-    # Development: Allow all origins
-    origins = ["*"]
-else:
-    # Production: Allow specific origins
+    # Development: Allow specific localhost origins only (not "*")
     origins = [
-        "http://localhost:8000",
         "http://localhost:3000",
+        "http://localhost:8000",
+        "http://localhost:8001",
+        "http://localhost:8002",
+        "http://localhost:8003",
+        "http://localhost:8004",
+    ]
+else:
+    # Production: Allow ONLY specific origins - NEVER use "*"
+    origins = [
         "https://chat.jeerasakananta.dev",
         "https://apichat.jeerasakananta.dev",
     ]
 
-# For development, always allow localhost:8000
-if "http://localhost:8000" not in origins:
-    origins.append("http://localhost:8000")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,
+    allow_credentials=False,  # Cannot use credentials with wildcard origins
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
+    allow_headers=["Authorization", "Content-Type"],  # Specify headers instead of "*"
 )
 
 # Root endpoint
 app.get("/")(lambda: {"message": "LannaFinChat API is running..."})
 
 # Include the router in the main FastAPI app
-# Authentication routers    
+# Authentication routers
 app.include_router(router_login)
 
 # Chat routers
@@ -79,9 +95,10 @@ app.include_router(router_pdfs_enhanced)
 app.include_router(router_admin)
 app.include_router(router_admin_conversations)
 
+
 @app.on_event("startup")
 async def startup_event():
     """Log application startup with system time"""
     from app.utils.timezone import now, format_datetime
-    logging.info(f"LannaFinChat API started at {format_datetime(now())}")
 
+    logging.info(f"LannaFinChat API started at {format_datetime(now())}")
