@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Users,
   Search,
@@ -40,7 +40,7 @@ const UserManagement: React.FC = () => {
 
   useEffect(() => {
     filterUsers();
-  }, [users, searchTerm, selectedRole]);
+  }, [filterUsers]);
 
   const fetchUsers = async () => {
     try {
@@ -55,14 +55,14 @@ const UserManagement: React.FC = () => {
       } else {
         setError('ไม่สามารถดึงข้อมูลผู้ใช้ได้');
       }
-    } catch (error) {
+    } catch {
       setError('เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const filterUsers = () => {
+  const filterUsers = useCallback(() => {
     let filtered = users;
 
     // Filter by search term
@@ -80,7 +80,7 @@ const UserManagement: React.FC = () => {
     }
 
     setFilteredUsers(filtered);
-  };
+  }, [users, searchTerm, selectedRole]);
 
   // remove  user in db
   const handleDeleteUser = async (userId: number) => {
@@ -99,7 +99,7 @@ const UserManagement: React.FC = () => {
       } else {
         alert('ไม่สามารถลบผู้ใช้ได้');
       }
-    } catch (error) {
+    } catch {
       alert('เกิดข้อผิดพลาดในการลบผู้ใช้');
     }
   };

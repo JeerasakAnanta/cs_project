@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Search,
   Clock,
@@ -46,35 +46,42 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({
     new Set()
   );
 
-  useEffect(() => {
-    loadConversations();
+  const calculateStats = useCallback((data: Conversation[]) => {
+    const total = data.length;
+    if (total === 0) {
+      setStats({
+        totalConversations: 0,
+        averageSatisfaction: 0,
+        averageResponseTime: 0,
+        satisfactionDistribution: { positive: 0, neutral: 0, negative: 0 },
+      });
+      return;
+    }
 
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(() => {
-      loadConversations();
-    }, 30000);
+    const avgSatisfaction =
+      data.reduce((sum, conv) => sum + (conv.satisfaction_rating || 0), 0) /
+      total;
+    const avgResponseTime =
+      data.reduce((sum, conv) => sum + (conv.response_time_ms || 0), 0) / total;
 
-    return () => clearInterval(interval);
+    const satisfactionDist = {
+      positive: data.filter((conv) => (conv.satisfaction_rating || 0) >= 4)
+        .length,
+      neutral: data.filter((conv) => (conv.satisfaction_rating || 0) === 3)
+        .length,
+      negative: data.filter((conv) => (conv.satisfaction_rating || 0) <= 2)
+        .length,
+    };
+
+    setStats({
+      totalConversations: total,
+      averageSatisfaction: Math.round(avgSatisfaction * 100) / 100,
+      averageResponseTime: Math.round(avgResponseTime),
+      satisfactionDistribution: satisfactionDist,
+    });
   }, []);
 
-  const loadConversations = async () => {
-    setIsLoading(true);
-    try {
-      const data = await conversationService.getConversations();
-      console.log('Loaded conversations:', data); // Debug log
-      setConversations(data);
-      setFilteredConversations(data);
-      calculateStats(data);
-    } catch (error: any) {
-      console.error('Error loading conversations:', error);
-      // Fallback to mock data if API fails
-      loadMockData();
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadMockData = () => {
+  const loadMockData = useCallback(() => {
     const mockData: Conversation[] = [
       {
         id: 1,
@@ -120,42 +127,35 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({
     setConversations(mockData);
     setFilteredConversations(mockData);
     calculateStats(mockData);
-  };
+  }, [calculateStats]);
 
-  const calculateStats = (data: Conversation[]) => {
-    const total = data.length;
-    if (total === 0) {
-      setStats({
-        totalConversations: 0,
-        averageSatisfaction: 0,
-        averageResponseTime: 0,
-        satisfactionDistribution: { positive: 0, neutral: 0, negative: 0 },
-      });
-      return;
+  const loadConversations = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await conversationService.getConversations();
+      console.log('Loaded conversations:', data); // Debug log
+      setConversations(data);
+      setFilteredConversations(data);
+      calculateStats(data);
+    } catch (error: unknown) {
+      console.error('Error loading conversations:', error);
+      // Fallback to mock data if API fails
+      loadMockData();
+    } finally {
+      setIsLoading(false);
     }
+  }, [calculateStats, loadMockData]);
 
-    const avgSatisfaction =
-      data.reduce((sum, conv) => sum + (conv.satisfaction_rating || 0), 0) /
-      total;
-    const avgResponseTime =
-      data.reduce((sum, conv) => sum + (conv.response_time_ms || 0), 0) / total;
+  useEffect(() => {
+    loadConversations();
 
-    const satisfactionDist = {
-      positive: data.filter((conv) => (conv.satisfaction_rating || 0) >= 4)
-        .length,
-      neutral: data.filter((conv) => (conv.satisfaction_rating || 0) === 3)
-        .length,
-      negative: data.filter((conv) => (conv.satisfaction_rating || 0) <= 2)
-        .length,
-    };
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      loadConversations();
+    }, 30000);
 
-    setStats({
-      totalConversations: total,
-      averageSatisfaction: Math.round(avgSatisfaction * 100) / 100,
-      averageResponseTime: Math.round(avgResponseTime),
-      satisfactionDistribution: satisfactionDist,
-    });
-  };
+    return () => clearInterval(interval);
+  }, [loadConversations]);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -265,9 +265,10 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error exporting conversations:', error);
-      alert('เกิดข้อผิดพลาดในการส่งออกข้อมูล: ' + error.message);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      alert('เกิดข้อผิดพลาดในการส่งออกข้อมูล: ' + message);
     }
   };
 
@@ -297,13 +298,7 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({
   // Function to render markdown safely
   const renderMarkdown = (text: string) => {
     try {
-      // Configure marked options for security
-      marked.setOptions({
-        breaks: true,
-        gfm: true,
-      });
-
-      return marked(text);
+      return marked.parse(text) as string;
     } catch (error) {
       console.error('Error rendering markdown:', error);
       return text; // Fallback to plain text
@@ -340,7 +335,9 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({
         <div className="bg-gradient-to-br from-rose-200/70 to-pink-200/70 border border-rose-400/50 p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
           <div className="flex items-center gap-2">
             <MessageSquare className="w-5 h-5 text-blue-600" />
-            <span className="text-sm text-gray-800 font-medium">การสนทนาทั้งหมด</span>
+            <span className="text-sm text-gray-800 font-medium">
+              การสนทนาทั้งหมด
+            </span>
           </div>
           <p className="text-2xl font-bold text-gray-900">
             {stats.totalConversations}
@@ -350,7 +347,9 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({
         <div className="bg-gradient-to-br from-violet-200/70 to-purple-200/70 border border-violet-400/50 p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
           <div className="flex items-center gap-2">
             <ThumbsUp className="w-5 h-5 text-green-600" />
-            <span className="text-sm text-gray-800 font-medium">ความพึงพอใจเฉลี่ย</span>
+            <span className="text-sm text-gray-800 font-medium">
+              ความพึงพอใจเฉลี่ย
+            </span>
           </div>
           <p className="text-2xl font-bold text-gray-900">
             {stats.averageSatisfaction}/5
@@ -360,7 +359,9 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({
         <div className="bg-gradient-to-br from-blue-200/70 to-cyan-200/70 border border-blue-400/50 p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-purple-600" />
-            <span className="text-sm text-gray-800 font-medium">เวลาตอบเฉลี่ย</span>
+            <span className="text-sm text-gray-800 font-medium">
+              เวลาตอบเฉลี่ย
+            </span>
           </div>
           <p className="text-2xl font-bold text-gray-900">
             {stats.averageResponseTime}ms
@@ -370,7 +371,9 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({
         <div className="bg-gradient-to-br from-cyan-200/70 to-teal-200/70 border border-cyan-400/50 p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
           <div className="flex items-center gap-2">
             <User className="w-5 h-5 text-gray-700" />
-            <span className="text-sm text-gray-800 font-medium">ผู้ใช้ที่พึงพอใจ</span>
+            <span className="text-sm text-gray-800 font-medium">
+              ผู้ใช้ที่พึงพอใจ
+            </span>
           </div>
           <p className="text-2xl font-bold text-gray-900">
             {stats.satisfactionDistribution.positive}
@@ -519,7 +522,9 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({
                         <div
                           className="text-gray-900 markdown-content"
                           dangerouslySetInnerHTML={{
-                            __html: expandedResponses.has(conversation.id.toString())
+                            __html: expandedResponses.has(
+                              conversation.id.toString()
+                            )
                               ? renderMarkdown(conversation.bot_response)
                               : renderMarkdown(
                                   truncateText(conversation.bot_response).text
@@ -531,7 +536,9 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              toggleExpandedResponse(conversation.id.toString());
+                              toggleExpandedResponse(
+                                conversation.id.toString()
+                              );
                             }}
                             className="text-sm text-green-700 hover:text-green-800 font-medium transition-colors hover:bg-green-50 px-2 py-1 rounded-md"
                           >

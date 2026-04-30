@@ -1,0 +1,108 @@
+# Frontend build and docker tasks
+
+# Default recipe to list available commands
+default:
+    @just --list
+
+# ====================
+# Development Tasks
+# ====================
+
+# Install dependencies
+install:
+    npm install
+
+# Run development server
+dev:
+    npm run dev
+
+# Build frontend for production
+build:
+    npm run build
+
+# Format code with prettier
+format:
+    npm run format
+
+# Run linter
+lint:
+    npm run lint
+
+# Clean build artifacts
+clean:
+    rm -rf dist coverage node_modules/.vite
+
+# ====================
+# Docker Tasks
+# ====================
+
+# Extract version from package.json
+_get-version:
+    #!/bin/bash
+    grep '"version"' package.json | cut -d '"' -f 4
+
+# Build Docker image
+docker-build: build
+    #!/bin/bash
+    set -e
+    VERSION=$(just _get-version)
+    DOCKER_USERNAME="jeerasakanant"
+    IMAGE_NAME="frontend-cs-project"
+
+    echo "Building Docker image..."
+    docker build -t ${DOCKER_USERNAME}/${IMAGE_NAME}:${VERSION} .
+    docker build -t ${DOCKER_USERNAME}/${IMAGE_NAME}:latest .
+
+    echo "✓ Built: ${DOCKER_USERNAME}/${IMAGE_NAME}:${VERSION}"
+    echo "✓ Built: ${DOCKER_USERNAME}/${IMAGE_NAME}:latest"
+
+# Run Docker image locally
+docker-run port="8002":
+    #!/bin/bash
+    VERSION=$(just _get-version)
+    DOCKER_USERNAME="jeerasakanant"
+    IMAGE_NAME="frontend-cs-project"
+
+    echo "Running Docker container on port {{port}}..."
+    docker run -p {{port}}:80 ${DOCKER_USERNAME}/${IMAGE_NAME}:latest
+
+# Build and push Docker image to registry
+docker-push: docker-build
+    #!/bin/bash
+    set -e
+    VERSION=$(just _get-version)
+    DOCKER_USERNAME="jeerasakanant"
+    IMAGE_NAME="frontend-cs-project"
+
+    echo "Pushing Docker image..."
+    docker push ${DOCKER_USERNAME}/${IMAGE_NAME}:${VERSION}
+    docker push ${DOCKER_USERNAME}/${IMAGE_NAME}:latest
+    echo "✓ Pushed successfully"
+
+# Start services with docker-compose
+docker-compose-up:
+    docker-compose up -d
+
+# Stop docker-compose services
+docker-compose-down:
+    docker-compose down
+
+# View docker-compose logs
+docker-compose-logs service="vite-app":
+    docker-compose logs -f {{service}}
+
+# ====================
+# Combined Tasks
+# ====================
+
+# Full build and docker build
+build-all: install lint build docker-build
+    @echo "✓ All build tasks completed"
+
+# Clean and rebuild
+rebuild: clean install build
+    @echo "✓ Rebuild complete"
+
+# Quick check (format, lint, build)
+check: format lint build
+    @echo "✓ All checks passed"

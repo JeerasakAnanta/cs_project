@@ -9,6 +9,12 @@ interface SurveyButtonProps {
   className?: string;
 }
 
+interface SurveyData {
+  rating: number;
+  comment: string;
+  [key: string]: unknown;
+}
+
 const SurveyButton: React.FC<SurveyButtonProps> = ({
   variant = 'button',
   position = 'inline',
@@ -19,7 +25,7 @@ const SurveyButton: React.FC<SurveyButtonProps> = ({
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleSubmit = (data: any) => {
+  const handleSubmit = (data: SurveyData) => {
     // Here you can send the survey data to your backend
     console.log('Survey submitted:', data);
 

@@ -38,7 +38,7 @@ const Login: React.FC = () => {
         const errorData = await response.json().catch(() => null);
         setError(errorData?.detail || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
       }
-    } catch (err) {
+    } catch {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
     } finally {
       setIsLoading(false);
@@ -255,8 +255,7 @@ const Login: React.FC = () => {
               theme === 'light' ? 'text-gray-500' : 'text-neutral-500'
             }`}
           >
-            © 2025 LannaFinChat. Developed by CS RMUTL NAN. All rights
-            reserved.
+            © 2025 LannaFinChat. Developed by CS RMUTL NAN. All rights reserved.
           </p>
         </div>
       </div>

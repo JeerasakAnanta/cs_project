@@ -3,7 +3,7 @@
 /**
  * Debounce function to limit rate of function calls
  */
-export const debounce = <T extends (...args: any[]) => any>(
+export const debounce = <T extends (...args: unknown[]) => unknown>(
   func: T,
   delay: number
 ): ((...args: Parameters<T>) => void) => {
@@ -17,7 +17,7 @@ export const debounce = <T extends (...args: any[]) => any>(
 /**
  * Throttle function to limit function calls to once per specified time
  */
-export const throttle = <T extends (...args: any[]) => any>(
+export const throttle = <T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number
 ): ((...args: Parameters<T>) => void) => {
@@ -66,7 +66,10 @@ export const getViewportDimensions = () => {
 /**
  * Prefetch resource
  */
-export const prefetch = (url: string, type: 'script' | 'style' | 'image' = 'script') => {
+export const prefetch = (
+  url: string,
+  type: 'script' | 'style' | 'image' = 'script'
+) => {
   const link = document.createElement('link');
   link.rel = 'prefetch';
   link.as = type;
@@ -78,9 +81,9 @@ export const prefetch = (url: string, type: 'script' | 'style' | 'image' = 'scri
  * Lazy load component with timeout
  */
 export const lazyLoadWithTimeout = (
-  importFunc: () => Promise<any>,
+  importFunc: () => Promise<unknown>,
   timeout: number = 5000
-): Promise<any> => {
+): Promise<unknown> => {
   return Promise.race([
     importFunc(),
     new Promise((_, reject) =>
@@ -112,4 +115,3 @@ export const cancelIdleCallback =
   function (id: number) {
     clearTimeout(id);
   };
-

@@ -7,21 +7,25 @@ A modern web-based chatbot interface built with React and TypeScript, featuring 
 ## Technology Stack
 
 ### Frontend Framework & Build Tools
+
 - **React** 18.3.1 - UI library
 - **TypeScript** 5.5.3 - Type-safe JavaScript
 - **Vite** 6.3.2 - Next-generation build tool
 - **React Router** 6.30.1 - Client-side routing
 
 ### Styling & UI Components
+
 - **Tailwind CSS** 3.4.11 - Utility-first CSS framework
 - **Material-UI (MUI)** 6.1.1 - Component library
 - **Emotion** 11.13.x - CSS-in-JS styling
 
 ### HTTP & Data Management
+
 - **Axios** 1.10.0 - HTTP client
 - **JWT Decode** 4.0.0 - JWT token decoding
 
 ### Development Tools
+
 - **ESLint** 9.9.0 - Code linting
 - **Prettier** 3.3.3 - Code formatting
 - **PostCSS** 8.4.45 - CSS processing
@@ -55,10 +59,49 @@ PDF_MANAGEMENT_API=0.5.19
 
 ## Getting Started
 
+### Prerequisites
+
+Ensure the following are installed on your system before proceeding:
+
+- **Node.js** >= 18.x ([Download](https://nodejs.org/))
+- **npm** >= 9.x (bundled with Node.js)
+
+Verify your installation:
+
+```sh
+node -v
+npm -v
+```
+
 ### Installation
+
+Follow these steps to set up the project:
+
+**Step 1: Clone the repository**
+
+```sh
+git clone <repository-url>
+cd frontend
+```
+
+**Step 2: Install dependencies**
 
 ```sh
 npm install
+```
+
+**Step 3: Configure environment variables**
+
+```sh
+cp .env.example .env
+```
+
+Edit `.env` and update the values according to your environment (see [Environment Variables](#environment-variables)).
+
+**Step 4: Verify installation**
+
+```sh
+npm run lint
 ```
 
 ### Development Server

@@ -58,7 +58,9 @@ const StatisticsCharts: React.FC<StatisticsChartsProps> = ({
             <div className="w-10 h-10 bg-blue-200/60 rounded-lg flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-blue-700" />
             </div>
-            <span className="text-blue-700 text-sm font-medium">แนวโน้มผู้ใช้</span>
+            <span className="text-blue-700 text-sm font-medium">
+              แนวโน้มผู้ใช้
+            </span>
           </div>
           <div className="text-2xl font-bold text-gray-800 mb-2">
             {formatNumber(totalUsers)}
@@ -76,7 +78,9 @@ const StatisticsCharts: React.FC<StatisticsChartsProps> = ({
             <div className="w-10 h-10 bg-green-200/60 rounded-lg flex items-center justify-center">
               <MessageCircle className="w-5 h-5 text-green-700" />
             </div>
-            <span className="text-green-700 text-sm font-medium">แนวโน้มการสนทนา</span>
+            <span className="text-green-700 text-sm font-medium">
+              แนวโน้มการสนทนา
+            </span>
           </div>
           <div className="text-2xl font-bold text-gray-800 mb-2">
             {formatNumber(totalConversations)}
@@ -96,7 +100,9 @@ const StatisticsCharts: React.FC<StatisticsChartsProps> = ({
             <div className="w-10 h-10 bg-purple-200/60 rounded-lg flex items-center justify-center">
               <Activity className="w-5 h-5 text-purple-700" />
             </div>
-            <span className="text-purple-700 text-sm font-medium">แนวโน้มข้อความ</span>
+            <span className="text-purple-700 text-sm font-medium">
+              แนวโน้มข้อความ
+            </span>
           </div>
           <div className="text-2xl font-bold text-gray-800 mb-2">
             {formatNumber(totalMessages)}
@@ -181,7 +187,9 @@ const StatisticsCharts: React.FC<StatisticsChartsProps> = ({
           <div className="flex items-center justify-center space-x-6 pt-4 border-t border-gray-300/60">
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-blue-500 rounded shadow-sm"></div>
-              <span className="text-sm text-gray-700 font-medium">รวมทั้งหมด</span>
+              <span className="text-sm text-gray-700 font-medium">
+                รวมทั้งหมด
+              </span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-green-500 rounded shadow-sm"></div>
@@ -191,7 +199,9 @@ const StatisticsCharts: React.FC<StatisticsChartsProps> = ({
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-purple-500 rounded shadow-sm"></div>
-              <span className="text-sm text-gray-700 font-medium">Guest Users</span>
+              <span className="text-sm text-gray-700 font-medium">
+                Guest Users
+              </span>
             </div>
           </div>
         </div>

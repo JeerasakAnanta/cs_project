@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
 interface OfflineContextType {
   isOnline: boolean;
@@ -17,7 +23,9 @@ export interface QueuedMessage {
 
 const OfflineContext = createContext<OfflineContextType | undefined>(undefined);
 
-export const OfflineProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const OfflineProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [queuedMessages, setQueuedMessages] = useState<QueuedMessage[]>([]);
 
@@ -93,4 +101,3 @@ export const useOffline = () => {
   }
   return context;
 };
-

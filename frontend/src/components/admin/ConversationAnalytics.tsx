@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   BarChart3,
   TrendingUp,
@@ -13,28 +13,17 @@ import {
   ConversationStats,
 } from '../../services/conversationService';
 
-interface ConversationAnalyticsProps {
-  conversations: any[];
-}
-
-const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({
-  conversations: _conversations,
-}) => {
+const ConversationAnalytics: React.FC = () => {
   const [timeRange, setTimeRange] = useState('7d');
   const [isLoading, setIsLoading] = useState(false);
   const [stats, setStats] = useState<ConversationStats | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadStats();
-  }, [timeRange]);
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Calculate date range
       let dateFrom: string | undefined;
       let dateTo: string | undefined;
 
@@ -58,13 +47,19 @@ const ConversationAnalytics: React.FC<ConversationAnalyticsProps> = ({
       });
 
       setStats(data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error loading stats:', error);
-      setError(error.message);
+      if (error instanceof Error) {
+        setError(error.message);
+      }
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [timeRange]);
+
+  useEffect(() => {
+    loadStats();
+  }, [timeRange, loadStats]);
 
   const handleRefresh = () => {
     loadStats();

@@ -1,11 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Monitor,
-  RotateCcw,
-  Download,
-  Upload,
-  Info,
-} from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Monitor, RotateCcw, Download, Upload, Info } from 'lucide-react';
 
 interface MachineInfo {
   machine_id: string;
@@ -38,13 +32,7 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
   const [showImportForm, setShowImportForm] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
 
-  useEffect(() => {
-    if (machineId) {
-      fetchMachineInfo();
-    }
-  }, [machineId]);
-
-  const fetchMachineInfo = async () => {
+  const fetchMachineInfo = useCallback(async () => {
     if (!machineId) return;
 
     setLoading(true);
@@ -54,12 +42,18 @@ const MachineManagement: React.FC<MachineManagementProps> = ({
         const data = await response.json();
         setMachineInfo(data);
       }
-    } catch (error) {
-      console.error('Error fetching machine info:', error);
+    } catch (_error) {
+      console.error('Error fetching machine info:', _error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [machineId]);
+
+  useEffect(() => {
+    if (machineId) {
+      fetchMachineInfo();
+    }
+  }, [machineId, fetchMachineInfo]);
 
   const generateNewMachineId = async () => {
     setLoading(true);

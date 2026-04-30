@@ -1,6 +1,4 @@
-type Props = {};
-
-function ArchivedChats({}: Props) {
+function ArchivedChats() {
   return <div>ArchivedChats</div>;
 }
 

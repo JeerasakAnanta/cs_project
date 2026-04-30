@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Upload,
   FileText,
@@ -12,7 +12,6 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import LoadingSpinner from '../common/ui/LoadingSpinner';
-import { useTheme } from '../../contexts/ThemeContext';
 
 const BACKEND_API =
   import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
@@ -50,7 +49,6 @@ const PDFManager: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const { } = useTheme();
 
   const authToken = localStorage.getItem('authToken');
 
@@ -85,9 +83,9 @@ const PDFManager: React.FC = () => {
         clearInterval(interval);
       }
     };
-  }, [isIndexing]);
+  }, [isIndexing, fetchFiles, fetchStats]);
 
-  const fetchFiles = async () => {
+  const fetchFiles = useCallback(async () => {
     try {
       const response = await fetch(`${BACKEND_API}/api/pdfs/`, {
         headers: { Authorization: `Bearer ${authToken}` },
@@ -102,14 +100,14 @@ const PDFManager: React.FC = () => {
       } else {
         setError('ไม่สามารถดึงข้อมูลไฟล์ได้');
       }
-    } catch (err) {
+    } catch {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [authToken]);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const response = await fetch(`${BACKEND_API}/api/pdfs/stats/`, {
         headers: { Authorization: `Bearer ${authToken}` },
@@ -119,10 +117,10 @@ const PDFManager: React.FC = () => {
         const data = await response.json();
         setStats(data);
       }
-    } catch (err) {
-      console.error('Error fetching stats:', err);
+    } catch {
+      console.error('Error fetching stats:', _err);
     }
-  };
+  }, [authToken]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -160,7 +158,7 @@ const PDFManager: React.FC = () => {
         const errorData = await response.json();
         setError(errorData.detail || 'เกิดข้อผิดพลาดในการอัปโหลด');
       }
-    } catch (err) {
+    } catch {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setIsUploading(false);
@@ -193,7 +191,7 @@ const PDFManager: React.FC = () => {
         setIsIndexing(null);
         setIndexingStatus((prev) => ({ ...prev, [filename]: 'error' }));
       }
-    } catch (err) {
+    } catch {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
       setIsIndexing(null);
       setIndexingStatus((prev) => ({ ...prev, [filename]: 'error' }));
@@ -228,7 +226,7 @@ const PDFManager: React.FC = () => {
             }, 3000);
           }
         }
-      } catch (err) {
+      } catch {
         console.error('Error checking indexing status:', err);
       }
     }, 2000); // ตรวจสอบทุก 2 วินาที
@@ -272,7 +270,7 @@ const PDFManager: React.FC = () => {
         setIsIndexing(null);
         setIndexingStatus((prev) => ({ ...prev, [filename]: 'error' }));
       }
-    } catch (err) {
+    } catch {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
       setIsIndexing(null);
       setIndexingStatus((prev) => ({ ...prev, [filename]: 'error' }));
@@ -298,7 +296,7 @@ const PDFManager: React.FC = () => {
         const errorData = await response.json();
         setError(errorData.detail || 'เกิดข้อผิดพลาดในการลบไฟล์');
       }
-    } catch (err) {
+    } catch {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     }
   };

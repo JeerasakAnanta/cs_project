@@ -39,7 +39,8 @@
     min-height: 100vh;
     min-height: -webkit-fill-available;
     /* Safe area insets for notched devices */
-    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
+      env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
     /* Prevent text size adjustment on orientation change */
     -webkit-text-size-adjust: 100%;
     /* Smooth scrolling on iOS */
@@ -47,7 +48,7 @@
     /* Prevent pull-to-refresh on Chrome mobile */
     overscroll-behavior-y: contain;
   }
-  
+
   /* Root element for full height on mobile */
   #root {
     min-height: 100vh;
@@ -72,7 +73,7 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-400;
   }
-  
+
   /* Mobile-specific styles */
   @media (max-width: 768px) {
     /* Hide scrollbar on mobile for cleaner look */
@@ -80,15 +81,16 @@
       width: 3px;
     }
   }
-  
+
   /* Prevent tap highlight on mobile */
   * {
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
   }
-  
+
   /* Allow text selection only on specific elements */
-  input, textarea {
+  input,
+  textarea {
     -webkit-user-select: text;
     user-select: text;
   }
@@ -492,21 +494,25 @@
 /* Mobile optimization styles */
 @media (max-width: 768px) {
   /* Improve touch targets */
-  button, a, input, select, textarea {
+  button,
+  a,
+  input,
+  select,
+  textarea {
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   /* Optimize font sizes for mobile */
   html {
     font-size: 16px; /* Prevents zoom on iOS when focusing inputs */
   }
-  
+
   /* Better textarea on mobile */
   textarea {
     font-size: 16px; /* Prevents zoom on iOS */
   }
-  
+
   /* Smooth scrolling */
   * {
     scroll-behavior: smooth;
@@ -518,22 +524,23 @@
   .safe-top {
     padding-top: max(0px, env(safe-area-inset-top));
   }
-  
+
   .safe-bottom {
     padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
-  
+
   .safe-left {
     padding-left: max(0px, env(safe-area-inset-left));
   }
-  
+
   .safe-right {
     padding-right: max(0px, env(safe-area-inset-right));
   }
 }
 
 /* Prevent rubber band scrolling on iOS */
-html, body {
+html,
+body {
   position: fixed;
   overflow: hidden;
   width: 100%;

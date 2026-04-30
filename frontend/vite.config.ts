@@ -15,9 +15,7 @@ export default defineConfig({
       '.jeerasakananta.dev', // Allow all subdomains
     ],
   },
-  plugins: [
-    react(),
-  ],
+  plugins: [react()],
 
   css: {
     postcss: {

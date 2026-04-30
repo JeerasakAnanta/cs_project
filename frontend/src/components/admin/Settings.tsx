@@ -305,8 +305,7 @@ const About = () => {
             ระบบ AI Assistant สำหรับการเบิกจ่ายค่าใช้จ่ายในการดำเนินงาน
           </p>
           <div className="text-xs text-neutral-500">
-            © 2025 LannaFinChat. Developed by CS RMUTL NAN. All rights
-            reserved.
+            © 2025 LannaFinChat. Developed by CS RMUTL NAN. All rights reserved.
           </div>
         </div>
       </div>

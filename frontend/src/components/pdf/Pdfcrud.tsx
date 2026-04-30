@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   FileText,
   Trash2,
@@ -25,10 +25,6 @@ const PdfCrud: React.FC = () => {
   useEffect(() => {
     fetchPdfs();
   }, []);
-
-  useEffect(() => {
-    filterPdfs();
-  }, [pdfs, searchTerm]);
 
   const fetchPdfs = async () => {
     setIsLoading(true);
@@ -76,7 +72,7 @@ const PdfCrud: React.FC = () => {
     }
   };
 
-  const filterPdfs = () => {
+  const filterPdfs = useCallback(() => {
     if (!searchTerm) {
       setFilteredPdfs(pdfs);
     } else {
@@ -85,7 +81,11 @@ const PdfCrud: React.FC = () => {
       );
       setFilteredPdfs(filtered);
     }
-  };
+  }, [pdfs, searchTerm]);
+
+  useEffect(() => {
+    filterPdfs();
+  }, [filterPdfs]);
 
   const handleCheckboxChange = (pdf: string) => {
     setSelectedPdfs((prevState) =>

@@ -78,31 +78,39 @@ src/components/
 ## 🎯 หมวดหมู่ Components
 
 ### **Common Components**
+
 - **UI**: Components พื้นฐานที่ใช้ทั่วทั้งแอป
 - **Layout**: Components สำหรับโครงสร้างหน้าเว็บ
 - **Feedback**: Components สำหรับแสดงผลตอบกลับและแจ้งเตือน
 
 ### **Auth Components**
+
 - Components สำหรับการยืนยันตัวตนและการจัดการผู้ใช้
 
 ### **Admin Components**
+
 - Components สำหรับหน้าจัดการระบบและผู้ดูแล
 
 ### **Chat Components**
+
 - Components สำหรับระบบแชทและการสื่อสาร
 
 ### **PDF Components**
+
 - Components สำหรับการจัดการไฟล์ PDF
 
 ### **Survey Components**
+
 - Components สำหรับระบบสำรวจและประเมินความพึงพอใจ
 
 ### **Pages Components**
+
 - Components สำหรับหน้าต่างๆ ของเว็บไซต์
 
 ## 📦 การใช้งาน
 
 ### Import แบบใหม่ (แนะนำ)
+
 ```typescript
 // Import จากหมวดหมู่
 import { Navbar, ErrorBoundary } from './components/common';
@@ -115,6 +123,7 @@ import * as AdminComponents from './components/admin';
 ```
 
 ### Import แบบเก่า (ยังใช้ได้)
+
 ```typescript
 // Import โดยตรง
 import Navbar from './components/common/layout/Navbar';

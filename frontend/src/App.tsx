@@ -108,7 +108,7 @@ const AppContent: React.FC = () => {
     } else if (currentUser) {
       fetchAuthenticatedConversations();
     }
-  }, [currentUser, isGuestMode]);
+  }, [currentUser, isGuestMode, fetchGuestConversations, fetchAuthenticatedConversations]);
 
   const handleNewConversation = () => {
     setCurrentConversationId(null);
@@ -172,8 +172,13 @@ const AppContent: React.FC = () => {
         );
         if (response.ok) {
           const data = await response.json();
+          interface MessageData {
+            id: string | number;
+            content: string;
+            sender: 'user' | 'bot';
+          }
           const formattedMessages: Message[] = await Promise.all(
-            data.messages.map(async (msg: any) => {
+            (data.messages as MessageData[]).map(async (msg) => {
               if (msg.sender === 'bot') {
                 return {
                   id: msg.id,
@@ -186,77 +191,192 @@ const AppContent: React.FC = () => {
           );
           setMessages(formattedMessages);
         } else if (response.status === 401) {
-          // Token is invalid or expired, clear it and let AuthContext handle the rest
           localStorage.removeItem('authToken');
           return;
-          } else {
-            throw new Error('Failed to create new conversation');
-          }
-        } catch (error) {
-          console.error(error);
-          return; // Exit if conversation creation fails
-        }
-      }
-
-      // Add user message to the conversation
-      const userMessage: Message = {
-        id: Date.now(),
-        text: messageContent,
-        sender: 'user',
-      };
-      setMessages((prevMessages) => [...prevMessages, userMessage]);
-
-      try {
-        await fetch(
-          `${BACKEND_API}/chat/conversations/${conversationId}/messages/`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${authToken}`,
-            },
-            body: JSON.stringify({ sender: 'user', content: messageContent }),
-          }
-        );
-
-        // Now, get the bot's response
-        const response = await fetch(
-          `${BACKEND_API}/chat/conversations/${conversationId}/messages/`,
-          {
-            headers: { Authorization: `Bearer ${authToken}` },
-          }
-        );
-
-        if (response.ok) {
-          const botMessageData = await response.json();
-          if (botMessageData && botMessageData.length > 0) {
-            const lastBotMessage = botMessageData[botMessageData.length - 1];
-            const formattedText = await formatBotMessage(
-              lastBotMessage.content
-            );
-            const botMessage: Message = {
-              id: lastBotMessage.id,
-              text: formattedText,
-              sender: 'bot',
-            };
-
-            setMessages((prevMessages) => [...prevMessages, botMessage]);
-          } else {
-            console.error('No bot message received');
-          }
-          } else if (response.status === 401) {
-            // Token is invalid or expired, clear it and let AuthContext handle the rest
-            localStorage.removeItem('authToken');
-            return;
         } else {
-          console.error(
-            'Error getting bot response:',
-            response.status,
-            response.statusText
-          );
+          throw new Error('Failed to fetch conversation');
         }
       } catch (error) {
-        console.error('Error sending message or getting response:', error);
+        console.error('Error fetching conversation:', error);
+        return;
+      }
+    }
+  };
+
+  const handleSendMessage = async (messageContent: string) => {
+    setIsLoading(true);
+
+    try {
+      if (isGuestMode()) {
+        const conversationId = currentConversationId;
+        if (!conversationId) {
+          const newConversation =
+            await guestPostgreSQLService.createConversation(messageContent);
+          setCurrentConversationId(newConversation.id);
+          setGuestConversations((prev) => [newConversation, ...prev]);
+          const botMessage: Message = {
+            id: Date.now(),
+            text:
+              newConversation.messages[newConversation.messages.length - 1]
+                ?.content || '',
+            sender: 'bot',
+          };
+          setMessages([
+            { id: Date.now() - 1, text: messageContent, sender: 'user' },
+            botMessage,
+          ]);
+        } else {
+          const userMessage: Message = {
+            id: Date.now(),
+            text: messageContent,
+            sender: 'user',
+          };
+          setMessages((prev) => [...prev, userMessage]);
+
+          const response = await guestPostgreSQLService.addMessage(
+            conversationId as string,
+            messageContent
+          );
+          const botMessage: Message = {
+            id: Date.now() + 1,
+            text: response.message || '',
+            sender: 'bot',
+          };
+          setMessages((prev) => [...prev, botMessage]);
+          const updatedConversation =
+            await guestPostgreSQLService.getConversation(
+              conversationId as string
+            );
+          if (updatedConversation) {
+            setGuestConversations((prev) =>
+              prev.map((c) =>
+                c.id === conversationId ? updatedConversation : c
+              )
+            );
+          }
+        }
+      } else {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) return;
+
+        const conversationId = currentConversationId;
+
+        if (!conversationId) {
+          try {
+            const response = await fetch(`${BACKEND_API}/chat/conversations/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${authToken}`,
+              },
+              body: JSON.stringify({ title: messageContent.substring(0, 50) }),
+            });
+
+            if (response.ok) {
+              const newConversation = await response.json();
+              setCurrentConversationId(newConversation.id);
+              setConversations((prev) => [newConversation, ...prev]);
+
+              const userMessage: Message = {
+                id: Date.now(),
+                text: messageContent,
+                sender: 'user',
+              };
+              setMessages([userMessage]);
+
+              const botResponse = await fetch(
+                `${BACKEND_API}/chat/conversations/${newConversation.id}/messages/`,
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${authToken}`,
+                  },
+                  body: JSON.stringify({
+                    sender: 'user',
+                    content: messageContent,
+                  }),
+                }
+              );
+
+              if (botResponse.ok) {
+                const botMessageData = await botResponse.json();
+                if (botMessageData && botMessageData.content) {
+                  const formattedText = await formatBotMessage(
+                    botMessageData.content
+                  );
+                  const botMessage: Message = {
+                    id: Date.now() + 1,
+                    text: formattedText,
+                    sender: 'bot',
+                  };
+                  setMessages((prev) => [...prev, botMessage]);
+                }
+              }
+            } else if (response.status === 401) {
+              localStorage.removeItem('authToken');
+              return;
+            } else {
+              throw new Error('Failed to create new conversation');
+            }
+          } catch (error) {
+            console.error(error);
+            return;
+          }
+        } else {
+          const userMessage: Message = {
+            id: Date.now(),
+            text: messageContent,
+            sender: 'user',
+          };
+          setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+          try {
+            await fetch(
+              `${BACKEND_API}/chat/conversations/${conversationId}/messages/`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${authToken}`,
+                },
+                body: JSON.stringify({
+                  sender: 'user',
+                  content: messageContent,
+                }),
+              }
+            );
+
+            const response = await fetch(
+              `${BACKEND_API}/chat/conversations/${conversationId}/messages/`,
+              {
+                headers: { Authorization: `Bearer ${authToken}` },
+              }
+            );
+
+            if (response.ok) {
+              const botMessageData = await response.json();
+              if (botMessageData && botMessageData.length > 0) {
+                const lastBotMessage =
+                  botMessageData[botMessageData.length - 1];
+                const formattedText = await formatBotMessage(
+                  lastBotMessage.content
+                );
+                const botMessage: Message = {
+                  id: lastBotMessage.id,
+                  text: formattedText,
+                  sender: 'bot',
+                };
+                setMessages((prevMessages) => [...prevMessages, botMessage]);
+              }
+            } else if (response.status === 401) {
+              localStorage.removeItem('authToken');
+              return;
+            }
+          } catch (error) {
+            console.error('Error sending message or getting response:', error);
+          }
+        }
       }
     } finally {
       setIsLoading(false);

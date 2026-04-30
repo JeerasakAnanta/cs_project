@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { FileText, ExternalLink, ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
+import {
+  FileText,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  EyeOff,
+} from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import DocumentViewer from './DocumentViewer';
 
@@ -21,9 +28,12 @@ const DocumentReferences: React.FC<DocumentReferencesProps> = ({
   className = '',
 }) => {
   const [expandedRefs, setExpandedRefs] = useState<Set<number>>(new Set());
-  const [showFullContent, setShowFullContent] = useState<Set<number>>(new Set());
+  const [showFullContent, setShowFullContent] = useState<Set<number>>(
+    new Set()
+  );
   const [viewerOpen, setViewerOpen] = useState(false);
-  const [selectedDocument, setSelectedDocument] = useState<DocumentReference | null>(null);
+  const [selectedDocument, setSelectedDocument] =
+    useState<DocumentReference | null>(null);
   const { theme } = useTheme();
 
   if (!references || references.length === 0) {
@@ -140,7 +150,9 @@ const DocumentReferences: React.FC<DocumentReferencesProps> = ({
                         ref.confidence_score
                       )}`}
                     />
-                    <span className={`text-xs ${getConfidenceColor(ref.confidence_score)}`}>
+                    <span
+                      className={`text-xs ${getConfidenceColor(ref.confidence_score)}`}
+                    >
                       {(ref.confidence_score * 100).toFixed(1)}%
                     </span>
                   </div>
@@ -155,7 +167,11 @@ const DocumentReferences: React.FC<DocumentReferencesProps> = ({
                   className={`p-1 rounded hover:bg-gray-200 dark:hover:bg-neutral-600 transition-colors ${
                     theme === 'light' ? 'text-gray-600' : 'text-gray-400'
                   }`}
-                  title={showFullContent.has(index) ? 'ซ่อนเนื้อหาเต็ม' : 'แสดงเนื้อหาเต็ม'}
+                  title={
+                    showFullContent.has(index)
+                      ? 'ซ่อนเนื้อหาเต็ม'
+                      : 'แสดงเนื้อหาเต็ม'
+                  }
                 >
                   {showFullContent.has(index) ? (
                     <EyeOff className="w-4 h-4" />
@@ -184,18 +200,21 @@ const DocumentReferences: React.FC<DocumentReferencesProps> = ({
                       theme === 'light' ? 'text-gray-700' : 'text-gray-300'
                     }`}
                   >
-                    {showFullContent.has(index) ? ref.full_content : ref.content_preview}
+                    {showFullContent.has(index)
+                      ? ref.full_content
+                      : ref.content_preview}
                   </div>
-                  {!showFullContent.has(index) && ref.full_content.length > 200 && (
-                    <button
-                      onClick={() => toggleFullContent(index)}
-                      className={`mt-2 text-sm font-medium hover:underline ${
-                        theme === 'light' ? 'text-blue-600' : 'text-blue-400'
-                      }`}
-                    >
-                      อ่านต่อ...
-                    </button>
-                  )}
+                  {!showFullContent.has(index) &&
+                    ref.full_content.length > 200 && (
+                      <button
+                        onClick={() => toggleFullContent(index)}
+                        className={`mt-2 text-sm font-medium hover:underline ${
+                          theme === 'light' ? 'text-blue-600' : 'text-blue-400'
+                        }`}
+                      >
+                        อ่านต่อ...
+                      </button>
+                    )}
                 </div>
 
                 {/* Actions */}
@@ -241,7 +260,8 @@ const DocumentReferences: React.FC<DocumentReferencesProps> = ({
             : 'bg-neutral-800/50 text-neutral-400'
         }`}
       >
-        <strong>หมายเหตุ:</strong> ข้อมูลอ้างอิงจากเอกสารอาจไม่ครบถ้วนหรือไม่ถูกต้อง 100% 
+        <strong>หมายเหตุ:</strong>{' '}
+        ข้อมูลอ้างอิงจากเอกสารอาจไม่ครบถ้วนหรือไม่ถูกต้อง 100%
         โปรดตรวจสอบข้อมูลจากเอกสารต้นฉบับก่อนนำไปใช้งาน
       </div>
 

@@ -7,7 +7,7 @@ const STATIC_ASSETS = [
   '/index.html',
   '/offline.html',
   '/icon.svg',
-  '/manifest.json'
+  '/manifest.json',
 ];
 
 // Install event - cache static assets
@@ -57,14 +57,14 @@ self.addEventListener('fetch', (event) => {
       .then((response) => {
         // Clone the response before caching
         const responseToCache = response.clone();
-        
+
         // Cache successful responses
         if (response.status === 200) {
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
           });
         }
-        
+
         return response;
       })
       .catch(() => {
@@ -73,12 +73,12 @@ self.addEventListener('fetch', (event) => {
           if (cachedResponse) {
             return cachedResponse;
           }
-          
+
           // If requesting a page and no cache, show offline page
           if (event.request.mode === 'navigate') {
             return caches.match(OFFLINE_URL);
           }
-          
+
           return new Response('Network error', {
             status: 408,
             headers: { 'Content-Type': 'text/plain' },
@@ -94,4 +94,3 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
-

@@ -189,7 +189,10 @@ class GuestPostgreSQLService {
     }
   }
 
-  async addMessage(conversationId: string, content: string): Promise<{ message: string; source_documents?: DocumentReference[] }> {
+  async addMessage(
+    conversationId: string,
+    content: string
+  ): Promise<{ message: string; source_documents?: DocumentReference[] }> {
     const response = await fetch(
       `${BACKEND_API}/chat/guest/conversations/${conversationId}/messages`,
       {
@@ -239,7 +242,11 @@ class GuestPostgreSQLService {
 
   async sendMessage(
     content: string
-  ): Promise<{ message: string; machine_id: string; source_documents?: DocumentReference[] }> {
+  ): Promise<{
+    message: string;
+    machine_id: string;
+    source_documents?: DocumentReference[];
+  }> {
     const response = await fetch(`${BACKEND_API}/chat/guest/message`, {
       method: 'POST',
       headers: this.getHeaders(),

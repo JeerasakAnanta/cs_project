@@ -95,7 +95,7 @@ class ConversationService {
       );
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching conversations:', error);
       if (error.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้เข้าถึงข้อมูลการสนทนา');
@@ -117,7 +117,7 @@ class ConversationService {
       );
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching conversation:', error);
       if (error.response?.status === 404) {
         throw new Error('ไม่พบการสนทนาที่ระบุ');
@@ -149,7 +149,7 @@ class ConversationService {
       );
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching conversation stats:', error);
       if (error.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้เข้าถึงสถิติการสนทนา');
@@ -172,7 +172,7 @@ class ConversationService {
       );
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error updating satisfaction:', error);
       if (error.response?.status === 404) {
         throw new Error('ไม่พบการสนทนาที่ระบุ');
@@ -194,7 +194,7 @@ class ConversationService {
       await axios.delete(`${API_BASE_URL}/admin/conversations/${id}`, {
         headers: this.getAuthHeaders(),
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error deleting conversation:', error);
       if (error.response?.status === 404) {
         throw new Error('ไม่พบการสนทนาที่ระบุ');
@@ -235,7 +235,7 @@ class ConversationService {
       );
 
       return response.data as Blob;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error exporting conversations:', error);
       if (error.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้ส่งออกข้อมูลการสนทนา');
@@ -262,7 +262,7 @@ class ConversationService {
   /**
    * Migrate existing conversation data
    */
-  async migrateExistingData(): Promise<any> {
+  async migrateExistingData(): Promise<unknown> {
     try {
       const response = await axios.post(
         `${API_BASE_URL}/admin/conversations/migrate-existing-data`,
@@ -271,7 +271,7 @@ class ConversationService {
       );
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error migrating data:', error);
       if (error.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้ทำการ migration');

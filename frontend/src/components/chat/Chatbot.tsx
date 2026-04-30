@@ -8,13 +8,13 @@ import {
   ThumbsDown,
   MessageCircle,
 } from 'lucide-react';
+import DOMPurify from 'dompurify';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import CustomAlert from '../common/feedback/CustomAlert';
 import TypingIndicator from '../common/ui/TypingIndicator';
 import DocumentReferences from './DocumentReferences';
 import { marked } from 'marked';
-import DOMPurify from 'dompurify';
 
 const BACKEND_API =
   import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
@@ -95,28 +95,48 @@ const Chatbot: React.FC<ChatbotProps> = ({
       // Use DOMPurify for comprehensive XSS protection
       return DOMPurify.sanitize(htmlContent, {
         ALLOWED_TAGS: [
-          'p', 'br', 'strong', 'em', 'u', 'ol', 'ul', 'li', 'a', 'code', 
-          'pre', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'table', 
-          'thead', 'tbody', 'tr', 'th', 'td'
+          'p',
+          'br',
+          'strong',
+          'em',
+          'u',
+          'ol',
+          'ul',
+          'li',
+          'a',
+          'code',
+          'pre',
+          'blockquote',
+          'h1',
+          'h2',
+          'h3',
+          'h4',
+          'h5',
+          'h6',
+          'table',
+          'thead',
+          'tbody',
+          'tr',
+          'th',
+          'td',
         ],
         ALLOWED_ATTR: ['href', 'target', 'class'],
-        ALLOW_DATA_ATTR: false
+        ALLOW_DATA_ATTR: false,
       });
-    } catch (error) {
+    } catch {
       console.error('Error rendering markdown:', error);
       return content; // Fallback to plain text
     }
   };
 
-  const scrollToBottom =
-    () => {
-      if (chatBoxRef.current) {
-        chatBoxRef.current.scrollTo({
-          top: chatBoxRef.current.scrollHeight,
-          behavior: 'smooth',
-        });
-      }
-    };
+  const scrollToBottom = () => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTo({
+        top: chatBoxRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   useEffect(() => {
     // Scroll to bottom when messages change
@@ -135,7 +155,8 @@ const Chatbot: React.FC<ChatbotProps> = ({
     const handleResize = () => {
       const visualViewport = window.visualViewport;
       if (visualViewport) {
-        const keyboardVisible = visualViewport.height < window.innerHeight * 0.75;
+        const keyboardVisible =
+          visualViewport.height < window.innerHeight * 0.75;
         if (keyboardVisible) {
           // Scroll to bottom when keyboard opens
           setTimeout(() => scrollToBottom(), 100);
@@ -263,7 +284,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
           message: errorData.detail || 'ไม่สามารถส่ง feedback ได้',
         });
       }
-    } catch (error) {
+    } catch {
       setAlertState({
         isOpen: true,
         type: 'error',
@@ -292,17 +313,21 @@ const Chatbot: React.FC<ChatbotProps> = ({
       {/* Feedback Modal */}
       {feedbackModal.isOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 safe-top safe-bottom">
-          <div className={`backdrop-blur-sm rounded-2xl p-4 sm:p-6 max-w-md w-full shadow-2xl border max-h-[90vh] overflow-y-auto ${
-            theme === 'light'
-              ? 'bg-white/95 border-gray-300/50'
-              : 'bg-neutral-800/95 border-neutral-700/50'
-          }`}>
+          <div
+            className={`backdrop-blur-sm rounded-2xl p-4 sm:p-6 max-w-md w-full shadow-2xl border max-h-[90vh] overflow-y-auto ${
+              theme === 'light'
+                ? 'bg-white/95 border-gray-300/50'
+                : 'bg-neutral-800/95 border-neutral-700/50'
+            }`}
+          >
             <div className="flex items-start">
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className={`text-base sm:text-lg font-semibold ${
-                    theme === 'light' ? 'text-gray-900' : 'text-white'
-                  }`}>
+                  <h3
+                    className={`text-base sm:text-lg font-semibold ${
+                      theme === 'light' ? 'text-gray-900' : 'text-white'
+                    }`}
+                  >
                     ให้ Feedback
                   </h3>
                   <button
@@ -329,9 +354,11 @@ const Chatbot: React.FC<ChatbotProps> = ({
                   </button>
                 </div>
                 <div className="mb-4">
-                  <p className={`text-sm mb-2 ${
-                    theme === 'light' ? 'text-gray-700' : 'text-neutral-300'
-                  }`}>
+                  <p
+                    className={`text-sm mb-2 ${
+                      theme === 'light' ? 'text-gray-700' : 'text-neutral-300'
+                    }`}
+                  >
                     คุณ
                     {feedbackModal.feedbackType === 'like' ? 'ชอบ' : 'ไม่ชอบ'}
                     คำตอบนี้หรือไม่?
@@ -420,20 +447,22 @@ const Chatbot: React.FC<ChatbotProps> = ({
       <div
         className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 pb-4 scroll-smooth -webkit-overflow-scrolling-touch"
         ref={chatBoxRef}
-        style={{ 
+        style={{
           scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch'
+          WebkitOverflowScrolling: 'touch',
         }}
       >
         <div className="max-w-5xl mx-auto">
           {/* Welcome message when no conversation */}
           {messages.length === 0 ? (
             <div className="text-center py-6 sm:py-12 px-2">
-              <div className={`mb-6 sm:mb-8 p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-sm border ${
-                theme === 'light'
-                  ? 'bg-white/80 border-gray-200/50'
-                  : 'bg-neutral-800/80 border-neutral-700/50'
-              }`}>
+              <div
+                className={`mb-6 sm:mb-8 p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-sm border ${
+                  theme === 'light'
+                    ? 'bg-white/80 border-gray-200/50'
+                    : 'bg-neutral-800/80 border-neutral-700/50'
+                }`}
+              >
                 <div
                   className={`w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-2xl ${
                     theme === 'light'
@@ -558,12 +587,14 @@ const Chatbot: React.FC<ChatbotProps> = ({
                       />
 
                       {/* Document References for bot messages */}
-                      {msg.sender === 'bot' && msg.source_documents && msg.source_documents.length > 0 && (
-                        <DocumentReferences 
-                          references={msg.source_documents}
-                          className="mt-4"
-                        />
-                      )}
+                      {msg.sender === 'bot' &&
+                        msg.source_documents &&
+                        msg.source_documents.length > 0 && (
+                          <DocumentReferences
+                            references={msg.source_documents}
+                            className="mt-4"
+                          />
+                        )}
 
                       {/* Feedback buttons for bot messages - only for authenticated users */}
                       {msg.sender === 'bot' &&
@@ -674,7 +705,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
                   : 'text-white placeholder-white/70'
               }`}
               rows={1}
-              style={{ 
+              style={{
                 minHeight: '48px',
                 maxHeight: '120px',
                 fontSize: '16px', // Prevents zoom on iOS
@@ -699,8 +730,13 @@ const Chatbot: React.FC<ChatbotProps> = ({
             }`}
           >
             <Sparkles className="w-3 h-3 flex-shrink-0" />
-            <span className="hidden sm:inline">คำตอบสร้างโดย GenAI เพื่อใช้ในการค้นหาข้อมูลเท่านั้น โปรดตรวจสอบข้อมูลก่อนนำไปใช้งาน</span>
-            <span className="sm:hidden">คำตอบสร้างโดย GenAI โปรดตรวจสอบข้อมูลก่อนใช้งาน</span>
+            <span className="hidden sm:inline">
+              คำตอบสร้างโดย GenAI เพื่อใช้ในการค้นหาข้อมูลเท่านั้น
+              โปรดตรวจสอบข้อมูลก่อนนำไปใช้งาน
+            </span>
+            <span className="sm:hidden">
+              คำตอบสร้างโดย GenAI โปรดตรวจสอบข้อมูลก่อนใช้งาน
+            </span>
           </p>
         </div>
       </div>

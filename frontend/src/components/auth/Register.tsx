@@ -73,8 +73,11 @@ const Register: React.FC = () => {
         if (errorData?.detail) {
           // Handle array of validation errors
           if (Array.isArray(errorData.detail)) {
+            interface ValidationError {
+              msg: string;
+            }
             const errorMessages = errorData.detail
-              .map((err: any) => err.msg)
+              .map((err: ValidationError) => err.msg)
               .join(', ');
             setError(errorMessages);
           } else {
@@ -85,7 +88,7 @@ const Register: React.FC = () => {
           setError('เกิดข้อผิดพลาดในการสมัครสมาชิก');
         }
       }
-    } catch (err) {
+    } catch {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
     } finally {
       setIsLoading(false);
@@ -419,8 +422,7 @@ const Register: React.FC = () => {
               theme === 'light' ? 'text-gray-500' : 'text-neutral-500'
             }`}
           >
-            © 2025 LannaFinChat. Developed by CS RMUTL NAN. All rights
-            reserved.
+            © 2025 LannaFinChat. Developed by CS RMUTL NAN. All rights reserved.
           </p>
         </div>
       </div>

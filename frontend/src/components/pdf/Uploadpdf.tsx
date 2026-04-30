@@ -54,8 +54,9 @@ const Uploadpdf: React.FC = () => {
       });
       setStatusText('อัปโหลดสำเร็จ!');
       setSelectedFile(null); // Reset the selected file
-    } catch (err: any) {
-      if (err.response?.status === 401) {
+    } catch (err: unknown) {
+      const error = err as { response?: { status: number } } | undefined;
+      if (error?.response?.status === 401) {
         setStatusText('⚠️ ไม่ได้รับอนุญาตให้อัปโหลด PDF กรุณาเข้าสู่ระบบใหม่');
       } else {
         setStatusText('เกิดข้อผิดพลาดในการอัปโหลด. กรุณาลองใหม่อีกครั้ง.');

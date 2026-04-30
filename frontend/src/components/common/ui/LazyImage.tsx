@@ -7,12 +7,12 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   placeholder?: string;
 }
 
-const LazyImage: React.FC<LazyImageProps> = ({ 
-  src, 
-  alt, 
-  placeholder, 
+const LazyImage: React.FC<LazyImageProps> = ({
+  src,
+  alt,
+  placeholder,
   className = '',
-  ...props 
+  ...props
 }) => {
   const [imageSrc, setImageSrc] = useState(placeholder || '');
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -21,15 +21,16 @@ const LazyImage: React.FC<LazyImageProps> = ({
 
   useEffect(() => {
     let observer: IntersectionObserver;
-    
-    if (imgRef.current && 'IntersectionObserver' in window) {
+    const currentRef = imgRef.current;
+
+    if (currentRef && 'IntersectionObserver' in window) {
       observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               setImageSrc(src);
-              if (imgRef.current) {
-                observer.unobserve(imgRef.current);
+              if (currentRef) {
+                observer.unobserve(currentRef);
               }
             }
           });
@@ -39,15 +40,15 @@ const LazyImage: React.FC<LazyImageProps> = ({
         }
       );
 
-      observer.observe(imgRef.current);
+      observer.observe(currentRef);
     } else {
       // Fallback for browsers that don't support IntersectionObserver
       setImageSrc(src);
     }
 
     return () => {
-      if (observer && imgRef.current) {
-        observer.unobserve(imgRef.current);
+      if (observer && currentRef) {
+        observer.unobserve(currentRef);
       }
     };
   }, [src]);
@@ -77,4 +78,3 @@ const LazyImage: React.FC<LazyImageProps> = ({
 };
 
 export default LazyImage;
-

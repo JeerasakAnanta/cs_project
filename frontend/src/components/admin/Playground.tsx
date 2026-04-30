@@ -1,6 +1,4 @@
-type Props = {};
-
-function Playground({}: Props) {
+function Playground() {
   return <div>Playground</div>;
 }
 

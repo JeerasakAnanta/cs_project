@@ -72,13 +72,7 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({
   // Function to render markdown safely
   const renderMarkdown = (text: string) => {
     try {
-      // Configure marked options for security
-      marked.setOptions({
-        breaks: true,
-        gfm: true,
-      });
-
-      return marked(text);
+      return marked.parse(text) as string;
     } catch (error) {
       console.error('Error rendering markdown:', error);
       return text; // Fallback to plain text

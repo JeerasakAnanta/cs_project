@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { X, Download, Search, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  X,
+  Download,
+  Search,
+  FileText,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 
 interface DocumentReference {
@@ -132,7 +139,9 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
                     document.confidence_score
                   )}`}
                 />
-                <span className={`text-sm ${getConfidenceColor(document.confidence_score)}`}>
+                <span
+                  className={`text-sm ${getConfidenceColor(document.confidence_score)}`}
+                >
                   {(document.confidence_score * 100).toFixed(1)}%
                 </span>
               </div>
@@ -196,7 +205,9 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
         {/* Footer */}
         <div
           className={`p-4 border-t ${
-            theme === 'light' ? 'border-gray-200 bg-gray-50' : 'border-neutral-600 bg-neutral-800/50'
+            theme === 'light'
+              ? 'border-gray-200 bg-gray-50'
+              : 'border-neutral-600 bg-neutral-800/50'
           }`}
         >
           <div className="flex items-center justify-between">

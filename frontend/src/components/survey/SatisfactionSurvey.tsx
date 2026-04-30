@@ -149,7 +149,7 @@ const SatisfactionSurvey: React.FC<SatisfactionSurveyProps> = ({
           timestamp: new Date(),
         });
       }, 2000);
-    } catch (error) {
+    } catch {
       setShowError(true);
     }
   };

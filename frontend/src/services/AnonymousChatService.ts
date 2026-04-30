@@ -21,7 +21,9 @@ export interface AnonymousConversation {
 }
 
 class AnonymousChatService {
-  async sendMessage(message: string): Promise<{ message: string; source_documents?: DocumentReference[] }> {
+  async sendMessage(
+    message: string
+  ): Promise<{ message: string; source_documents?: DocumentReference[] }> {
     try {
       const response = await fetch(`${BACKEND_API}/chat/anonymous/message`, {
         method: 'POST',
