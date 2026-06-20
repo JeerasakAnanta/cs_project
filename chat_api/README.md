@@ -33,9 +33,8 @@
 ├── chatbot_api.py
 ├── log
 │   └── app.log
-├── poetry.lock
 ├── pyproject.toml
-├── requirements.txt
+├── uv.lock
 ├── run_api.sh
 └── tests
     └── __init__.py

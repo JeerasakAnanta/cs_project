@@ -1,0 +1,38 @@
+# Default target - setup everything
+default: setup
+
+# Setup the project (install deps + run migrations)
+setup:
+    @echo "Setting up project..."
+    uv sync
+    @echo "Setup complete!"
+
+# Install dependencies
+deps:
+    @echo "Installing dependencies..."
+    uv sync
+
+# Run database migrations
+migrate:
+    @echo "Running migrations..."
+    uv run alembic upgrade head
+
+# Create a new migration
+new-migration:
+    @echo "Creating new migration..."
+    uv run alembic revision --autogenerate -m "{{message}}"
+
+# Run development server
+dev:
+    @echo "Starting development server..."
+    uv run uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+
+# Build docker image
+docker-build:
+    @echo "Building Docker image..."
+    bash docker-build.sh
+
+# Index PDF documents
+index-docs:
+    @echo "Indexing PDF documents..."
+    uv run python scripts/indexing_docs.py

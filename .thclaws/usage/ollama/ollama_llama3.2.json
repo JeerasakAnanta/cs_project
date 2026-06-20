@@ -1,0 +1,9 @@
+{
+  "2026-05-07": {
+    "input": 8192,
+    "output": 241,
+    "cache_write": 0,
+    "cache_read": 0,
+    "requests": 2
+  }
+}
