@@ -67,24 +67,6 @@ const PDFManager: React.FC = () => {
     }
   }, [error]);
 
-  useEffect(() => {
-    fetchFiles();
-    fetchStats();
-
-    // เริ่ม polling สำหรับสถานะการ indexing
-    const interval = setInterval(() => {
-      if (isIndexing) {
-        fetchFiles(); // อัปเดตสถานะไฟล์
-      }
-    }, 2000); // อัปเดตทุก 2 วินาที
-
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [isIndexing, fetchFiles, fetchStats]);
-
   const fetchFiles = useCallback(async () => {
     try {
       const response = await fetch(`${BACKEND_API}/api/pdfs/`, {
@@ -117,10 +99,28 @@ const PDFManager: React.FC = () => {
         const data = await response.json();
         setStats(data);
       }
-    } catch {
-      console.error('Error fetching stats:', _err);
+    } catch (err) {
+      console.error('Error fetching stats:', err);
     }
   }, [authToken]);
+
+  useEffect(() => {
+    fetchFiles();
+    fetchStats();
+
+    // เริ่ม polling สำหรับสถานะการ indexing
+    const interval = setInterval(() => {
+      if (isIndexing) {
+        fetchFiles(); // อัปเดตสถานะไฟล์
+      }
+    }, 2000); // อัปเดตทุก 2 วินาที
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isIndexing, fetchFiles, fetchStats]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -226,7 +226,7 @@ const PDFManager: React.FC = () => {
             }, 3000);
           }
         }
-      } catch {
+      } catch (err) {
         console.error('Error checking indexing status:', err);
       }
     }, 2000); // ตรวจสอบทุก 2 วินาที

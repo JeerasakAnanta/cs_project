@@ -54,10 +54,9 @@ const DocumentSearchDashboard: React.FC<DocumentSearchDashboardProps> = ({
     if (savedHistory) {
       try {
         const parsed = JSON.parse(savedHistory);
-        interface SearchHistoryItem {
+        type SearchHistoryItem = Omit<SearchHistory, 'timestamp'> & {
           timestamp: string;
-          [key: string]: unknown;
-        }
+        };
         setSearchHistory(
           (parsed as SearchHistoryItem[]).map((item) => ({
             ...item,

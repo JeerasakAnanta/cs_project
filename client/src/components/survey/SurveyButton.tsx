@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import { Button, Fab, Tooltip } from '@mui/material';
 import { RateReview, Feedback } from '@mui/icons-material';
-import SatisfactionSurvey from './SatisfactionSurvey';
+import SatisfactionSurvey, { type SurveyData } from './SatisfactionSurvey';
 
 interface SurveyButtonProps {
   variant?: 'button' | 'fab';
   position?: 'fixed' | 'inline';
   className?: string;
-}
-
-interface SurveyData {
-  rating: number;
-  comment: string;
-  [key: string]: unknown;
 }
 
 const SurveyButton: React.FC<SurveyButtonProps> = ({

@@ -38,10 +38,6 @@ const UserManagement: React.FC = () => {
     fetchUsers();
   }, []);
 
-  useEffect(() => {
-    filterUsers();
-  }, [filterUsers]);
-
   const fetchUsers = async () => {
     try {
       const response = await fetch(`${BACKEND_API}/admin/users/`, {
@@ -81,6 +77,10 @@ const UserManagement: React.FC = () => {
 
     setFilteredUsers(filtered);
   }, [users, searchTerm, selectedRole]);
+
+  useEffect(() => {
+    filterUsers();
+  }, [filterUsers]);
 
   // remove  user in db
   const handleDeleteUser = async (userId: number) => {

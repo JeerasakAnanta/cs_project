@@ -40,7 +40,7 @@ interface SatisfactionSurveyProps {
   onSubmit?: (data: SurveyData) => void;
 }
 
-interface SurveyData {
+export interface SurveyData {
   overallSatisfaction: number;
   easeOfUse: number;
   responseSpeed: number;

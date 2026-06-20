@@ -95,7 +95,7 @@ class AdminStatisticsService {
         }
       );
       return response.data;
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('Error fetching system statistics:', error);
       throw new Error(
         error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติระบบ'
@@ -115,7 +115,7 @@ class AdminStatisticsService {
         }
       );
       return response.data;
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('Error fetching user statistics:', error);
       throw new Error(
         error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติผู้ใช้'
@@ -135,7 +135,7 @@ class AdminStatisticsService {
         }
       );
       return response.data;
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('Error fetching conversation statistics:', error);
       throw new Error(
         error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติการสนทนา'
@@ -163,7 +163,7 @@ class AdminStatisticsService {
         users: userStats,
         conversations: conversationStats,
       };
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('Error fetching all statistics:', error);
       throw error;
     }

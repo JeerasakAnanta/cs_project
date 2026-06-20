@@ -38,7 +38,7 @@ const AdminDashboard = () => {
           <ConversationSearch onConversationSelect={handleConversationSelect} />
         );
       case 'analytics':
-        return <ConversationAnalytics conversations={[]} />; // TODO: Pass real conversations data
+        return <ConversationAnalytics />;
       case 'admin':
         return (
           <div className="p-6 text-center">
