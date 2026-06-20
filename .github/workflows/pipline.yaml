@@ -1,0 +1,170 @@
+name: build
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  # ---------------- Backend ----------------
+  backend-prepare:
+    name: Build Backend
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Setup Python with uv
+        working-directory: server
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          uv python install 3.13
+
+      - name: Install dependencies
+        working-directory: server
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          uv sync
+
+      - name: Run Tests (optional)
+        working-directory: server
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          echo "Add test commands here if needed (e.g., uv run pytest)"
+
+  backend-build-docker:
+    name: Build Push Backend Image
+    runs-on: self-hosted
+    needs: backend-prepare
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker Image
+        working-directory: server
+        run: |
+          docker build -t ghcr.io/jeerasakananta/cs_project-backend:latest \
+                       -t ghcr.io/jeerasakananta/cs_project-backend:${{ github.sha }} .
+
+      - name: Push Docker Image (latest)
+        working-directory: server
+        run: docker push ghcr.io/jeerasakananta/cs_project-backend:latest
+
+      - name: Push Docker Image (commit SHA)
+        working-directory: server
+        run: docker push ghcr.io/jeerasakananta/cs_project-backend:${{ github.sha }}
+
+  backend-deploy:
+    name: Deploy Backend Container
+    runs-on: self-hosted
+    needs: backend-build-docker
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Stop Old Container
+        run: docker stop cs_project-backend || true
+
+      - name: Remove Old Container
+        run: docker rm cs_project-backend || true
+
+      - name: Run New Container
+        run: |
+          docker run -d \
+            --name cs_project-backend \
+            --restart unless-stopped \
+            -p 8080:8080 \
+            ghcr.io/jeerasakananta/cs_project-backend:latest
+
+  # ---------------- Frontend ----------------
+  frontend-prepare:
+    name: Build Frontend
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install dependencies
+        working-directory: client
+        run: npm i
+
+      - name: Build Frontend
+        working-directory: client
+        run: npm run build
+
+  frontend-build-docker:
+    name: Build Push Frontend Image
+    runs-on: self-hosted
+    needs: frontend-prepare
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker Image
+        working-directory: client
+        run: |
+          docker build -t ghcr.io/jeerasakananta/cs_project-frontend:latest \
+                       -t ghcr.io/jeerasakananta/cs_project-frontend:${{ github.sha }} .
+
+      - name: Push Docker Image (latest)
+        working-directory: client
+        run: docker push ghcr.io/jeerasakananta/cs_project-frontend:latest
+
+      - name: Push Docker Image (commit SHA)
+        working-directory: client
+        run: docker push ghcr.io/jeerasakananta/cs_project-frontend:${{ github.sha }}
+
+  frontend-deploy:
+    name: Deploy Frontend Container
+    runs-on: self-hosted
+    needs: frontend-build-docker
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Stop Old Container
+        run: docker stop cs_project-frontend || true
+
+      - name: Remove Old Container
+        run: docker rm cs_project-frontend || true
+
+      - name: Run New Container
+        run: |
+          docker run -d \
+            --name cs_project-frontend \
+            --restart unless-stopped \
+            -p 8000:8000 \
+            ghcr.io/jeerasakananta/cs_project-frontend:latest
