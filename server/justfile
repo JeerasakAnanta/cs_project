@@ -18,7 +18,7 @@ migrate:
     uv run alembic upgrade head
 
 # Create a new migration
-new-migration:
+new-migration message:
     @echo "Creating new migration..."
     uv run alembic revision --autogenerate -m "{{message}}"
 
