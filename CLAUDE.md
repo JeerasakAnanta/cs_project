@@ -16,12 +16,14 @@ The root `README.md` is partly stale (it still references `frontend/`, `chat_api
 Each app has a `justfile`; run recipes from inside its directory.
 
 Server (`cd server`):
+
 - `just deps` — `uv sync`
 - `just dev` — `uv run uvicorn app.main:app --port 8001 --reload`
 - `just migrate` / `just new-migration "message"` — Alembic upgrade / autogenerate
 - `just index-docs` — runs `scripts/indexing_docs.py` to embed PDFs from `server/pdfs/` into Qdrant
 
 Client (`cd client`):
+
 - `npm run dev` (Vite), `npm run build` (`tsc -b && vite build`), `npm run lint`, `npm run format` (prettier)
 - `just check` — format + lint + build
 
@@ -36,6 +38,7 @@ Env: copy `.env.example` to `.env` in `server/` and `client/`. The server needs 
 `main.py` wires everything: it calls `Base.metadata.create_all` at startup (in addition to Alembic migrations), installs a slowapi `Limiter` keyed by IP, sets CORS (an explicit localhost list when `DEBUG`, otherwise only the production domains), and mounts the routers. Rate limiting is applied per endpoint with `@limiter.limit`.
 
 Three chat modes, each with its own router and CRUD, all sharing the same RAG backend:
+
 - Authenticated chat: `chat/router.py`, with `chat/crud.py` and JWT auth from `login_system/` and `routers/router_login.py`.
 - Anonymous chat: `chat/anonymous_router.py`.
 - Guest chat: `chat/guest_router.py` and `guest_crud.py`. Guest conversations are persisted to PostgreSQL and tagged with a `machine_id` (see the `alembic/versions` migration and `docs/GUEST_MODE_*.md`).
