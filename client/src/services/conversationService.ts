@@ -1,4 +1,8 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+
+interface ApiErrorResponse {
+  detail?: string;
+}
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
@@ -95,13 +99,14 @@ class ConversationService {
       );
 
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>;
       console.error('Error fetching conversations:', error);
-      if (error.response?.status === 401) {
+      if (err.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้เข้าถึงข้อมูลการสนทนา');
       }
       throw new Error(
-        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงข้อมูลการสนทนา'
+        err.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงข้อมูลการสนทนา'
       );
     }
   }
@@ -117,16 +122,17 @@ class ConversationService {
       );
 
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>;
       console.error('Error fetching conversation:', error);
-      if (error.response?.status === 404) {
+      if (err.response?.status === 404) {
         throw new Error('ไม่พบการสนทนาที่ระบุ');
       }
-      if (error.response?.status === 401) {
+      if (err.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้เข้าถึงข้อมูลการสนทนา');
       }
       throw new Error(
-        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงข้อมูลการสนทนา'
+        err.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงข้อมูลการสนทนา'
       );
     }
   }
@@ -149,13 +155,14 @@ class ConversationService {
       );
 
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>;
       console.error('Error fetching conversation stats:', error);
-      if (error.response?.status === 401) {
+      if (err.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้เข้าถึงสถิติการสนทนา');
       }
       throw new Error(
-        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติการสนทนา'
+        err.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติการสนทนา'
       );
     }
   }
@@ -172,16 +179,17 @@ class ConversationService {
       );
 
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>;
       console.error('Error updating satisfaction:', error);
-      if (error.response?.status === 404) {
+      if (err.response?.status === 404) {
         throw new Error('ไม่พบการสนทนาที่ระบุ');
       }
-      if (error.response?.status === 401) {
+      if (err.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้อัปเดตข้อมูลการสนทนา');
       }
       throw new Error(
-        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการอัปเดตความพึงพอใจ'
+        err.response?.data?.detail || 'เกิดข้อผิดพลาดในการอัปเดตความพึงพอใจ'
       );
     }
   }
@@ -194,16 +202,17 @@ class ConversationService {
       await axios.delete(`${API_BASE_URL}/admin/conversations/${id}`, {
         headers: this.getAuthHeaders(),
       });
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>;
       console.error('Error deleting conversation:', error);
-      if (error.response?.status === 404) {
+      if (err.response?.status === 404) {
         throw new Error('ไม่พบการสนทนาที่ระบุ');
       }
-      if (error.response?.status === 401) {
+      if (err.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้ลบข้อมูลการสนทนา');
       }
       throw new Error(
-        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการลบการสนทนา'
+        err.response?.data?.detail || 'เกิดข้อผิดพลาดในการลบการสนทนา'
       );
     }
   }
@@ -235,13 +244,14 @@ class ConversationService {
       );
 
       return response.data as Blob;
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>;
       console.error('Error exporting conversations:', error);
-      if (error.response?.status === 401) {
+      if (err.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้ส่งออกข้อมูลการสนทนา');
       }
       throw new Error(
-        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการส่งออกข้อมูล'
+        err.response?.data?.detail || 'เกิดข้อผิดพลาดในการส่งออกข้อมูล'
       );
     }
   }
@@ -271,13 +281,14 @@ class ConversationService {
       );
 
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>;
       console.error('Error migrating data:', error);
-      if (error.response?.status === 401) {
+      if (err.response?.status === 401) {
         throw new Error('ไม่ได้รับอนุญาตให้ทำการ migration');
       }
       throw new Error(
-        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการ migration'
+        err.response?.data?.detail || 'เกิดข้อผิดพลาดในการ migration'
       );
     }
   }

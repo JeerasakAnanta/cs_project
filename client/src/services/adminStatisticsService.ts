@@ -1,4 +1,8 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+
+interface ApiErrorResponse {
+  detail?: string;
+}
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
@@ -95,10 +99,11 @@ class AdminStatisticsService {
         }
       );
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>;
       console.error('Error fetching system statistics:', error);
       throw new Error(
-        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติระบบ'
+        err.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติระบบ'
       );
     }
   }
@@ -115,10 +120,11 @@ class AdminStatisticsService {
         }
       );
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>;
       console.error('Error fetching user statistics:', error);
       throw new Error(
-        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติผู้ใช้'
+        err.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติผู้ใช้'
       );
     }
   }
@@ -135,10 +141,11 @@ class AdminStatisticsService {
         }
       );
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>;
       console.error('Error fetching conversation statistics:', error);
       throw new Error(
-        error.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติการสนทนา'
+        err.response?.data?.detail || 'เกิดข้อผิดพลาดในการดึงสถิติการสนทนา'
       );
     }
   }
@@ -163,7 +170,7 @@ class AdminStatisticsService {
         users: userStats,
         conversations: conversationStats,
       };
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error fetching all statistics:', error);
       throw error;
     }
