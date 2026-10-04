@@ -16,8 +16,6 @@ from app.database import models
 from app.utils.database import get_db
 from app.login_system.auth import get_current_user
 from . import schemas, crud
-from .websocket_manager import ConnectionManager
-from .chatbot import get_chatbot_response
 from app.rag_system.rag_system import chatbot as rag_chatbot
 
 router = APIRouter(
