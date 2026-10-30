@@ -1,1 +1,78 @@
-Generic single-database configuration.
+# Database Migrations (Alembic)
+
+โฟลเดอร์นี้เก็บ migration ของฐานข้อมูล PostgreSQL ของ LannaFinChat จัดการด้วย [Alembic](https://alembic.sqlalchemy.org/) บน SQLAlchemy
+
+## โครงสร้าง
+
+```
+server/
+├── alembic.ini              # ค่า config ของ Alembic (script_location, sqlalchemy.url, logging)
+└── alembic/
+    ├── env.py               # โหลด Base.metadata จาก app เพื่อใช้ autogenerate
+    ├── script.py.mako       # template ของไฟล์ migration ใหม่
+    └── versions/            # ไฟล์ migration (เรียงตาม revision chain)
+```
+
+`env.py` import `Base` จาก `app.utils.database` และ models จาก `app.database` ดังนั้นตารางใหม่ต้องถูก import ผ่าน `app.database.models` ด้วย ไม่เช่นนั้น autogenerate จะมองไม่เห็น
+
+## สิ่งที่ต้องมีก่อนเริ่ม
+
+- Python >= 3.13 และ [uv](https://docs.astral.sh/uv/)
+- PostgreSQL ที่เข้าถึงได้ และฐานข้อมูลถูกสร้างไว้แล้ว
+- ติดตั้ง dependencies: `just deps` (หรือ `uv sync`)
+
+## ตั้งค่า connection
+
+Alembic อ่าน connection string จาก `sqlalchemy.url` ใน `server/alembic.ini` (ไม่ได้อ่านจาก `.env`):
+
+```ini
+sqlalchemy.url = postgresql://<user>:<password>@<host>/<database>
+```
+
+> **ข้อควรระวัง:** อย่า commit รหัสผ่านจริงลง Git ให้ใช้ค่า placeholder ในไฟล์ที่ commit และแก้เฉพาะในเครื่องของตัวเอง
+
+## คำสั่งที่ใช้บ่อย
+
+รันจากโฟลเดอร์ `server/`
+
+| งาน | คำสั่ง (just) | คำสั่งเต็ม |
+| --- | --- | --- |
+| อัปเกรดฐานข้อมูลเป็นเวอร์ชันล่าสุด | `just migrate` | `uv run alembic upgrade head` |
+| สร้าง migration จากการเปลี่ยน model | `just new-migration "message"` | `uv run alembic revision --autogenerate -m "message"` |
+| ดูเวอร์ชันปัจจุบันของฐานข้อมูล | - | `uv run alembic current` |
+| ดูประวัติ migration | - | `uv run alembic history --verbose` |
+| ย้อนกลับ 1 เวอร์ชัน | - | `uv run alembic downgrade -1` |
+| ย้อนกลับไปเวอร์ชันที่ระบุ | - | `uv run alembic downgrade <revision>` |
+| สร้าง SQL โดยไม่รันจริง | - | `uv run alembic upgrade head --sql` |
+
+## ขั้นตอนการเพิ่ม migration
+
+1. แก้ไข model ใน `app/database/`
+2. สร้าง migration: `just new-migration "add xxx to yyy"`
+3. **เปิดไฟล์ที่ถูกสร้างใน `versions/` และตรวจทุกครั้ง** autogenerate ตรวจจับ rename column/table ไม่ได้ (จะกลายเป็น drop + add ซึ่งทำให้ข้อมูลหาย)
+4. ตรวจว่า `downgrade()` ย้อนกลับได้จริง
+5. ทดสอบกับฐานข้อมูลของตัวเอง: `upgrade head` -> `downgrade -1` -> `upgrade head`
+6. Commit ไฟล์ migration พร้อมการเปลี่ยนแปลง model ใน commit/PR เดียวกัน
+
+## แนวปฏิบัติ
+
+- **ห้ามแก้ migration ที่ถูก merge หรือ deploy แล้ว** ให้สร้าง migration ใหม่เพื่อแก้ไขแทน
+- 1 migration ต่อ 1 การเปลี่ยนแปลงเชิงตรรกะ ตั้งชื่อ message เป็นภาษาอังกฤษ ให้สื่อความหมาย
+- ใช้ `nullable=True` หรือ `server_default` เมื่อเพิ่ม column ในตารางที่มีข้อมูลอยู่แล้ว
+- สำรองข้อมูลก่อนรัน migration ที่ลบหรือเปลี่ยนชนิดข้อมูลบน production
+- ระวังไม่ให้เกิดหลาย head: ตรวจด้วย `uv run alembic heads` ถ้ามีมากกว่า 1 ให้ merge ด้วย `alembic merge heads`
+
+## หมายเหตุเฉพาะโปรเจกต์
+
+- `app/main.py` เรียก `Base.metadata.create_all` ตอน startup ด้วย ตารางที่ยังไม่มีจะถูกสร้างอัตโนมัติ แต่ **การเพิ่ม column หรือ index ในตารางเดิมต้องผ่าน Alembic** เพราะ `create_all` ไม่แก้ตารางที่มีอยู่แล้ว
+- migration ปัจจุบัน `add_machine_id_001` เพิ่ม column `machine_id` และ index ให้ตาราง `guest_conversations` (รองรับ Guest mode ดู `docs/GUEST_MODE_*.md`)
+
+## การแก้ไขปัญหาเบื้องต้น
+
+| อาการ | สาเหตุที่พบบ่อย | วิธีแก้ |
+| --- | --- | --- |
+| `Can't locate revision ...` | ฐานข้อมูลอ้างอิง revision ที่ไม่มีในโค้ด | `git pull` ให้ได้ไฟล์ migration ล่าสุด หรือตรวจ `alembic_version` |
+| `Multiple head revisions are present` | สอง branch สร้าง migration พร้อมกัน | `uv run alembic merge heads -m "merge heads"` |
+| autogenerate สร้าง migration ว่าง | model ไม่ถูก import ใน `env.py` | import model ผ่าน `app.database.models` |
+| `relation ... already exists` | ตารางถูกสร้างโดย `create_all` ไปแล้ว | ตรวจสถานะด้วย `alembic current` และปรับ migration หรือใช้ `alembic stamp <revision>` |
+| เชื่อมต่อฐานข้อมูลไม่ได้ | `sqlalchemy.url` ผิด หรือ PostgreSQL ไม่ทำงาน | ตรวจ URL ใน `alembic.ini` และสถานะ PostgreSQL |
