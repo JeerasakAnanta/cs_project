@@ -1,0 +1,50 @@
+# Prod stack: prebuilt images from ghcr.io (built by .github/workflows/build.yaml)
+# Usage: docker compose -f docker-compose.prod.yaml up -d
+# server/.env must set DB_HOST=db:5432 and QDRANT_VECTERDB_HOST=http://qdrant:6333
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      retries: 10
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  backend:
+    image: ghcr.io/jeerasakananta/cs_project-backend:latest
+    restart: unless-stopped
+    env_file: ./server/.env
+    ports:
+      - "8001:8003"
+    volumes:
+      - ./server/pdfs:/app/pdfs
+      - ./server/log:/app/log
+    depends_on:
+      db:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+
+  frontend:
+    image: ghcr.io/jeerasakananta/cs_project-frontend:latest
+    restart: unless-stopped
+    ports:
+      - "8002:8000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  qdrant_data:
