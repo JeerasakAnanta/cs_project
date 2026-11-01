@@ -1,12 +1,22 @@
-# LannaFinChat
+<p align="center">
+  <img src="docs/images/rmutl-logo.png" alt="Rajamangala University of Technology Lanna" width="360">
+</p>
 
-แชตบอตภาษาไทยที่ตอบคำถามจากเอกสาร PDF ด้วยเทคนิค RAG (Retrieval-Augmented Generation)
+<h1 align="center">LannaFinChat</h1>
+
+<p align="center">
+  แชตบอตภาษาไทยที่ตอบคำถามจากเอกสาร PDF ด้วยเทคนิค RAG (Retrieval-Augmented Generation)
+</p>
+
+<p align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
 ![Qdrant](https://img.shields.io/badge/Qdrant-Vector_DB-DC244C)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
+
+</p>
 
 โครงงานสำเร็จการศึกษา สาขาวิทยาการคอมพิวเตอร์ มหาวิทยาลัยเทคโนโลยีราชมงคลล้านนา (RMUTL)
 
