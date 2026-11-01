@@ -99,11 +99,11 @@
 /* Component styles */
 @layer components {
   .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white;
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white;
   }
 
   .btn-secondary {
-    @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-white border border-gray-300;
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-white border border-gray-300;
   }
 
   .input-field {
@@ -567,5 +567,26 @@ body {
   html {
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
+  }
+}
+
+/* Keyboard focus: ring ที่เห็นชัดบนทุกปุ่ม/ลิงก์ (input/textarea มี ring ของตัวเองอยู่แล้ว) */
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid #8a6f3a;
+  outline-offset: 2px;
+}
+
+/* ผู้ใช้ที่ปิด animation ในระบบ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

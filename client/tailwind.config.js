@@ -28,6 +28,8 @@ module.exports = {
         indigo: brand,
         purple: brand,
         violet: brand,
+        pink: brand,
+        sky: brand,
         neutral: {
           50: '#fafafa',
           100: '#f5f5f5',
