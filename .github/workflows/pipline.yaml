@@ -29,19 +29,19 @@ jobs:
       - name: Setup Python with uv
         working-directory: server
         run: |
-          export PATH="$HOME/.cargo/bin:$PATH"
+          export PATH="$HOME/.local/bin:$PATH"
           uv python install 3.13
 
       - name: Install dependencies
         working-directory: server
         run: |
-          export PATH="$HOME/.cargo/bin:$PATH"
+          export PATH="$HOME/.local/bin:$PATH"
           uv sync
 
       - name: Run Tests (optional)
         working-directory: server
         run: |
-          export PATH="$HOME/.cargo/bin:$PATH"
+          export PATH="$HOME/.local/bin:$PATH"
           echo "Add test commands here if needed (e.g., uv run pytest)"
 
   backend-build-docker:
@@ -91,7 +91,7 @@ jobs:
           docker run -d \
             --name cs_project-backend \
             --restart unless-stopped \
-            -p 8080:8080 \
+            -p 8001:8003 \
             ghcr.io/jeerasakananta/cs_project-backend:latest
 
   # ---------------- Frontend ----------------
@@ -113,7 +113,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: client
-        run: npm i
+        run: npm ci
 
       - name: Build Frontend
         working-directory: client
@@ -166,5 +166,5 @@ jobs:
           docker run -d \
             --name cs_project-frontend \
             --restart unless-stopped \
-            -p 8000:8000 \
+            -p 8002:8000 \
             ghcr.io/jeerasakananta/cs_project-frontend:latest
