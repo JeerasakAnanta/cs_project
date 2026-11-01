@@ -1,3 +1,17 @@
+// สีแบรนด์ RMUTL (น้ำตาล-ทอง) ใช้แทนชุดสี blue/purple/indigo เดิมทั้งแอป
+const brand = {
+  50: '#faf6ef',
+  100: '#f1e8d6',
+  200: '#e2d0aa',
+  300: '#d1b57d',
+  400: '#bd9c5b',
+  500: '#a88f58',
+  600: '#8a6f3a',
+  700: '#6f5830',
+  800: '#54402c',
+  900: '#3a2b1f',
+};
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
@@ -9,18 +23,11 @@ module.exports = {
         'rmutl-gold': '#a88f58',
         'rmutl-tan': '#a19282',
         // Enhanced color palette
-        primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-        },
+        primary: brand,
+        blue: brand,
+        indigo: brand,
+        purple: brand,
+        violet: brand,
         neutral: {
           50: '#fafafa',
           100: '#f5f5f5',
@@ -34,11 +41,11 @@ module.exports = {
           900: '#171717',
         },
         chat: {
-          bg: 'var(--chat-bg, #0f0f23)',
-          sidebar: 'var(--chat-sidebar, #1a1a2e)',
-          'message-user': 'var(--chat-message-user, #3b82f6)',
-          'message-bot': 'var(--chat-message-bot, #1f2937)',
-          input: 'var(--chat-input, #374151)',
+          bg: 'var(--chat-bg, #1c1510)',
+          sidebar: 'var(--chat-sidebar, #261d16)',
+          'message-user': 'var(--chat-message-user, #8a6f3a)',
+          'message-bot': 'var(--chat-message-bot, #33281f)',
+          input: 'var(--chat-input, #3d3025)',
         },
       },
       fontFamily: {
@@ -69,8 +76,8 @@ module.exports = {
         xs: '2px',
       },
       boxShadow: {
-        glow: '0 0 20px rgba(59, 130, 246, 0.3)',
-        'glow-lg': '0 0 40px rgba(59, 130, 246, 0.4)',
+        glow: '0 0 20px rgba(168, 143, 88, 0.3)',
+        'glow-lg': '0 0 40px rgba(168, 143, 88, 0.4)',
       },
     },
   },
