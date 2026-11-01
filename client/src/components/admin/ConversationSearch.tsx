@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useAlert } from '../common/feedback/useAlert';
 import {
   Search,
   Clock,
@@ -24,6 +25,7 @@ interface ConversationSearchProps {
 const ConversationSearch: React.FC<ConversationSearchProps> = ({
   onConversationSelect,
 }) => {
+  const { notify, alertNode } = useAlert();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [filteredConversations, setFilteredConversations] = useState<
     Conversation[]
@@ -268,7 +270,7 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({
     } catch (error: unknown) {
       console.error('Error exporting conversations:', error);
       const message = error instanceof Error ? error.message : 'Unknown error';
-      alert('เกิดข้อผิดพลาดในการส่งออกข้อมูล: ' + message);
+      notify('error', 'ส่งออกข้อมูลไม่สำเร็จ', message);
     }
   };
 
@@ -307,6 +309,7 @@ const ConversationSearch: React.FC<ConversationSearchProps> = ({
 
   return (
     <div className="space-y-6">
+      {alertNode}
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-black flex items-center gap-2">

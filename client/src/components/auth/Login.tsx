@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
-import { Eye, EyeOff, Lock, User, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, Lock, User } from 'lucide-react';
 
 const BACKEND_API =
   import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
@@ -47,65 +47,34 @@ const Login: React.FC = () => {
 
   return (
     <div
-      className={`min-h-screen flex items-center justify-center relative overflow-hidden ${
-        theme === 'light'
-          ? 'bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100'
-          : 'bg-gradient-to-br from-chat-bg via-neutral-900 to-chat-bg'
+      className={`min-h-screen flex items-center justify-center ${
+        theme === 'light' ? 'bg-chat-bg' : 'bg-chat-bg'
       }`}
     >
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="w-full max-w-md mx-4 px-4 sm:px-0">
         <div
-          className={`absolute -top-40 -right-40 w-80 h-80 rounded-full blur-3xl animate-pulse-slow ${
-            theme === 'light' ? 'bg-blue-500/10' : 'bg-primary-500/10'
-          }`}
-        ></div>
-        <div
-          className={`absolute -bottom-40 -left-40 w-80 h-80 rounded-full blur-3xl animate-pulse-slow ${
-            theme === 'light' ? 'bg-purple-500/10' : 'bg-purple-500/10'
-          }`}
-          style={{ animationDelay: '1s' }}
-        ></div>
-        <div
-          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl animate-pulse-slow ${
-            theme === 'light' ? 'bg-blue-500/5' : 'bg-blue-500/5'
-          }`}
-          style={{ animationDelay: '2s' }}
-        ></div>
-      </div>
-
-      <div className="relative z-10 w-full max-w-md mx-4 px-4 sm:px-0">
-        <div
-          className={`card p-4 sm:p-6 md:p-8 shadow-2xl border backdrop-blur-sm ${
+          className={`card p-4 sm:p-6 md:p-8 shadow-lg border ${
             theme === 'light'
-              ? 'bg-white/90 border-gray-200/30 shadow-blue-500/20'
+              ? 'bg-white border-gray-200'
               : 'border-neutral-700/50'
           }`}
         >
           {/* Header */}
           <div className="text-center mb-6 sm:mb-8">
-            <div className="flex items-center justify-center mb-3 sm:mb-4">
-              <div
-                className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mr-2 sm:mr-3 ${
-                  theme === 'light'
-                    ? 'bg-gradient-to-br from-blue-500 via-purple-600 to-blue-700'
-                    : 'bg-gradient-to-br from-primary-500 to-purple-600'
-                }`}
-              >
-                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-              </div>
-              <h1
-                className={`text-2xl sm:text-3xl font-bold ${
-                  theme === 'light'
-                    ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent drop-shadow-sm'
-                    : 'gradient-text'
-                }`}
-              >
-                LannaFinChat
-              </h1>
-            </div>
+            <img
+              src="/rmutl-logo.png"
+              alt="มหาวิทยาลัยเทคโนโลยีราชมงคลล้านนา"
+              className="mx-auto mb-4 h-14 sm:h-16 w-auto"
+            />
+            <h1
+              className={`text-2xl sm:text-3xl font-bold ${
+                theme === 'light' ? 'text-blue-800' : 'text-blue-300'
+              }`}
+            >
+              LannaFinChat
+            </h1>
             <p
-              className={`text-xs sm:text-sm ${
+              className={`mt-1 text-sm ${
                 theme === 'light' ? 'text-gray-600' : 'text-neutral-400'
               }`}
             >

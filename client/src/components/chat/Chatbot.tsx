@@ -123,7 +123,7 @@ const Chatbot: React.FC<ChatbotProps> = ({
         ALLOWED_ATTR: ['href', 'target', 'class'],
         ALLOW_DATA_ATTR: false,
       });
-    } catch {
+    } catch (error) {
       console.error('Error rendering markdown:', error);
       return content; // Fallback to plain text
     }

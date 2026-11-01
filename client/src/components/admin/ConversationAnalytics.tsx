@@ -17,7 +17,7 @@ const ConversationAnalytics: React.FC = () => {
   const [timeRange, setTimeRange] = useState('7d');
   const [isLoading, setIsLoading] = useState(false);
   const [stats, setStats] = useState<ConversationStats | null>(null);
-  const [, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const loadStats = useCallback(async () => {
     setIsLoading(true);
