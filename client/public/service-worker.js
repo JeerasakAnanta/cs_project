@@ -6,7 +6,7 @@ const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/offline.html',
-  '/icon.svg',
+  '/icon-192x192.png',
   '/manifest.json',
 ];
 
