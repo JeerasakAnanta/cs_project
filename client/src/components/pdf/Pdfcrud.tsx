@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useAlert } from '../common/feedback/useAlert';
 import {
   FileText,
   Trash2,
@@ -16,6 +17,7 @@ const VITE_HOST =
   import.meta.env.VITE_BACKEND_DOCS_API || 'http://localhost:8001';
 
 const PdfCrud: React.FC = () => {
+  const { notify, alertNode } = useAlert();
   const [pdfs, setPdfs] = useState<string[]>([]);
   const [selectedPdfs, setSelectedPdfs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -105,7 +107,7 @@ const PdfCrud: React.FC = () => {
 
   const handleDelete = async () => {
     if (selectedPdfs.length === 0) {
-      alert('❌ กรุณาเลือกไฟล์ PDF อย่างน้อย 1 ไฟล์เพื่อลบ ❌');
+      notify('warning', 'ยังไม่ได้เลือกไฟล์', 'เลือกไฟล์ PDF อย่างน้อย 1 ไฟล์ก่อนลบ');
       return;
     }
 
@@ -117,7 +119,7 @@ const PdfCrud: React.FC = () => {
     // Get authentication token
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
-      alert('⚠️ ไม่พบข้อมูลการยืนยันตัวตน กรุณาเข้าสู่ระบบใหม่');
+      notify('error', 'ไม่พบข้อมูลการยืนยันตัวตน', 'กรุณาเข้าสู่ระบบใหม่อีกครั้ง');
       return;
     }
 
@@ -136,13 +138,13 @@ const PdfCrud: React.FC = () => {
       setSelectedPdfs([]);
     } catch (error) {
       console.error('Error deleting PDFs:', error);
-      alert('เกิดข้อผิดพลาดในการลบไฟล์ PDF');
+      notify('error', 'ลบไฟล์ไม่สำเร็จ', 'ลองอีกครั้ง หากยังไม่ได้ให้ตรวจสอบการเชื่อมต่อกับเซิร์ฟเวอร์');
     }
   };
 
   const handleReembedding = async () => {
     if (selectedPdfs.length === 0) {
-      alert('❌ กรุณาเลือกไฟล์ PDF อย่างน้อย 1 ไฟล์เพื่อ Re-embedding ❌');
+      notify('warning', 'ยังไม่ได้เลือกไฟล์', 'เลือกไฟล์ PDF อย่างน้อย 1 ไฟล์ก่อน Re-embedding');
       return;
     }
 
@@ -152,7 +154,7 @@ const PdfCrud: React.FC = () => {
     if (!confirm) return;
 
     // TODO: Implement re-embedding functionality
-    alert('ฟีเจอร์ Re-embedding กำลังอยู่ในระหว่างการพัฒนา');
+    notify('info', 'ยังใช้งานไม่ได้', 'ฟีเจอร์ Re-embedding กำลังอยู่ระหว่างพัฒนา');
   };
 
   if (isLoading) {
@@ -168,6 +170,7 @@ const PdfCrud: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {alertNode}
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center">

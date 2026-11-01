@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import LoadingSpinner from '../common/ui/LoadingSpinner';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useAlert } from '../common/feedback/useAlert';
 
 const BACKEND_API =
   import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
@@ -26,6 +27,7 @@ interface User {
 }
 
 const UserManagement: React.FC = () => {
+  const { notify, alertNode } = useAlert();
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -97,10 +99,10 @@ const UserManagement: React.FC = () => {
       if (response.ok) {
         setUsers(users.filter((user) => user.id !== userId));
       } else {
-        alert('ไม่สามารถลบผู้ใช้ได้');
+        notify('error', 'ลบผู้ใช้ไม่สำเร็จ', 'เซิร์ฟเวอร์ปฏิเสธคำขอ ลองอีกครั้งหรือตรวจสอบสิทธิ์ผู้ดูแล');
       }
     } catch {
-      alert('เกิดข้อผิดพลาดในการลบผู้ใช้');
+      notify('error', 'ลบผู้ใช้ไม่สำเร็จ', 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ลองอีกครั้ง');
     }
   };
 
@@ -182,6 +184,7 @@ const UserManagement: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {alertNode}
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
