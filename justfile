@@ -16,6 +16,13 @@ deps:
     @echo "Installing client dependencies..."
     just -f client/justfile -d client install
 
+# Update all dependencies to latest allowed versions (server + client)
+update:
+    @echo "Updating server dependencies..."
+    cd server && uv lock --upgrade && uv sync
+    @echo "Updating client dependencies..."
+    cd client && npm update
+
 # Run database migrations
 migrate:
     @echo "Running database migrations..."
