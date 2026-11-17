@@ -30,6 +30,9 @@
     "react-router-dom": "^7.18.5",
     "tailwindcss": "^3.4.11"
   },
+  "overrides": {
+    "postcss-selector-parser": ">=6.1.5"
+  },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@tailwindcss/typography": "^0.5.15",
