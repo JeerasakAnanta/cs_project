@@ -16,7 +16,8 @@ from app.database import models
 from app.utils.database import get_db
 from app.login_system.auth import get_current_user
 from . import schemas, crud
-from app.rag_system.rag_system import chatbot as rag_chatbot
+from app.rag_system.langgraph_rag_system import chatbot as rag_chatbot
+from app.rag_system.rag_response_adapter import adapt_chatbot_response
 
 router = APIRouter(
     prefix="/chat",
@@ -107,23 +108,10 @@ async def create_message_for_conversation(
         # Generate bot response with document references
         bot_response = rag_chatbot(message.content)
 
-        # Convert document references to schema format
-        source_documents = []
-        if "source_documents" in bot_response and bot_response["source_documents"]:
-            for doc_ref in bot_response["source_documents"]:
-                source_documents.append(
-                    schemas.DocumentReference(
-                        filename=doc_ref["filename"],
-                        page=doc_ref["page"],
-                        confidence_score=doc_ref["confidence_score"],
-                        content_preview=doc_ref["content_preview"],
-                        full_content=doc_ref["full_content"],
-                    )
-                )
+        # Normalize raw chatbot output through the adapter
+        message_text, source_documents = adapt_chatbot_response(bot_response)
 
-        bot_message = schemas.MessageCreate(
-            sender="bot", content=bot_response["message"]
-        )
+        bot_message = schemas.MessageCreate(sender="bot", content=message_text)
         created_message = crud.create_message(
             db=db, message=bot_message, conversation_id=conversation_id
         )

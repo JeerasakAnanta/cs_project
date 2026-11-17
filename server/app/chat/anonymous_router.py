@@ -5,7 +5,8 @@ import uuid
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-from app.rag_system.rag_system import chatbot as rag_chatbot
+from app.rag_system.langgraph_rag_system import chatbot as rag_chatbot
+from app.rag_system.rag_response_adapter import adapt_chatbot_response
 from . import schemas
 
 router = APIRouter(
@@ -30,22 +31,11 @@ async def send_anonymous_message(
         # Get bot response using RAG system
         bot_response = rag_chatbot(message.content)
 
-        # Convert document references to schema format
-        source_documents = []
-        if "source_documents" in bot_response and bot_response["source_documents"]:
-            for doc_ref in bot_response["source_documents"]:
-                source_documents.append(
-                    schemas.DocumentReference(
-                        filename=doc_ref["filename"],
-                        page=doc_ref["page"],
-                        confidence_score=doc_ref["confidence_score"],
-                        content_preview=doc_ref["content_preview"],
-                        full_content=doc_ref["full_content"],
-                    )
-                )
+        # Normalize raw chatbot output through the adapter
+        message_text, source_documents = adapt_chatbot_response(bot_response)
 
         return {
-            "message": bot_response["message"],
+            "message": message_text,
             "source_documents": source_documents,
         }
     except Exception as e:
