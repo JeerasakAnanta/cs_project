@@ -26,7 +26,10 @@ from app.routers.router_admin_conversations import router as router_admin_conver
 setup_logging(log_level="INFO", log_file="log/app.log")
 
 # Create all tables in the database
-models.Base.metadata.create_all(bind=engine)
+try:
+    models.Base.metadata.create_all(bind=engine)
+except Exception as e:
+    logging.warning(f"Could not connect to database on startup: {e}")
 
 # Initialize FastAPI
 app = FastAPI(title="LannaFinChat API", description="API for LannaFinChat")

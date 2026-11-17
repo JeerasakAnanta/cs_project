@@ -7,7 +7,9 @@ from sqlalchemy.orm import sessionmaker
 from app.utils.config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME
 
 # Database config postgres
-SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+SQLALCHEMY_DATABASE_URL = (
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+)
 
 # Create engine for database connection
 engine = create_engine(SQLALCHEMY_DATABASE_URL)

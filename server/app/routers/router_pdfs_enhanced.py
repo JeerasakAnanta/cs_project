@@ -232,7 +232,7 @@ def process_pdf_with_metadata(file_path: str, filename: str):
         
         # Import here to avoid circular imports
         from docling.document_converter import DocumentConverter
-        from langchain.text_splitter import MarkdownTextSplitter
+        from langchain_text_splitters import MarkdownTextSplitter
         from langchain_qdrant import QdrantVectorStore
         from langchain_openai import OpenAIEmbeddings
         from app.utils.config import EMBEDDINGS_MODEL, QDRANT_VECTERDB_HOST, COLLECTION_NAME

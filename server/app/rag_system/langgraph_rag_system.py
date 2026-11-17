@@ -20,11 +20,12 @@ embeddings = OpenAIEmbeddings(
 )
 
 # Setup Qdrant client and vector store
-qdrant_client = QdrantClient(url=QDRANT_URL)
+qdrant_client = QdrantClient(url=QDRANT_URL, check_compatibility=False)
 qdrant_store = QdrantVectorStore(
     client=qdrant_client,
     collection_name=COLLECTION_NAME,
     embedding=embeddings,
+    validate_collection_config=False,
 )
 
 # Initialize LLM

@@ -4,8 +4,7 @@ import logging as logger
 
 # langchain
 from langchain_openai import OpenAIEmbeddings
-from langchain.text_splitter import MarkdownTextSplitter
-from langchain_openai import OpenAIEmbeddings
+from langchain_text_splitters import MarkdownTextSplitter
 
 # FastAPI
 from fastapi import HTTPException
