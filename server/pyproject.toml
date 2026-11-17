@@ -21,7 +21,6 @@ dependencies = [
     "passlib>=1.7.4",
     "psycopg2-binary>=2.9.10",
     "pyjwt>=2.10.1",
-    "python-jose>=3.5.0",
     "python-multipart>=0.0.20",
     "sqlalchemy>=2.0.41",
     "pydantic[email]>=2.11.4",
