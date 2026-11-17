@@ -1,12 +1,5 @@
 import { BACKEND_API } from '../config';
-
-export interface DocumentReference {
-  filename: string;
-  page: number | null;
-  confidence_score: number;
-  content_preview: string;
-  full_content: string;
-}
+import { DocumentReference } from '../types/rag';
 
 export interface GuestMessage {
   id: string;

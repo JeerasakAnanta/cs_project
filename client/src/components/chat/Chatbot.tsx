@@ -9,6 +9,7 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import DOMPurify from 'dompurify';
+import { DocumentReference } from '../../types/rag';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import CustomAlert from '../common/feedback/CustomAlert';
@@ -18,14 +19,6 @@ import { marked } from 'marked';
 
 const BACKEND_API =
   import.meta.env.VITE_BACKEND_CHATBOT_API || 'http://localhost:8001';
-
-interface DocumentReference {
-  filename: string;
-  page: number | null;
-  confidence_score: number;
-  content_preview: string;
-  full_content: string;
-}
 
 interface Message {
   id?: number | string;
